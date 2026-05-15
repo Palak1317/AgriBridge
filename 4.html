@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriBridge — Grain Storage Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gd:#1B4D2E;--gm:#2D7A4F;--gl:#4CAF78;--gp:#E8F5EE;--ga:#5DBF82;
+  --am:#F5A623;--ap:#FEF3DC;--ad:#8C5E10;
+  --rd:#D94F3D;--rp:#FDECEA;
+  --bl:#1A6FA0;--bp:#EBF2FA;
+  --bg:#F4F7F2;--sf:#FFFFFF;--br:rgba(0,0,0,0.08);
+  --t1:#1A2B1F;--t2:#5A7060;--tm:#93AE99;
+  --shd:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shl:0 12px 32px rgba(0,0,0,0.12),0 4px 8px rgba(0,0,0,0.06);
+  --r:12px;--rs:8px;
+  --fd:'Baloo 2',cursive;--fb:'Noto Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+
+/* BACK BUTTON */
+.back-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;flex-shrink:0;transition:background 0.2s,transform 0.15s;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,0.22);transform:translateX(-2px)}
+.back-btn svg{display:block}
+
+/* TOPBAR */
+.topbar{background:var(--gd);height:60px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:100;gap:14px}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none}
+.logo-mark{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1}
+.logo-words{line-height:1.1}
+.logo-main{font-family:var(--fd);font-size:18px;font-weight:800;color:#fff;display:block;letter-spacing:0.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.2px;display:block}
+.topbar-spacer{flex:1}
+.topbar-search{display:flex;align-items:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:0 14px;gap:8px;height:36px;width:240px;transition:background 0.2s}
+.topbar-search:focus-within{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35)}
+.topbar-search input{background:none;border:none;outline:none;color:#fff;font-size:13px;font-family:var(--fb);width:100%}
+.topbar-search input::placeholder{color:rgba(255,255,255,0.45)}
+
+/* NAV TABS */
+.nav-tabs{display:flex;gap:4px;margin-left:8px}
+.nav-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;font-family:var(--fd);color:rgba(255,255,255,0.6);cursor:pointer;text-decoration:none;transition:all 0.15s;border:1px solid transparent}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,0.1)}
+.nav-tab.active{color:#fff;background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.25)}
+
+/* LANG DROPDOWN */
+.lang-wrapper{position:relative;flex-shrink:0}
+.lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 12px;color:#fff;font-size:12px;font-family:var(--fb);cursor:pointer;transition:background 0.2s}
+.lang-btn:hover{background:rgba(255,255,255,0.2)}
+.lang-btn .chevron{transition:transform 0.2s;font-size:10px}
+.lang-btn.open .chevron{transform:rotate(180deg)}
+.lang-dropdown{position:absolute;right:0;top:calc(100% + 8px);background:var(--sf);border:1px solid var(--br);border-radius:var(--rs);box-shadow:var(--shl);min-width:155px;overflow:hidden;display:none;z-index:200}
+.lang-dropdown.open{display:block}
+.lang-option{padding:9px 14px;font-size:13px;color:var(--t1);cursor:pointer;display:flex;align-items:center;gap:10px;border:none;background:none;width:100%;text-align:left;font-family:var(--fb);transition:background 0.15s}
+.lang-option:hover{background:var(--gp)}
+.lang-option.active{background:var(--gp);color:var(--gm);font-weight:600}
+
+/* AI BUTTON */
+.ai-float-btn{display:flex;align-items:center;gap:7px;background:var(--am);border:none;border-radius:20px;padding:7px 14px 7px 10px;color:#fff;font-size:13px;font-weight:700;font-family:var(--fd);cursor:pointer;box-shadow:0 2px 8px rgba(245,166,35,0.45);transition:box-shadow 0.2s,transform 0.15s;flex-shrink:0}
+.ai-float-btn:hover{box-shadow:0 4px 16px rgba(245,166,35,0.6);transform:translateY(-1px)}
+.ai-float-btn .ai-icon{width:22px;height:22px;background:rgba(255,255,255,0.25);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* HERO BANNER */
+.hero-banner{background:linear-gradient(135deg,var(--gd) 0%,#2D6B45 60%,#1a5c35 100%);padding:22px 22px 18px;position:relative;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:16px}
+.hero-icon{width:54px;height:54px;background:rgba(245,166,35,0.2);border:2px solid rgba(245,166,35,0.4);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.hero-text h1{font-family:var(--fd);font-size:22px;font-weight:800;color:#fff;margin-bottom:3px}
+.hero-text p{font-size:13px;color:rgba(255,255,255,0.65);max-width:500px;line-height:1.5}
+.hero-stats{display:flex;gap:20px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.12)}
+.hero-stat{display:flex;flex-direction:column;gap:2px}
+.hero-stat .hs-val{font-family:var(--fd);font-size:18px;font-weight:800;color:#fff}
+.hero-stat .hs-lbl{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.7px}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 60px)}
+.main{padding:20px 22px;overflow-y:auto}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf);font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:all 0.15s;font-family:var(--fb);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.filter-chip:hover{border-color:var(--gm);color:var(--gm)}
+.filter-chip.active{background:var(--gd);border-color:var(--gd);color:#fff}
+.chip-icon{font-size:14px;line-height:1}
+.mandi-select{padding:6px 28px 6px 12px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2393AE99'/%3E%3C/svg%3E") no-repeat right 10px center;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--fb);appearance:none;outline:none;transition:border-color 0.15s}
+.mandi-select:focus{border-color:var(--gm)}
+.filter-row-2{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.sort-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf);font-size:11px;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all 0.15s}
+.sort-btn:hover,.sort-btn.active{border-color:var(--bl);color:var(--bl);background:var(--bp)}
+.capacity-range{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);margin-left:auto}
+.capacity-range input[type=range]{width:80px;accent-color:var(--gm)}
+
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--gd);display:flex;align-items:center;gap:8px}
+.result-count{font-size:12px;color:var(--tm);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--br)}
+
+/* STORAGE GRID */
+.storage-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+
+/* STORAGE CARD — no animation on initial load, only on filter changes */
+.storage-card{background:var(--sf);border-radius:var(--r);border:1.5px solid var(--br);overflow:hidden;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;position:relative}
+.storage-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gl);transform:scaleX(0);transform-origin:left;transition:transform 0.25s}
+.storage-card:hover{border-color:var(--gm);box-shadow:var(--shd);transform:translateY(-2px)}
+.storage-card:hover::before{transform:scaleX(1)}
+/* animate class added only when filtering after initial load */
+.storage-card.animate-in{animation:cardIn 0.35s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD MAP THUMB */
+.card-map-thumb{height:100px;background:linear-gradient(135deg,#d4edda,#b8dfc7);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.card-map-thumb .map-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.card-map-thumb .map-grid{position:absolute;inset:0;opacity:0.15;background-image:linear-gradient(rgba(45,122,79,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(45,122,79,0.5) 1px,transparent 1px);background-size:20px 20px}
+.map-pin{font-size:28px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));z-index:1}
+.map-type-badge{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px}
+.type-govt{background:rgba(26,111,160,0.9);color:#fff}
+.type-private{background:rgba(245,166,35,0.9);color:#fff}
+.type-coop{background:rgba(45,122,79,0.9);color:#fff}
+.type-fci{background:rgba(100,61,155,0.9);color:#fff}
+.map-open-btn{position:absolute;bottom:8px;right:8px;background:#fff;border:1px solid var(--br);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--gm);display:flex;align-items:center;gap:3px;transition:background 0.15s;z-index:2}
+.map-open-btn:hover{background:var(--gp)}
+
+/* CARD BODY */
+.card-body{padding:13px 14px 14px}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px}
+.card-name{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--t1);line-height:1.2}
+.card-rating{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--ad);background:var(--ap);padding:3px 7px;border-radius:8px;flex-shrink:0}
+.card-address{font-size:11px;color:var(--tm);margin-bottom:8px;display:flex;align-items:center;gap:4px;line-height:1.4}
+.card-mandi{font-size:11px;color:var(--gm);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:4px}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.card-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;display:flex;align-items:center;gap:3px}
+.tag-cold{background:#EBF2FA;color:#1A6FA0}
+.tag-humid{background:#E6F4EC;color:var(--gm)}
+.tag-cert{background:var(--ap);color:var(--ad)}
+.tag-24h{background:#F3E8FF;color:#6B21A8}
+.tag-transport{background:#FEF3DC;color:#8C5E10}
+.tag-nwrp{background:#E0F2FE;color:#0369A1}
+.card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.cs-item{background:var(--bg);border-radius:var(--rs);padding:7px 8px;text-align:center}
+.cs-lbl{font-size:9px;color:var(--tm);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px}
+.cs-val{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--gd)}
+.card-avail-bar{margin-bottom:10px}
+.avail-bar-top{display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px}
+.avail-bar-lbl{color:var(--t2);font-weight:500}
+.avail-bar-pct{font-weight:700}
+.avail-pct-ok{color:var(--gm)}.avail-pct-warn{color:var(--am)}.avail-pct-full{color:var(--rd)}
+.avail-track{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--br)}
+.avail-fill{height:6px;border-radius:3px;transition:width 0.6s ease}
+.fill-ok{background:var(--gl)}.fill-warn{background:var(--am)}.fill-full{background:var(--rd)}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--br)}
+.card-price{display:flex;align-items:baseline;gap:3px}
+.card-price-val{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--gd)}
+.card-price-unit{font-size:10px;color:var(--tm)}
+.card-contact-btn{padding:6px 12px;background:var(--gd);border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:600;font-family:var(--fb);cursor:pointer;transition:background 0.15s}
+.card-contact-btn:hover{background:var(--gm)}
+.avail-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.avail-ok{background:#E6F4EC;color:var(--gm)}
+.avail-low{background:var(--ap);color:var(--ad)}
+.avail-full{background:var(--rp);color:var(--rd)}
+
+/* SAVINGS INSIGHT BANNER */
+.savings-banner{background:linear-gradient(135deg,var(--ap),#FFF8ED);border:1.5px solid rgba(245,166,35,0.3);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px}
+.sb-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.sb-content h4{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--ad);margin-bottom:4px}
+.sb-content p{font-size:12px;color:var(--t2);line-height:1.5}
+.sb-crops{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sb-crop-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:rgba(245,166,35,0.2);color:var(--ad);cursor:pointer;transition:background 0.15s}
+.sb-crop-pill:hover{background:rgba(245,166,35,0.35)}
+
+/* SIDEBAR */
+.sidebar{background:var(--sf);border-left:1.5px solid var(--br);display:flex;flex-direction:column;height:calc(100vh - 60px);position:sticky;top:60px;overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+.sb-header{padding:14px 16px 12px;border-bottom:1.5px solid var(--br);display:flex;align-items:center;gap:8px}
+.sb-header-title{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--gd)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--ga);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+
+.sb-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px;border-bottom:1px solid var(--br)}
+.sb-stat{background:var(--bg);border-radius:9px;padding:10px 11px}
+.sb-stat-lbl{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.sb-stat-val{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--gd);line-height:1}
+.sb-stat-sub{font-size:10px;color:var(--t2);margin-top:2px}
+
+.sb-section-lbl{padding:10px 14px 6px;font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:0.8px}
+
+/* Price Savings Calculator */
+.sb-calc{padding:10px 14px;border-bottom:1px solid var(--br)}
+.sb-calc h4{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--gd);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.calc-row{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.calc-input-wrap{display:flex;flex-direction:column;gap:2px}
+.calc-input-lbl{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:0.4px}
+.calc-input{width:100%;padding:6px 10px;border:1.5px solid var(--br);border-radius:8px;font-size:13px;font-family:var(--fd);font-weight:700;color:var(--gd);background:var(--bg);outline:none;transition:border-color 0.2s}
+.calc-input:focus{border-color:var(--gm)}
+.calc-result{background:var(--gp);border-radius:8px;padding:10px 12px;border:1px solid rgba(45,122,79,0.2)}
+.calc-result .cr-lbl{font-size:10px;color:var(--gm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
+.calc-result .cr-val{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--gd)}
+.calc-result .cr-note{font-size:10px;color:var(--t2);margin-top:3px}
+
+/* Nearby Mandis */
+.sb-mandi-item{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(0,0,0,0.04);gap:9px}
+.sb-mandi-icon{width:30px;height:30px;border-radius:8px;background:var(--gp);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sb-mandi-info{flex:1;min-width:0}
+.sb-mandi-name{font-size:12px;font-weight:600;color:var(--t1)}
+.sb-mandi-count{font-size:11px;font-weight:700;color:var(--gm);background:var(--gp);padding:2px 8px;border-radius:10px;flex-shrink:0}
+
+/* Crop holding tips */
+.sb-tip{padding:8px 14px;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;gap:8px;align-items:flex-start}
+.sb-tip-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.sb-tip-info{}
+.sb-tip-crop{font-size:11px;font-weight:700;color:var(--t1);margin-bottom:1px}
+.sb-tip-text{font-size:10px;color:var(--t2);line-height:1.45}
+.sb-tip-badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;margin-top:3px}
+.tip-hold{background:#E6F4EC;color:var(--gm)}
+.tip-sell{background:var(--rp);color:var(--rd)}
+
+/* NWRP info */
+.sb-nwrp{margin:10px 14px;background:var(--bp);border-radius:10px;padding:12px 13px}
+.sb-nwrp h4{font-family:var(--fd);font-size:12px;font-weight:700;color:var(--bl);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.sb-nwrp p{font-size:10px;color:#2B5070;line-height:1.5}
+
+/* AI PANEL */
+.ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:300;backdrop-filter:blur(2px)}
+.ai-overlay.open{display:block}
+.ai-panel{position:fixed;right:-430px;top:0;bottom:0;width:420px;background:var(--sf);box-shadow:var(--shl);z-index:400;display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(0.34,1.1,0.64,1)}
+.ai-panel.open{right:0}
+.ai-panel-header{background:var(--gd);padding:15px 18px;display:flex;align-items:center;gap:12px}
+.ai-panel-icon{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ai-panel-header h3{font-family:var(--fd);font-size:15px;font-weight:700;color:#fff}
+.ai-panel-header p{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px}
+.ai-close{margin-left:auto;background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:30px;height:30px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;line-height:1}
+.ai-close:hover{background:rgba(255,255,255,0.25)}
+.ai-key-section{padding:10px 14px;border-bottom:1px solid var(--br);background:#FAFBF9}
+.ai-key-label{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.ai-key-hint{font-size:10px;color:var(--tm);margin-bottom:6px;line-height:1.4}
+.ai-key-row{display:flex;gap:6px}
+.ai-key-input{flex:1;padding:7px 10px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:12px;font-family:var(--fb);background:var(--sf);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-key-input:focus{border-color:var(--gm)}
+.ai-key-save{padding:7px 12px;background:var(--gd);border:none;border-radius:var(--rs);color:#fff;font-size:12px;font-weight:600;font-family:var(--fb);cursor:pointer;white-space:nowrap;transition:background 0.15s}
+.ai-key-save:hover{background:var(--gm)}
+.ai-key-status{font-size:10px;margin-top:4px;height:14px}
+.key-ok{color:var(--gm)}.key-no{color:var(--rd)}
+.ai-chips{padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--br)}
+.ai-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--br);background:var(--bg);font-size:11px;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all 0.15s}
+.ai-chip:hover{border-color:var(--am);color:var(--ad);background:var(--ap)}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ai-messages::-webkit-scrollbar{width:3px}
+.ai-messages::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+.msg-bubble{max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.55}
+.msg-ai{background:var(--gp);color:var(--t1);align-self:flex-start;border-radius:4px 14px 14px 14px;border:1px solid rgba(45,122,79,0.15)}
+.msg-user{background:var(--gd);color:#fff;align-self:flex-end;border-radius:14px 4px 14px 14px}
+.ai-input-row{padding:12px 14px;border-top:1.5px solid var(--br);display:flex;gap:8px;align-items:center}
+.ai-input-row input{flex:1;padding:9px 13px;border-radius:24px;border:1.5px solid var(--br);font-size:13px;font-family:var(--fb);background:var(--bg);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-input-row input:focus{border-color:var(--gm)}
+.ai-send{width:36px;height:36px;background:var(--gd);border:none;border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.15s;flex-shrink:0}
+.ai-send:hover{background:var(--gm);transform:scale(1.06)}
+.gemini-tag{padding:7px 14px;font-size:10px;color:var(--tm);display:flex;align-items:center;gap:4px;border-top:1px solid var(--br);background:var(--bg)}
+.typing-dots{display:flex;gap:4px;padding:3px 0}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--gm);animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,60%,100%{opacity:1}30%{opacity:0.2}}
+
+/* DETAIL MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--sf);border-radius:18px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shl);animation:modalIn 0.22s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-box::-webkit-scrollbar{width:4px}
+.modal-box::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.modal-map-area{height:180px;background:linear-gradient(135deg,#c8e6d4,#a8d5b8);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-map-grid{position:absolute;inset:0;opacity:0.15;background-image:linear-gradient(rgba(45,122,79,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(45,122,79,0.5) 1px,transparent 1px);background-size:25px 25px}
+.modal-map-roads{position:absolute;inset:0}
+.modal-map-pin{font-size:44px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));z-index:2}
+.modal-map-open{position:absolute;bottom:12px;right:12px;background:var(--gd);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;font-family:var(--fb);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.15s;z-index:3}
+.modal-map-open:hover{background:var(--gm)}
+.modal-type-badge{position:absolute;top:12px;left:12px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:10px;z-index:3}
+.modal-header-info{padding:16px 20px 12px;border-bottom:1px solid var(--br)}
+.modal-header-info h2{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--t1);margin-bottom:4px}
+.modal-header-info .mh-address{font-size:12px;color:var(--tm);display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.modal-header-info .mh-mandi{font-size:12px;color:var(--gm);font-weight:600;display:flex;align-items:center;gap:4px}
+.modal-rating-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.modal-rating{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:var(--ad)}
+.modal-reviews{font-size:11px;color:var(--tm)}
+.modal-section{padding:16px 20px;border-bottom:1px solid var(--br)}
+.modal-section h4{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--gd);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.modal-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mpi{background:var(--bg);border-radius:var(--rs);padding:10px;text-align:center}
+.mpi .ml{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px}
+.mpi .mv{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--gd)}
+.modal-tags{display:flex;gap:6px;flex-wrap:wrap}
+.modal-crops-list{display:flex;gap:6px;flex-wrap:wrap}
+.modal-crop-pill{display:flex;align-items:center;gap:4px;background:var(--gp);border:1px solid rgba(45,122,79,0.2);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--gm)}
+.modal-hours-table{width:100%;border-collapse:collapse}
+.modal-hours-table tr{border-bottom:1px solid var(--br)}
+.modal-hours-table tr:last-child{border:none}
+.modal-hours-table td{padding:6px 0;font-size:12px}
+.modal-hours-table td:first-child{color:var(--t2);width:40%}
+.modal-hours-table td:last-child{color:var(--t1);font-weight:500;text-align:right}
+.modal-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-contact-btn{padding:10px;border-radius:10px;border:1.5px solid var(--br);background:var(--bg);font-size:12px;font-weight:600;color:var(--t1);cursor:pointer;display:flex;align-items:center;gap:7px;transition:all 0.15s;font-family:var(--fb)}
+.modal-contact-btn:hover{border-color:var(--gm);background:var(--gp);color:var(--gm)}
+.modal-contact-btn .mc-icon{font-size:18px}
+.modal-nwrp-box{background:var(--bp);border-radius:10px;padding:12px;font-size:11px;color:#2B5070;line-height:1.6}
+.modal-nwrp-box strong{color:var(--bl)}
+
+.modal-footer{padding:16px 20px;display:flex;gap:10px}
+.mf-btn{flex:1;padding:12px;border-radius:12px;border:none;font-size:13px;font-weight:700;font-family:var(--fd);cursor:pointer;transition:all 0.15s}
+.mf-primary{background:var(--gd);color:#fff}
+.mf-primary:hover{background:var(--gm)}
+.mf-secondary{background:var(--bg);color:var(--gd);border:1.5px solid var(--br)}
+.mf-secondary:hover{border-color:var(--gm);background:var(--gp)}
+
+.no-results{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--tm);font-size:14px}
+.no-results .nr-icon{font-size:48px;margin-bottom:12px}
+.no-results h3{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--t2);margin-bottom:6px}
+
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}.storage-grid{grid-template-columns:1fr}.topbar-search{display:none}}
+@media(max-width:560px){.storage-grid{grid-template-columns:1fr}.topbar{padding:0 12px;gap:8px}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="back-btn" href="#" onclick="history.back(); return false;" aria-label="Go back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  </a>
+  <a class="topbar-logo" href="#">
+    <div class="logo-mark">🌉</div>
+    <div class="logo-words">
+      <span class="logo-main">AgriBridge</span>
+      <span class="logo-sub" id="site-tagline">Grain Storage Finder</span>
+    </div>
+  </a>
+
+  <div class="topbar-spacer"></div>
+  <div class="topbar-search">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="main-search" placeholder="Search warehouse or location..." oninput="filterCards(this.value)">
+  </div>
+  <div class="lang-wrapper">
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span id="lang-label">English</span>
+      <span class="chevron">&#9660;</span>
+    </button>
+    <div class="lang-dropdown" id="lang-dropdown">
+      <button class="lang-option active" onclick="setLang('en')">🇮🇳 English</button>
+      <button class="lang-option" onclick="setLang('hi')">🇮🇳 हिंदी</button>
+      <button class="lang-option" onclick="setLang('kn')">🇮🇳 ಕನ್ನಡ</button>
+      <button class="lang-option" onclick="setLang('mr')">🇮🇳 मराठी</button>
+      <button class="lang-option" onclick="setLang('te')">🇮🇳 తెలుగు</button>
+      <button class="lang-option" onclick="setLang('ta')">🇮🇳 தமிழ்</button>
+    </div>
+  </div>
+  <button class="ai-float-btn" onclick="openAI()">
+    <div class="ai-icon">✨</div>
+    <span id="ai-btn-label">Ask AI</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<div class="hero-banner">
+  <div class="hero-inner">
+    <div class="hero-icon">🏛️</div>
+    <div class="hero-text">
+      <h1 id="hero-title">Find Grain Storage Near Your Mandi</h1>
+      <p id="hero-sub">Don't sell at low APMC prices — store your grain and sell when the market is right. Find certified warehouses, cold storage, and FCI godowns near you.</p>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hs-val">47</div><div class="hs-lbl" id="hs-lbl-storage">Storages Listed</div></div>
+    <div class="hero-stat"><div class="hs-val">5</div><div class="hs-lbl" id="hs-lbl-mandis">Nearby Mandis</div></div>
+    <div class="hero-stat"><div class="hs-val">2.4L</div><div class="hs-lbl" id="hs-lbl-cap">Qtl Capacity</div></div>
+    <div class="hero-stat"><div class="hs-val">NWRP</div><div class="hs-lbl" id="hs-lbl-loan">Loan Eligible</div></div>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- MAIN -->
+  <main class="main">
+    <!-- SAVINGS INSIGHT -->
+    <div class="savings-banner" id="savings-banner">
+      <div class="sb-icon">💡</div>
+      <div class="sb-content">
+        <h4 id="sb-title">Smart Storage Tip — Right Now</h4>
+        <p id="sb-text">Tomato prices at Kolar are up 18% but may dip next week due to Pune arrivals. Store your chilli and tur dal — prices expected to rise 10–15% in 3 weeks during festive demand. Use NWRP to get a loan against stored grain without selling.</p>
+        <div class="sb-crops">
+          <span class="sb-crop-pill" onclick="filterType('cold')">🌶️ Chilli</span>
+          <span class="sb-crop-pill" onclick="filterType('all')">🫘 Tur Dal</span>
+          <span class="sb-crop-pill" onclick="filterType('all')">🌾 Wheat</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar">
+      <button class="filter-chip active" onclick="setFilter(this,'all')" id="chip-all"><span class="chip-icon">🏪</span> <span id="f-all">All</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'govt')" id="chip-govt"><span class="chip-icon">🏛️</span> <span id="f-govt">Govt / FCI</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'private')" id="chip-priv"><span class="chip-icon">🏢</span> <span id="f-private">Private</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'coop')" id="chip-coop"><span class="chip-icon">🤝</span> <span id="f-coop">Cooperative</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'cold')" id="chip-cold"><span class="chip-icon">❄️</span> <span id="f-cold">Cold Storage</span></button>
+      <select class="mandi-select" onchange="filterMandi(this.value)" id="mandi-sel">
+        <option value="all" id="opt-all-m">All Mandis</option>
+        <option value="Kolar">Kolar APMC</option>
+        <option value="Hubli">Hubli APMC</option>
+        <option value="Raichur">Raichur APMC</option>
+        <option value="Belgaum">Belgaum APMC</option>
+        <option value="Mysuru">Mysuru APMC</option>
+      </select>
+    </div>
+    <div class="filter-row-2">
+      <button class="sort-btn" onclick="setSort(this,'avail')" id="sort-avail">📦 <span id="s-avail">Most Space</span></button>
+      <button class="sort-btn active" onclick="setSort(this,'price')" id="sort-price">💰 <span id="s-price">Lowest Rate</span></button>
+      <button class="sort-btn" onclick="setSort(this,'rating')" id="sort-rating">⭐ <span id="s-rating">Best Rated</span></button>
+      <label class="capacity-range">
+        <span id="lbl-cap-filter">Min cap:</span>
+        <input type="range" min="0" max="5000" step="500" value="0" oninput="filterCap(this.value)" id="cap-slider">
+        <span id="cap-val">0 qtl</span>
+      </label>
+    </div>
+    <div class="sec-hd">
+      <div class="sec-title">🏪 <span id="main-heading">Storage Facilities</span></div>
+      <div class="result-count" id="result-count">12 results</div>
+    </div>
+    <div class="storage-grid" id="storage-grid"></div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <div class="live-dot"></div>
+      <div class="sb-header-title" id="sb-main-title">Storage Overview</div>
+    </div>
+    <div class="sb-stats-row">
+      <div class="sb-stat">
+        <div class="sb-stat-lbl" id="sb-lbl-avail">Available</div>
+        <div class="sb-stat-val">34</div>
+        <div class="sb-stat-sub" id="sb-sub-avail">with free space</div>
+      </div>
+      <div class="sb-stat">
+        <div class="sb-stat-lbl" id="sb-lbl-nwrp">NWRP Ready</div>
+        <div class="sb-stat-val">18</div>
+        <div class="sb-stat-sub" id="sb-sub-nwrp">loan eligible</div>
+      </div>
+    </div>
+
+    <!-- Savings Calculator -->
+    <div class="sb-calc">
+      <h4>🧮 <span id="calc-title">Savings Calculator</span></h4>
+      <div class="calc-row">
+        <div class="calc-input-wrap">
+          <div class="calc-input-lbl" id="calc-lbl-qty">Your stock (quintals)</div>
+          <input type="number" class="calc-input" id="calc-qty" value="50" min="1" oninput="calcSavings()">
+        </div>
+        <div class="calc-input-wrap" style="margin-top:6px">
+          <div class="calc-input-lbl" id="calc-lbl-weeks">Weeks to hold</div>
+          <input type="number" class="calc-input" id="calc-weeks" value="4" min="1" max="52" oninput="calcSavings()">
+        </div>
+      </div>
+      <div class="calc-result">
+        <div class="cr-lbl" id="calc-res-lbl">Estimated Savings vs Selling Today</div>
+        <div class="cr-val" id="calc-result-val">₹18,500</div>
+        <div class="cr-note" id="calc-note">Storage cost ~₹1,200 · Net gain ~₹17,300</div>
+      </div>
+    </div>
+
+    <!-- Nearby Mandis -->
+    <div class="sb-section-lbl" id="sb-lbl-nearby">Nearby Mandis</div>
+    <div id="sb-mandis-list">
+      <div class="sb-mandi-item"><div class="sb-mandi-icon">🏪</div><div class="sb-mandi-info"><div class="sb-mandi-name">Kolar APMC</div></div><div class="sb-mandi-count">8 stores</div></div>
+      <div class="sb-mandi-item"><div class="sb-mandi-icon">🏪</div><div class="sb-mandi-info"><div class="sb-mandi-name">Hubli APMC</div></div><div class="sb-mandi-count">6 stores</div></div>
+      <div class="sb-mandi-item"><div class="sb-mandi-icon">🏪</div><div class="sb-mandi-info"><div class="sb-mandi-name">Raichur APMC</div></div><div class="sb-mandi-count">5 stores</div></div>
+      <div class="sb-mandi-item"><div class="sb-mandi-icon">🏪</div><div class="sb-mandi-info"><div class="sb-mandi-name">Belgaum APMC</div></div><div class="sb-mandi-count">4 stores</div></div>
+      <div class="sb-mandi-item"><div class="sb-mandi-icon">🏪</div><div class="sb-mandi-info"><div class="sb-mandi-name">Mysuru APMC</div></div><div class="sb-mandi-count">7 stores</div></div>
+    </div>
+
+    <!-- Hold tips -->
+    <div class="sb-section-lbl" id="sb-lbl-tips">AI Hold Recommendations</div>
+    <div class="sb-tip"><div class="sb-tip-icon">🌶️</div><div class="sb-tip-info"><div class="sb-tip-crop">Red Chilli</div><div class="sb-tip-text">Festive demand expected. Hold 3–4 weeks for 10–15% gain.</div><div class="sb-tip-badge tip-hold">HOLD</div></div></div>
+    <div class="sb-tip"><div class="sb-tip-icon">🫘</div><div class="sb-tip-info"><div class="sb-tip-crop">Tur Dal</div><div class="sb-tip-text">31% above MSP. Export demand strong. Safe to hold.</div><div class="sb-tip-badge tip-hold">HOLD</div></div></div>
+    <div class="sb-tip"><div class="sb-tip-icon">🧅</div><div class="sb-tip-info"><div class="sb-tip-crop">Onion</div><div class="sb-tip-text">Price falling. Sell now or cold-store to avoid spoilage loss.</div><div class="sb-tip-badge tip-sell">SELL</div></div></div>
+    <div class="sb-tip"><div class="sb-tip-icon">🌾</div><div class="sb-tip-info"><div class="sb-tip-crop">Wheat</div><div class="sb-tip-text">At MSP. Store if you can — post-Rabi prices usually rise 5–8%.</div><div class="sb-tip-badge tip-hold">HOLD</div></div></div>
+
+    <!-- NWRP Info -->
+    <div class="sb-nwrp">
+      <h4>🏦 <span id="nwrp-title">What is NWRP?</span></h4>
+      <p id="nwrp-text"><strong>Negotiable Warehouse Receipt Program</strong> — Store your grain in a certified warehouse and get a <strong>bank loan up to 75%</strong> of your crop's market value. You don't have to sell at low prices to get cash. Available at 18 warehouses listed here.</p>
+    </div>
+  </aside>
+</div>
+
+<!-- AI PANEL -->
+<div class="ai-overlay" id="ai-overlay" onclick="closeAI()"></div>
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-icon">✨</div>
+    <div>
+      <h3 id="ai-panel-title">AI Storage Advisor</h3>
+      <p>Powered by Gemini · Storage &amp; holding intelligence</p>
+    </div>
+    <button class="ai-close" onclick="closeAI()">✕</button>
+  </div>
+  <div class="ai-chips">
+    <button class="ai-chip" onclick="askChip('Should I store my wheat or sell it now at Raichur APMC?')">🌾 Store or sell wheat?</button>
+    <button class="ai-chip" onclick="askChip('How long can I safely store onion without cold storage?')">🧅 Onion storage life</button>
+    <button class="ai-chip" onclick="askChip('Explain NWRP loan — how do I get money without selling my crop?')">🏦 NWRP loan help</button>
+    <button class="ai-chip" onclick="askChip('Which crops should I hold for next 4 weeks based on current APMC prices?')">📈 Best crops to hold</button>
+    <button class="ai-chip" onclick="askChip('What is the difference between cold storage and normal warehouse for vegetables?')">❄️ Cold vs normal store</button>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="msg-bubble msg-ai" id="ai-welcome">Namaste 🙏 I'm your AI storage advisor! Ask me whether to store or sell, which warehouse suits your crop, how to get an NWRP loan, or how long your produce will last — in any language!</div>
+  </div>
+  <div class="ai-input-row">
+    <input type="text" id="ai-input" placeholder="Ask about storage, holding, NWRP loan..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+    </button>
+  </div>
+  <div class="gemini-tag">
+    <svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2z" fill="#4285F4"/></svg>
+    Gemini API · Advisory only — verify with warehouse directly
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-map-area" id="m-map">
+      <div class="modal-map-grid"></div>
+      <div class="modal-map-pin" id="m-pin">📍</div>
+      <div class="modal-type-badge" id="m-type-badge">Govt</div>
+      <button class="modal-map-open" id="m-maps-btn" onclick="openMaps()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open in Google Maps
+      </button>
+    </div>
+    <div class="modal-header-info">
+      <h2 id="m-name">Karnataka Warehousing Corporation</h2>
+      <div class="mh-address">📍 <span id="m-address">NH-4, Kolar Road, Karnataka 563101</span></div>
+      <div class="mh-mandi">🏪 <span id="m-mandi">Near Kolar APMC</span></div>
+      <div class="modal-rating-row">
+        <div class="modal-rating" id="m-rating">⭐ 4.3</div>
+        <div class="modal-reviews" id="m-reviews">128 farmer reviews</div>
+        <div class="avail-badge avail-ok" id="m-avail-badge">● Space Available</div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>💰 Storage Rates</h4>
+      <div class="modal-price-grid">
+        <div class="mpi"><div class="ml">Per Qtl/Month</div><div class="mv" id="m-rate-qtl">₹18</div></div>
+        <div class="mpi"><div class="ml">Min Booking</div><div class="mv" id="m-rate-min">10 qtl</div></div>
+        <div class="mpi"><div class="ml">Available Space</div><div class="mv" id="m-space">8,400 qtl</div></div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>🌾 Accepted Crops</h4>
+      <div class="modal-crops-list" id="m-crops"></div>
+    </div>
+    <div class="modal-section">
+      <h4>✅ Facilities & Certifications</h4>
+      <div class="modal-tags" id="m-tags"></div>
+    </div>
+    <div class="modal-section">
+      <h4>🕐 Operating Hours</h4>
+      <table class="modal-hours-table" id="m-hours"></table>
+    </div>
+    <div class="modal-section">
+      <h4>🏦 NWRP / Loan Info</h4>
+      <div class="modal-nwrp-box" id="m-nwrp"></div>
+    </div>
+    <div class="modal-section">
+      <h4>📞 Contact & Booking</h4>
+      <div class="modal-contact-grid" id="m-contacts"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="mf-btn mf-secondary" onclick="closeModal()">✕ Close</button>
+      <button class="mf-btn mf-primary" id="m-book-btn" onclick="bookStorage()">📦 Book Storage</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GEMINI KEY ──
+const HARDCODED_KEY = 'AIzaSyDzxt4CPtWZ97rr9eGo1wdXsFhM8y4cuW8';
+let geminiKey = HARDCODED_KEY || localStorage.getItem('agribridge_gemini_key') || '';
+
+// ── LANGUAGE ──
+let currentLang = 'en';
+
+const labels = {
+  en:{tagline:'Grain Storage Finder',heroTitle:'Find Grain Storage Near Your Mandi',heroSub:"Don't sell at low APMC prices — store your grain and sell when the market is right.",hsStorage:'Storages Listed',hsMandis:'Nearby Mandis',hsCap:'Qtl Capacity',hsLoan:'Loan Eligible',sbTitle:'Smart Storage Tip — Right Now',sbText:"Tomato prices at Kolar are up 18% but may dip next week. Store your chilli and tur dal — prices expected to rise 10–15% in 3 weeks during festive demand. Use NWRP to get a loan against stored grain.",fAll:'All',fGovt:'Govt / FCI',fPrivate:'Private',fCoop:'Cooperative',fCold:'Cold Storage',optAllM:'All Mandis',sortAvail:'Most Space',sortPrice:'Lowest Rate',sortRating:'Best Rated',minCap:'Min cap:',mainHead:'Storage Facilities',sbMainTitle:'Storage Overview',sbLblAvail:'Available',sbSubAvail:'with free space',sbLblNwrp:'NWRP Ready',sbSubNwrp:'loan eligible',calcTitle:'Savings Calculator',calcQty:'Your stock (quintals)',calcWeeks:'Weeks to hold',calcResLbl:'Est. Savings vs Selling Today',calcNote:'Storage cost ~₹COST · Net gain ~₹NET',sbLblNearby:'Nearby Mandis',sbLblTips:'AI Hold Recommendations',nwrpTitle:'What is NWRP?',nwrpText:'Negotiable Warehouse Receipt Program — Store your grain in a certified warehouse and get a bank loan up to 75% of your crop\'s market value. You don\'t have to sell at low prices to get cash. Available at 18 warehouses listed here.',aiBtn:'Ask AI',aiWelcome:"Namaste 🙏 I'm your AI storage advisor! Ask me whether to store or sell, which warehouse suits your crop, or how to get an NWRP loan!",langLabel:'English'},
+  hi:{tagline:'अनाज भंडारण खोजक',heroTitle:'अपने मंडी के पास भंडारण खोजें',heroSub:'APMC में कम दाम पर मत बेचें — अनाज रखें और सही समय पर बेचें।',hsStorage:'भंडारण सूचीबद्ध',hsMandis:'पास की मंडियां',hsCap:'क्विंटल क्षमता',hsLoan:'ऋण योग्य',sbTitle:'स्मार्ट भंडारण टिप्स',sbText:'कोलार में टमाटर 18% ऊपर है। अपनी मिर्च और अरहर दाल रखें — त्योहारी मांग में 3 सप्ताह में 10-15% बढ़ सकता है। NWRP से बिना बेचे पैसा लें।',fAll:'सभी',fGovt:'सरकारी/FCI',fPrivate:'निजी',fCoop:'सहकारी',fCold:'शीत भंडार',optAllM:'सभी मंडियां',sortAvail:'सबसे जगह',sortPrice:'सबसे सस्ता',sortRating:'सर्वश्रेष्ठ रेटिंग',minCap:'न्यूनतम क्षमता:',mainHead:'भंडारण सुविधाएं',sbMainTitle:'भंडारण अवलोकन',sbLblAvail:'उपलब्ध',sbSubAvail:'खाली जगह सहित',sbLblNwrp:'NWRP तैयार',sbSubNwrp:'ऋण योग्य',calcTitle:'बचत कैलकुलेटर',calcQty:'आपका स्टॉक (क्विंटल)',calcWeeks:'रखने के सप्ताह',calcResLbl:'आज बेचने से अनुमानित बचत',calcNote:'भंडारण लागत ~₹COST · शुद्ध लाभ ~₹NET',sbLblNearby:'पास की मंडियां',sbLblTips:'AI होल्ड सलाह',nwrpTitle:'NWRP क्या है?',nwrpText:'परक्राम्य वेयरहाउस रसीद कार्यक्रम — प्रमाणित गोदाम में अनाज रखें और बाजार मूल्य का 75% तक बैंक ऋण पाएं। कम दाम पर बेचने की जरूरत नहीं।',aiBtn:'AI से पूछें',aiWelcome:'नमस्ते 🙏 मैं आपका AI भंडारण सलाहकार हूं! रखें या बेचें, कौन सा गोदाम — सब पूछें!',langLabel:'हिंदी'},
+  kn:{tagline:'ಧಾನ್ಯ ಸಂಗ್ರಹ ಹುಡುಕಾಟ',heroTitle:'ನಿಮ್ಮ ಮಂಡಿ ಬಳಿ ಸಂಗ್ರಹಾಗಾರ ಹುಡುಕಿ',heroSub:'APMC ನಲ್ಲಿ ಕಡಿಮೆ ಬೆಲೆಗೆ ಮಾರಬೇಡಿ — ಧಾನ್ಯ ಇಟ್ಟು ಸರಿಯಾದ ಸಮಯದಲ್ಲಿ ಮಾರಿ.',hsStorage:'ಸಂಗ್ರಹಾಗಾರಗಳು',hsMandis:'ಹತ್ತಿರದ ಮಂಡಿಗಳು',hsCap:'ಕ್ವಿಂಟಾಲ್ ಸಾಮರ್ಥ್ಯ',hsLoan:'ಸಾಲ ಅರ್ಹ',sbTitle:'ಸ್ಮಾರ್ಟ್ ಶೇಖರಣೆ ಸಲಹೆ',sbText:'ಕೋಲಾರದಲ್ಲಿ ಟೊಮೆಟೊ 18% ಏರಿದೆ. ಮೆಣಸು ಮತ್ತು ತೊಗರಿ ಇಡಿ — 3 ವಾರದಲ್ಲಿ 10-15% ಏರಿಕೆ ನಿರೀಕ್ಷೆ. NWRP ಮೂಲಕ ಮಾರದೆ ಸಾಲ ಪಡೆಯಿರಿ.',fAll:'ಎಲ್ಲಾ',fGovt:'ಸರ್ಕಾರಿ/FCI',fPrivate:'ಖಾಸಗಿ',fCoop:'ಸಹಕಾರ',fCold:'ಶೀತ ಶೇಖರಣೆ',optAllM:'ಎಲ್ಲಾ ಮಂಡಿ',sortAvail:'ಹೆಚ್ಚು ಜಾಗ',sortPrice:'ಕಡಿಮೆ ದರ',sortRating:'ಅತ್ಯುತ್ತಮ ರೇಟಿಂಗ್',minCap:'ಕನಿಷ್ಠ ಸಾಮರ್ಥ್ಯ:',mainHead:'ಶೇಖರಣಾ ಸೌಲಭ್ಯಗಳು',sbMainTitle:'ಶೇಖರಣೆ ಅವಲೋಕನ',sbLblAvail:'ಲಭ್ಯ',sbSubAvail:'ಜಾಗ ಇರುವ',sbLblNwrp:'NWRP ಸಿದ್ಧ',sbSubNwrp:'ಸಾಲ ಅರ್ಹ',calcTitle:'ಉಳಿತಾಯ ಕ್ಯಾಲ್ಕುಲೇಟರ್',calcQty:'ನಿಮ್ಮ ಸ್ಟಾಕ್ (ಕ್ವಿಂಟಾಲ್)',calcWeeks:'ಇಡುವ ವಾರಗಳು',calcResLbl:'ಇಂದು ಮಾರಿದರೆ ಹೋಲಿಸಿ ಉಳಿತಾಯ',calcNote:'ಶೇಖರಣೆ ವೆಚ್ಚ ~₹COST · ನಿಕರ ಲಾಭ ~₹NET',sbLblNearby:'ಹತ್ತಿರದ ಮಂಡಿಗಳು',sbLblTips:'AI ಹಿಡಿದಿಡಿ ಸಲಹೆ',nwrpTitle:'NWRP ಎಂದರೇನು?',nwrpText:'ನಿಗೋಷಿಯೇಬಲ್ ವೇರ್‌ಹೌಸ್ ರಸೀದಿ ಕಾರ್ಯಕ್ರಮ — ಪ್ರಮಾಣಿತ ಗೋದಾಮಿನಲ್ಲಿ ಧಾನ್ಯ ಇಟ್ಟು 75% ರವರೆಗೆ ಬ್ಯಾಂಕ್ ಸಾಲ ಪಡೆಯಿರಿ.',aiBtn:'AI ಕೇಳಿ',aiWelcome:'ನಮಸ್ಕಾರ 🙏 ನಾನು ನಿಮ್ಮ AI ಶೇಖರಣೆ ಸಲಹೆಗಾರ! ಇಡಬೇಕಾ ಮಾರಬೇಕಾ — ಎಲ್ಲ ಕೇಳಿ!',langLabel:'ಕನ್ನಡ'},
+  mr:{tagline:'धान्य साठवण शोधक',heroTitle:'तुमच्या मंडईजवळ साठवण शोधा',heroSub:'APMC मध्ये कमी दरात विकू नका — धान्य ठेवा आणि योग्य वेळी विका.',hsStorage:'साठवण सूचीबद्ध',hsMandis:'जवळच्या मंडई',hsCap:'क्विंटल क्षमता',hsLoan:'कर्ज पात्र',sbTitle:'स्मार्ट साठवण टीप',sbText:'कोलारमध्ये टोमॅटो 18% वर आहे. मिरची आणि तूर डाळ ठेवा — 3 आठवड्यांत 10-15% वाढ अपेक्षित. NWRP द्वारे न विकता कर्ज घ्या.',fAll:'सर्व',fGovt:'सरकारी/FCI',fPrivate:'खाजगी',fCoop:'सहकारी',fCold:'शीतगृह',optAllM:'सर्व मंडई',sortAvail:'सर्वाधिक जागा',sortPrice:'सर्वात स्वस्त',sortRating:'सर्वोत्तम रेटिंग',minCap:'किमान क्षमता:',mainHead:'साठवण सुविधा',sbMainTitle:'साठवण आढावा',sbLblAvail:'उपलब्ध',sbSubAvail:'मोकळ्या जागेसह',sbLblNwrp:'NWRP तयार',sbSubNwrp:'कर्ज पात्र',calcTitle:'बचत कॅल्क्युलेटर',calcQty:'तुमचा साठा (क्विंटल)',calcWeeks:'ठेवण्याचे आठवडे',calcResLbl:'आज विकण्यापेक्षा अंदाजित बचत',calcNote:'साठवण खर्च ~₹COST · निव्वळ लाभ ~₹NET',sbLblNearby:'जवळच्या मंडई',sbLblTips:'AI ठेव शिफारसी',nwrpTitle:'NWRP म्हणजे काय?',nwrpText:'परक्राम्य वेअरहाउस पावती कार्यक्रम — प्रमाणित गोदामात धान्य ठेवा आणि बाजार मूल्याच्या 75% पर्यंत बँक कर्ज मिळवा.',aiBtn:'AI ला विचारा',aiWelcome:'नमस्कार 🙏 मी तुमचा AI साठवण सल्लागार आहे! ठेवायचे की विकायचे — सर्व विचारा!',langLabel:'मराठी'},
+  te:{tagline:'ధాన్యం నిల్వ శోధకం',heroTitle:'మీ మండి దగ్గర నిల్వ కేంద్రం వెతకండి',heroSub:'APMC లో తక్కువ ధరకు అమ్మకండి — ధాన్యం నిల్వ చేసి సరైన సమయంలో అమ్మండి.',hsStorage:'నిల్వ కేంద్రాలు',hsMandis:'సమీప మండిలు',hsCap:'క్వింటాల్ సామర్థ్యం',hsLoan:'రుణ అర్హత',sbTitle:'స్మార్ట్ నిల్వ చిట్కా',sbText:'కోలార్ లో టమాటో 18% పెరిగింది. మిర్చి మరియు కందిపప్పు నిల్వ చేయండి — 3 వారాల్లో 10-15% పెరుగుదల అంచనా. NWRP ద్వారా అమ్మకుండా రుణం తీసుకోండి.',fAll:'అన్నీ',fGovt:'ప్రభుత్వం/FCI',fPrivate:'ప్రైవేట్',fCoop:'సహకార',fCold:'శీతల నిల్వ',optAllM:'అన్ని మండిలు',sortAvail:'ఎక్కువ స్థలం',sortPrice:'తక్కువ రేటు',sortRating:'అత్యుత్తమ రేటింగ్',minCap:'కనీస సామర్థ్యం:',mainHead:'నిల్వ సదుపాయాలు',sbMainTitle:'నిల్వ సారాంశం',sbLblAvail:'అందుబాటులో',sbSubAvail:'ఖాళీ స్థలంతో',sbLblNwrp:'NWRP సిద్ధం',sbSubNwrp:'రుణ అర్హత',calcTitle:'ఆదా కాలిక్యులేటర్',calcQty:'మీ నిల్వ (క్వింటాళ్లు)',calcWeeks:'ఉంచే వారాలు',calcResLbl:'ఇప్పుడు అమ్మడం కంటే అంచనా ఆదా',calcNote:'నిల్వ వ్యయం ~₹COST · నికర లాభం ~₹NET',sbLblNearby:'సమీప మండిలు',sbLblTips:'AI హోల్డ్ సిఫారసులు',nwrpTitle:'NWRP అంటే ఏమిటి?',nwrpText:'నెగోషియబుల్ వేర్‌హౌస్ రసీదు కార్యక్రమం — సర్టిఫైడ్ గోదాంలో నిల్వ చేసి మార్కెట్ విలువలో 75% వరకు బ్యాంక్ రుణం పొందండి.',aiBtn:'AI అడగండి',aiWelcome:'నమస్కారం 🙏 నేను మీ AI నిల్వ సలహాదారుడిని! నిల్వ చేయాలా అమ్మాలా — అన్నీ అడగండి!',langLabel:'తెలుగు'},
+  ta:{tagline:'தானிய சேமிப்பு தேடல்',heroTitle:'உங்கள் மண்டி அருகில் சேமிப்பு கண்டறியுங்கள்',heroSub:'APMC இல் குறைந்த விலைக்கு விற்காதீர்கள் — தானியம் சேமித்து சரியான நேரத்தில் விற்கவும்.',hsStorage:'சேமிப்பு கட்டமைப்புகள்',hsMandis:'அருகில் மண்டிகள்',hsCap:'குவிண்டால் திறன்',hsLoan:'கடன் தகுதி',sbTitle:'சிறந்த சேமிப்பு குறிப்பு',sbText:'கோலாரில் தக்காளி 18% உயர்ந்தது. மிளகாய் மற்றும் துவரம் பருப்பு சேமிக்கவும் — 3 வாரங்களில் 10-15% உயர்வு எதிர்பார்க்கப்படுகிறது.',fAll:'அனைத்தும்',fGovt:'அரசு/FCI',fPrivate:'தனியார்',fCoop:'கூட்டுறவு',fCold:'குளிர் சேமிப்பு',optAllM:'அனைத்து மண்டி',sortAvail:'அதிக இடம்',sortPrice:'குறைந்த விலை',sortRating:'சிறந்த மதிப்பீடு',minCap:'குறைந்தபட்ச திறன்:',mainHead:'சேமிப்பு வசதிகள்',sbMainTitle:'சேமிப்பு மேலோட்டம்',sbLblAvail:'கிடைக்கிறது',sbSubAvail:'காலி இடத்துடன்',sbLblNwrp:'NWRP தயார்',sbSubNwrp:'கடன் தகுதி',calcTitle:'சேமிப்பு கணக்கி',calcQty:'உங்கள் இருப்பு (குவிண்டால்)',calcWeeks:'வைக்கும் வாரங்கள்',calcResLbl:'இப்போது விற்பதை விட மதிப்பீட்டு சேமிப்பு',calcNote:'சேமிப்பு செலவு ~₹COST · நிகர ஆதாயம் ~₹NET',sbLblNearby:'அருகில் மண்டிகள்',sbLblTips:'AI வைத்திருக்க பரிந்துரை',nwrpTitle:'NWRP என்றால் என்ன?',nwrpText:'பேச்சுவார்த்தையிடக்கூடிய கிடங்கு ரசீது திட்டம் — சான்றளிக்கப்பட்ட கிடங்கில் சேமித்து சந்தை மதிப்பில் 75% வரை வங்கிக் கடன் பெறுங்கள்.',aiBtn:'AI கேளுங்கள்',aiWelcome:'வணக்கம் 🙏 நான் உங்கள் AI சேமிப்பு ஆலோசகர்! சேமிக்கவா விற்கவா — எல்லாம் கேளுங்கள்!',langLabel:'தமிழ்'},
+};
+
+// ── STORAGE DATA ──
+const storages = [
+  {id:1, name:'Karnataka Warehousing Corporation',type:'govt',emoji:'🏛️',address:'NH-4, Kolar Road, Karnataka 563101',mandi:'Kolar',rating:4.3,reviews:128,totalCap:20000,usedPct:58,rateQtl:18,minBooking:10,nwrp:true,coldStorage:false,cert:true,transport:true,h24:false,crops:['🌾 Wheat','🫘 Tur Dal','🟢 Moong','🌶️ Chilli','🌾 Paddy'],tags:['WDRA Certified','Govt Approved','Pest Control','Fire Safety','CCTV'],hours:[['Mon–Sat','8:00 AM – 6:00 PM'],['Sunday','9:00 AM – 1:00 PM'],['Holidays','Closed']],phone:'08156-220145',contact2:'kswc.kolar@karnataka.gov.in',mapQuery:'Karnataka+Warehousing+Corporation+Kolar',nwrpText:'Eligible for NWRP loans. Bring your KCC card and produce receipt. Bank liaison available on-site (Mon, Wed, Fri). Loan up to 75% of commodity value at 7% interest.',lat:13.1369,lng:78.1321},
+  {id:2, name:'AgroVault Cold Storage',type:'private',emoji:'🏢',address:'Hubli-Dharwad Road, Dharwad 580001',mandi:'Hubli',rating:4.6,reviews:214,totalCap:8000,usedPct:42,rateQtl:32,minBooking:5,nwrp:true,coldStorage:true,cert:true,transport:true,h24:true,crops:['🧅 Onion','🍅 Tomato','🥔 Potato','🥬 Cabbage','🍌 Banana','🍊 Orange'],tags:['Cold Storage','Temp Control 2–8°C','FSSAI Certified','24/7 Security','Transport Fleet','WDRA Certified'],hours:[['Mon–Sun','24 Hours'],['Holidays','24 Hours'],['Emergency','Always Open']],phone:'0836-2441897',contact2:'info@agrovault.in',mapQuery:'AgroVault+Cold+Storage+Hubli',nwrpText:'Full NWRP facility. Specialized in horticulture and perishables. Bank officer visits every Tuesday. Same-day loan processing available for amounts up to ₹5 lakh.',lat:15.3647,lng:75.1239},
+  {id:3, name:'Raichur Farmers Cooperative Godown',type:'coop',emoji:'🤝',address:'Near APMC Yard, Raichur 584101',mandi:'Raichur',rating:4.1,reviews:87,totalCap:12000,usedPct:71,rateQtl:14,minBooking:20,nwrp:true,coldStorage:false,cert:true,transport:false,h24:false,crops:['🌾 Wheat','🫘 Tur Dal','🌶️ Chilli','🌾 Paddy','🟢 Moong'],tags:['FPO Managed','WDRA Certified','Member Discounts','Weigh Bridge','Pest Control'],hours:[['Mon–Sat','7:00 AM – 7:00 PM'],['Sunday','8:00 AM – 12:00 PM'],['Holidays','By Appointment']],phone:'08532-225678',contact2:'rfcg.raichur@gmail.com',mapQuery:'APMC+Yard+Raichur+Karnataka',nwrpText:'Cooperative members get 20% discount on storage rates. NWRP loans processed through Canara Bank and SBI. Bring membership card and produce quality certificate.',lat:16.2013,lng:77.3566},
+  {id:4, name:'FCI Regional Depot Belgaum',type:'govt',emoji:'🏛️',address:'FCI Campus, Belagavi 590001',mandi:'Belgaum',rating:3.9,reviews:54,totalCap:50000,usedPct:35,rateQtl:12,minBooking:100,nwrp:false,coldStorage:false,cert:true,transport:false,h24:false,crops:['🌾 Wheat','🌾 Paddy','🫘 Tur Dal'],tags:['FCI Depot','Govt Procurement','Bulk Only','Weigh Bridge','Fire Safety'],hours:[['Mon–Fri','9:00 AM – 5:00 PM'],['Saturday','9:00 AM – 1:00 PM'],['Sun/Holidays','Closed']],phone:'0831-2401234',contact2:'fci.belgaum@fci.gov.in',mapQuery:'FCI+Depot+Belagavi+Karnataka',nwrpText:'Not enrolled in NWRP scheme currently. Primarily for government procurement. Minimum booking of 100 quintals. Suitable for large farmer groups or FPOs.',lat:15.8497,lng:74.4977},
+  {id:5, name:'Mysuru Green Cold Chain',type:'private',emoji:'🏢',address:'Bannimantap Industrial Area, Mysuru 570015',mandi:'Mysuru',rating:4.8,reviews:302,totalCap:6000,usedPct:67,rateQtl:38,minBooking:2,nwrp:true,coldStorage:true,cert:true,transport:true,h24:true,crops:['🥬 Cabbage','🍌 Banana','🍇 Grapes','🍊 Orange','🧅 Onion','🍅 Tomato','🥔 Potato'],tags:['Cold Storage','0–4°C Precision','FSSAI Certified','GPS Transport','24/7 CCTV','Humidity Control','WDRA Certified'],hours:[['Mon–Sun','24 Hours'],['Holidays','24 Hours'],['Emergency','Always Open']],phone:'0821-2341567',contact2:'info@mysurugreencold.com',mapQuery:'Mysuru+Green+Cold+Chain+Bannimantap',nwrpText:'Premium NWRP facility. Specialized in fruits and vegetables. Interest subvention scheme available — effective rate as low as 4% for KCC holders. Digital receipts issued instantly.',lat:12.2958,lng:76.6394},
+  {id:6, name:'Hubli Private Grain Hub',type:'private',emoji:'🏢',address:'Gokul Road Industrial Estate, Hubli 580030',mandi:'Hubli',rating:4.0,reviews:71,totalCap:15000,usedPct:22,rateQtl:20,minBooking:10,nwrp:true,coldStorage:false,cert:true,transport:true,h24:false,crops:['🌾 Wheat','🫘 Tur Dal','🟢 Moong','🌶️ Chilli','🌾 Paddy'],tags:['WDRA Certified','Transport Available','Moisture Testing','CCTV','Bulk Discount'],hours:[['Mon–Sat','7:30 AM – 6:30 PM'],['Sunday','Closed'],['Holidays','Closed']],phone:'0836-2283456',contact2:'hubligrainhub@gmail.com',mapQuery:'Hubli+Private+Grain+Hub+Gokul+Road',nwrpText:'NWRP loans processed through Karnataka Grameena Bank. Initial processing in 3 working days. Minimum 10 quintals for loan eligibility. Moisture testing mandatory before storage.',lat:15.3647,lng:75.1239},
+  {id:7, name:'Kolar HOPCOMS Cold Store',type:'coop',emoji:'🤝',address:'HOPCOMS Campus, Kolar 563101',mandi:'Kolar',rating:4.4,reviews:156,totalCap:3000,usedPct:88,rateQtl:28,minBooking:1,nwrp:false,coldStorage:true,cert:true,transport:false,h24:false,crops:['🍅 Tomato','🧅 Onion','🥔 Potato','🥬 Cabbage'],tags:['HOPCOMS Managed','Cold Storage','Horticulture Only','Coop Member Discount'],hours:[['Mon–Sat','6:00 AM – 8:00 PM'],['Sunday','6:00 AM – 2:00 PM'],['Holidays','6:00 AM – 12:00 PM']],phone:'08152-222345',contact2:'hopcoms.kolar@karnataka.gov.in',mapQuery:'HOPCOMS+Cold+Storage+Kolar+Karnataka',nwrpText:'Not yet NWRP enrolled. Application pending. HOPCOMS cooperative members get 30% discount. Ideal for horticulture short-term storage up to 3 months.',lat:13.1369,lng:78.1321},
+  {id:8, name:'Raichur Pulse Storage Centre',type:'private',emoji:'🏢',address:'Sirwar Road, Raichur 584102',mandi:'Raichur',rating:4.2,reviews:93,totalCap:10000,usedPct:51,rateQtl:22,minBooking:15,nwrp:true,coldStorage:false,cert:true,transport:true,h24:false,crops:['🫘 Tur Dal','🟢 Moong','🌶️ Chilli','🌾 Wheat'],tags:['Pulse Specialist','WDRA Certified','Fumigation Service','Grading Available','Transport Fleet'],hours:[['Mon–Sat','8:00 AM – 6:00 PM'],['Sunday','9:00 AM – 1:00 PM'],['Holidays','Closed']],phone:'08532-234567',contact2:'raichurpulse@agristore.in',mapQuery:'Raichur+Pulse+Storage+Sirwar+Road',nwrpText:'Specialized NWRP for pulses and spices. Bank loan at 7.5% through Axis Bank and HDFC. Quality grading certificate issued free for NWRP customers. Average loan time: 2 days.',lat:16.2013,lng:77.3566},
+  {id:9, name:'Belgaum District Cooperative Godown',type:'coop',emoji:'🤝',address:'Khanapur Road, Belagavi 590006',mandi:'Belgaum',rating:3.7,reviews:41,totalCap:18000,usedPct:29,rateQtl:15,minBooking:25,nwrp:true,coldStorage:false,cert:false,transport:false,h24:false,crops:['🌾 Wheat','🌾 Paddy','🫘 Tur Dal','🟢 Moong'],tags:['Cooperative Run','Low Cost','Weighbridge','Fumigation'],hours:[['Mon–Fri','8:30 AM – 5:30 PM'],['Saturday','8:30 AM – 1:00 PM'],['Sun/Holidays','Closed']],phone:'0831-2456789',contact2:'belgaum.coop.godown@gmail.com',mapQuery:'Khanapur+Road+Belagavi+Cooperative+Godown',nwrpText:'NWRP available through District Central Cooperative Bank. Lower rates for members. Not WDRA certified yet — consult bank if NWRP loan is primary requirement.',lat:15.8497,lng:74.4977},
+  {id:10, name:'Mysuru Grain Storage Complex',type:'govt',emoji:'🏛️',address:'Hebbal Industrial Area, Mysuru 570016',mandi:'Mysuru',rating:4.0,reviews:68,totalCap:25000,usedPct:44,rateQtl:16,minBooking:50,nwrp:true,coldStorage:false,cert:true,transport:false,h24:false,crops:['🌾 Wheat','🌾 Paddy','🫘 Tur Dal','🟢 Moong','🌶️ Chilli'],tags:['WDRA Certified','KWC Managed','Pest Control','Fire Safety','Weigh Bridge','CCTV'],hours:[['Mon–Sat','8:00 AM – 6:00 PM'],['Sunday','Closed'],['Holidays','Closed']],phone:'0821-2478901',contact2:'kwc.mysuru@karnataka.gov.in',mapQuery:'Hebbal+Industrial+Area+Mysuru+Grain+Storage',nwrpText:'Full NWRP facility for grains. Minimum 50 quintals for NWRP. Processing through Karnataka Bank and Syndicate Bank. Documents needed: Aadhar, land records, and produce invoice.',lat:12.2958,lng:76.6394},
+  {id:11, name:'Hubli Agri Freshtech Cold Hub',type:'private',emoji:'🏢',address:'Vidyanagar, Hubli 580031',mandi:'Hubli',rating:4.5,reviews:178,totalCap:4500,usedPct:76,rateQtl:35,minBooking:3,nwrp:true,coldStorage:true,cert:true,transport:true,h24:true,crops:['🧅 Onion','🥔 Potato','🍊 Orange','🍇 Grapes','🥬 Cabbage','🍌 Banana'],tags:['Cold Storage','CA Technology','24/7 Security','GPS Tracked Transport','Humidity Sensors','FSSAI','WDRA Certified'],hours:[['Mon–Sun','24 Hours'],['Holidays','24 Hours'],['Emergency','Always Open']],phone:'0836-2567890',contact2:'hublifreshtech@coldchain.in',mapQuery:'Hubli+Freshtech+Cold+Storage+Vidyanagar',nwrpText:'Controlled atmosphere NWRP storage. Premium loans at 6.5% through NABARD partner banks. Suitable for grapes and high-value horticulture requiring precise temperature management.',lat:15.3647,lng:75.1239},
+  {id:12, name:'Kolar Agro Warehouse',type:'private',emoji:'🏢',address:'Bangarpet Road, Kolar 563114',mandi:'Kolar',rating:4.1,reviews:99,totalCap:9000,usedPct:33,rateQtl:19,minBooking:10,nwrp:true,coldStorage:false,cert:true,transport:true,h24:false,crops:['🌾 Wheat','🍅 Tomato','🫘 Tur Dal','🌶️ Chilli','🌾 Paddy'],tags:['WDRA Certified','Fumigation','Moisture Control','Transport','Grading Machine'],hours:[['Mon–Sat','7:00 AM – 7:00 PM'],['Sunday','8:00 AM – 1:00 PM'],['Holidays','Closed']],phone:'08152-256789',contact2:'kolaragrowarehouse@gmail.com',mapQuery:'Kolar+Agro+Warehouse+Bangarpet+Road',nwrpText:'NWRP through Karnataka Grameena Bank and SBI. Grading machine on-site ensures higher loan valuation. Quick 48-hour loan disbursement for existing customers.',lat:13.1369,lng:78.1321},
+];
+
+// ── STATE ──
+let currentFilter = 'all';
+let currentMandi = 'all';
+let currentSort = 'price';
+let currentMinCap = 0;
+let searchQuery = '';
+let activeStorage = null;
+let isInitialLoad = true; // ← KEY FLAG: skip animation on first render
+
+function fmt(n){return '₹'+n.toLocaleString('en-IN');}
+
+// ── SAVINGS CALCULATOR ──
+function calcSavings() {
+  const qty = parseFloat(document.getElementById('calc-qty').value) || 0;
+  const weeks = parseFloat(document.getElementById('calc-weeks').value) || 0;
+  const priceRisePct = (weeks / 4) * 0.035;
+  const avgPrice = 4000;
+  const gain = Math.round(qty * avgPrice * priceRisePct);
+  const storageCost = Math.round(qty * 20 * (weeks / 4));
+  const net = gain - storageCost;
+  const L = labels[currentLang];
+  document.getElementById('calc-result-val').textContent = net > 0 ? fmt(net) : '₹0';
+  const noteTemplate = L.calcNote || 'Storage cost ~₹COST · Net gain ~₹NET';
+  document.getElementById('calc-note').textContent = noteTemplate.replace('COST', storageCost.toLocaleString('en-IN')).replace('NET', Math.max(0, net).toLocaleString('en-IN'));
+}
+
+// ── FILTER / SORT ──
+function setFilter(btn, type) {
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = type;
+  isInitialLoad = false;
+  renderCards();
+}
+function filterType(type) {
+  currentFilter = type === 'cold' ? 'cold' : 'all';
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  document.getElementById('chip-'+(type==='cold'?'cold':'all')).classList.add('active');
+  isInitialLoad = false;
+  renderCards();
+}
+function filterMandi(v){currentMandi=v;isInitialLoad=false;renderCards();}
+function filterCap(v){
+  currentMinCap = parseInt(v);
+  document.getElementById('cap-val').textContent = v+' qtl';
+  isInitialLoad = false;
+  renderCards();
+}
+function setSort(btn, mode){
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSort = mode;
+  isInitialLoad = false;
+  renderCards();
+}
+function filterCards(q){searchQuery=q;isInitialLoad=false;renderCards();}
+
+function getAvailableQtl(s){ return Math.round(s.totalCap * (1 - s.usedPct/100)); }
+
+function getFilteredSorted() {
+  let list = storages.filter(s => {
+    const mf = currentFilter==='all'||(currentFilter==='cold'&&s.coldStorage)||(currentFilter==='govt'&&s.type==='govt')||(currentFilter==='private'&&s.type==='private')||(currentFilter==='coop'&&s.type==='coop');
+    const mm = currentMandi==='all'||s.mandi===currentMandi;
+    const mc = getAvailableQtl(s)>=currentMinCap;
+    const ms = !searchQuery||s.name.toLowerCase().includes(searchQuery.toLowerCase())||s.address.toLowerCase().includes(searchQuery.toLowerCase())||s.mandi.toLowerCase().includes(searchQuery.toLowerCase());
+    return mf&&mm&&mc&&ms;
+  });
+  if(currentSort==='avail') list.sort((a,b)=>getAvailableQtl(b)-getAvailableQtl(a));
+  else if(currentSort==='price') list.sort((a,b)=>a.rateQtl-b.rateQtl);
+  else if(currentSort==='rating') list.sort((a,b)=>b.rating-a.rating);
+  return list;
+}
+
+function getTypeStyle(type){
+  return {govt:'type-govt',private:'type-private',coop:'type-coop',fci:'type-fci'}[type]||'type-govt';
+}
+function getTypeLabel(type){
+  const m={govt:'Govt/KWC',private:'Private',coop:'Cooperative',fci:'FCI'};
+  return m[type]||type;
+}
+
+function renderCards() {
+  const grid = document.getElementById('storage-grid');
+  const list = getFilteredSorted();
+  document.getElementById('result-count').textContent = list.length + ' results';
+  grid.innerHTML = '';
+
+  const animate = !isInitialLoad; // only animate after user interactions
+
+  list.forEach((s, i) => {
+    const avail = getAvailableQtl(s);
+    const availPct = 100 - s.usedPct;
+    const fillClass = availPct>40?'fill-ok':availPct>15?'fill-warn':'fill-full';
+    const pctClass = availPct>40?'avail-pct-ok':availPct>15?'avail-pct-warn':'avail-pct-full';
+    const badgeClass = availPct>40?'avail-ok':availPct>15?'avail-low':'avail-full';
+    const badgeText = availPct>40?'● Space Available':availPct>15?'● Filling Up':'● Nearly Full';
+
+    const tags = s.tags.slice(0,3).map(t => {
+      let cls = 'tag-cert';
+      if(t.includes('Cold')||t.includes('Temp')||t.includes('Humidity')) cls='tag-cold';
+      else if(t.includes('WDRA')||t.includes('FCI')||t.includes('FSSAI')) cls='tag-cert';
+      else if(t.includes('24')||t.includes('CCTV')) cls='tag-24h';
+      else if(t.includes('Transport')||t.includes('GPS')) cls='tag-transport';
+      else if(t.includes('NWRP')) cls='tag-nwrp';
+      return `<span class="card-tag ${cls}">${t}</span>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    // Only add animate-in class (and delay) when user triggers a filter change
+    card.className = 'storage-card' + (animate ? ' animate-in' : '');
+    if (animate) card.style.animationDelay = (i * 0.04) + 's';
+    card.onclick = () => openModal(s);
+    card.innerHTML = `
+      <div class="card-map-thumb">
+        <div class="map-grid"></div>
+        <div class="map-pin">📍</div>
+        <div class="map-type-badge ${getTypeStyle(s.type)}">${getTypeLabel(s.type)}</div>
+        <button class="map-open-btn" onclick="event.stopPropagation();openGMaps_id(${s.id})">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Maps
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">${s.name}</div>
+          <div class="card-rating">⭐ ${s.rating}</div>
+        </div>
+        <div class="card-address">📍 ${s.address}</div>
+        <div class="card-mandi">🏪 Near ${s.mandi} APMC</div>
+        <div class="card-tags">${tags}${s.nwrp?'<span class="card-tag tag-nwrp">🏦 NWRP</span>':''}</div>
+        <div class="card-stats">
+          <div class="cs-item"><div class="cs-lbl">Rate</div><div class="cs-val">₹${s.rateQtl}/qtl</div></div>
+          <div class="cs-item"><div class="cs-lbl">Capacity</div><div class="cs-val">${(s.totalCap/1000).toFixed(1)}K qtl</div></div>
+          <div class="cs-item"><div class="cs-lbl">Available</div><div class="cs-val">${(avail/1000).toFixed(1)}K qtl</div></div>
+        </div>
+        <div class="card-avail-bar">
+          <div class="avail-bar-top">
+            <span class="avail-bar-lbl">Space Used</span>
+            <span class="avail-bar-pct ${pctClass}">${availPct}% free</span>
+          </div>
+          <div class="avail-track"><div class="avail-fill ${fillClass}" style="width:${s.usedPct}%"></div></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">
+            <div class="card-price-val">₹${s.rateQtl}</div>
+            <div class="card-price-unit">/qtl/mo</div>
+          </div>
+          <div class="avail-badge ${badgeClass}">${badgeText}</div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  if(!list.length) {
+    grid.innerHTML = `<div class="no-results"><div class="nr-icon">🏚️</div><h3>No storage found</h3><p>Try changing filters or search query</p></div>`;
+  }
+}
+
+// ── MODAL ──
+let activeMapsUrl = '';
+
+function openModal(s) {
+  activeStorage = s;
+  activeMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.mapQuery)}`;
+  document.getElementById('m-pin').textContent = '📍';
+  document.getElementById('m-type-badge').textContent = getTypeLabel(s.type);
+  document.getElementById('m-type-badge').className = 'modal-type-badge '+getTypeStyle(s.type);
+  document.getElementById('m-name').textContent = s.name;
+  document.getElementById('m-address').textContent = s.address;
+  document.getElementById('m-mandi').textContent = 'Near '+s.mandi+' APMC';
+  document.getElementById('m-rating').textContent = '⭐ '+s.rating;
+  document.getElementById('m-reviews').textContent = s.reviews+' farmer reviews';
+  const avail = getAvailableQtl(s);
+  const availPct = 100 - s.usedPct;
+  const ab = document.getElementById('m-avail-badge');
+  if(availPct>40){ab.textContent='● Space Available';ab.className='avail-badge avail-ok';}
+  else if(availPct>15){ab.textContent='● Filling Up';ab.className='avail-badge avail-low';}
+  else{ab.textContent='● Nearly Full';ab.className='avail-badge avail-full';}
+  document.getElementById('m-rate-qtl').textContent = '₹'+s.rateQtl;
+  document.getElementById('m-rate-min').textContent = s.minBooking+' qtl';
+  document.getElementById('m-space').textContent = avail.toLocaleString('en-IN')+' qtl';
+  document.getElementById('m-crops').innerHTML = s.crops.map(c=>`<div class="modal-crop-pill">${c}</div>`).join('');
+  document.getElementById('m-tags').innerHTML = s.tags.map(t=>{
+    let cls='tag-cert';
+    if(t.includes('Cold')||t.includes('Temp')||t.includes('Humidity')||t.includes('CA')) cls='tag-cold';
+    else if(t.includes('Transport')||t.includes('GPS')) cls='tag-transport';
+    else if(t.includes('24')) cls='tag-24h';
+    else if(t.includes('NWRP')) cls='tag-nwrp';
+    return `<span class="card-tag ${cls}">${t}</span>`;
+  }).join('');
+  document.getElementById('m-hours').innerHTML = s.hours.map(h=>`<tr><td>${h[0]}</td><td>${h[1]}</td></tr>`).join('');
+  document.getElementById('m-nwrp').innerHTML = s.nwrp
+    ? `<strong>🏦 NWRP Eligible</strong><br>${s.nwrpText}`
+    : `<strong>❌ Not NWRP Enrolled</strong><br>${s.nwrpText}`;
+  document.getElementById('m-contacts').innerHTML = `
+    <button class="modal-contact-btn" onclick="window.location.href='tel:${s.phone}'"><span class="mc-icon">📞</span><div><div style="font-size:10px;color:var(--tm);margin-bottom:1px">Call</div>${s.phone}</div></button>
+    <button class="modal-contact-btn" onclick="window.location.href='mailto:${s.contact2}'"><span class="mc-icon">📧</span><div><div style="font-size:10px;color:var(--tm);margin-bottom:1px">Email</div>Send Email</div></button>
+    <button class="modal-contact-btn" onclick="openGMaps_id(${s.id})"><span class="mc-icon">🗺️</span><div><div style="font-size:10px;color:var(--tm);margin-bottom:1px">Directions</div>Google Maps</div></button>
+    <button class="modal-contact-btn" onclick="askChip('Tell me about ${s.name} storage near ${s.mandi} APMC. What crops can I store there and is NWRP loan easy to get?')"><span class="mc-icon">✨</span><div><div style="font-size:10px;color:var(--tm);margin-bottom:1px">AI Help</div>Ask AI Advisor</div></button>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openGMaps_id(id) {
+  const s = storages.find(x=>x.id===id);
+  if(s) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.mapQuery)}`, '_blank');
+}
+function openMaps() {
+  if(activeMapsUrl) window.open(activeMapsUrl, '_blank');
+}
+function bookStorage() {
+  if(activeStorage) {
+    const msg = `I want to book storage at ${activeStorage.name} near ${activeStorage.mandi} APMC. Rate is ₹${activeStorage.rateQtl}/qtl/month. How do I proceed and what documents are needed?`;
+    closeModal();
+    openAI();
+    document.getElementById('ai-input').value = msg;
+    sendAI();
+  }
+}
+function closeModal(e) {
+  if(!e||e.target===document.getElementById('modal-overlay')||!e.target) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+document.getElementById('modal-box').addEventListener('click',e=>e.stopPropagation());
+
+// ── LANGUAGE ──
+function toggleLang(){
+  document.getElementById('lang-btn').classList.toggle('open');
+  document.getElementById('lang-dropdown').classList.toggle('open');
+}
+function setLang(lang){
+  currentLang=lang;
+  document.querySelectorAll('.lang-option').forEach((o,i)=>o.classList.toggle('active',['en','hi','kn','mr','te','ta'][i]===lang));
+  document.getElementById('lang-btn').classList.remove('open');
+  document.getElementById('lang-dropdown').classList.remove('open');
+  applyLabels();
+}
+document.addEventListener('click',e=>{
+  const w=document.querySelector('.lang-wrapper');
+  if(!w.contains(e.target)){document.getElementById('lang-btn').classList.remove('open');document.getElementById('lang-dropdown').classList.remove('open');}
+});
+
+function applyLabels(){
+  const L = labels[currentLang];
+  document.getElementById('site-tagline').textContent = L.tagline;
+  document.getElementById('hero-title').textContent = L.heroTitle;
+  document.getElementById('hero-sub').textContent = L.heroSub;
+  document.getElementById('hs-lbl-storage').textContent = L.hsStorage;
+  document.getElementById('hs-lbl-mandis').textContent = L.hsMandis;
+  document.getElementById('hs-lbl-cap').textContent = L.hsCap;
+  document.getElementById('hs-lbl-loan').textContent = L.hsLoan;
+  document.getElementById('sb-title').textContent = L.sbTitle;
+  document.getElementById('sb-text').textContent = L.sbText;
+  document.getElementById('f-all').textContent = L.fAll;
+  document.getElementById('f-govt').textContent = L.fGovt;
+  document.getElementById('f-private').textContent = L.fPrivate;
+  document.getElementById('f-coop').textContent = L.fCoop;
+  document.getElementById('f-cold').textContent = L.fCold;
+  document.getElementById('s-avail').textContent = L.sortAvail;
+  document.getElementById('s-price').textContent = L.sortPrice;
+  document.getElementById('s-rating').textContent = L.sortRating;
+  document.getElementById('lbl-cap-filter').textContent = L.minCap;
+  document.getElementById('main-heading').textContent = L.mainHead;
+  document.getElementById('sb-main-title').textContent = L.sbMainTitle;
+  document.getElementById('sb-lbl-avail').textContent = L.sbLblAvail;
+  document.getElementById('sb-sub-avail').textContent = L.sbSubAvail;
+  document.getElementById('sb-lbl-nwrp').textContent = L.sbLblNwrp;
+  document.getElementById('sb-sub-nwrp').textContent = L.sbSubNwrp;
+  document.getElementById('calc-title').textContent = L.calcTitle;
+  document.getElementById('calc-lbl-qty').textContent = L.calcQty;
+  document.getElementById('calc-lbl-weeks').textContent = L.calcWeeks;
+  document.getElementById('calc-res-lbl').textContent = L.calcResLbl;
+  document.getElementById('sb-lbl-nearby').textContent = L.sbLblNearby;
+  document.getElementById('sb-lbl-tips').textContent = L.sbLblTips;
+  document.getElementById('nwrp-title').textContent = L.nwrpTitle;
+  document.getElementById('nwrp-text').innerHTML = L.nwrpText;
+  document.getElementById('ai-btn-label').textContent = L.aiBtn;
+  document.getElementById('ai-welcome').textContent = L.aiWelcome;
+  document.getElementById('lang-label').textContent = L.langLabel;
+  const ph={en:'Search warehouse or location...',hi:'गोदाम या स्थान खोजें...',kn:'ಗೋದಾಮು ಅಥವಾ ಸ್ಥಳ ಹುಡುಕಿ...',mr:'गोदाम किंवा ठिकाण शोधा...',te:'గోదాం లేదా స్థలం వెతకండి...',ta:'கிடங்கு அல்லது இடத்தை தேடுங்கள்...'};
+  document.getElementById('main-search').placeholder = ph[currentLang]||ph.en;
+  calcSavings();
+  // Don't call renderCards() here — init handles it separately
+}
+
+// ── AI ──
+function openAI(){document.getElementById('ai-panel').classList.add('open');document.getElementById('ai-overlay').classList.add('open');}
+function closeAI(){document.getElementById('ai-panel').classList.remove('open');document.getElementById('ai-overlay').classList.remove('open');}
+function askChip(t){document.getElementById('ai-input').value=t;openAI();sendAI();}
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  if(!geminiKey){return;}
+  const msgs = document.getElementById('ai-messages');
+  const ud = document.createElement('div');ud.className='msg-bubble msg-user';ud.textContent=msg;msgs.appendChild(ud);
+  input.value='';
+  const td = document.createElement('div');td.className='msg-bubble msg-ai';td.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';msgs.appendChild(td);
+  msgs.scrollTop=msgs.scrollHeight;
+
+  const storageCtx = storages.map(s=>`${s.name} (${s.mandi}, ₹${s.rateQtl}/qtl/mo, ${getAvailableQtl(s)} qtl free, NWRP:${s.nwrp}, Cold:${s.coldStorage})`).join('; ');
+  const sys = `You are AgriBridge's AI storage advisor for Indian farmers in Karnataka. Storage facilities: ${storageCtx}. You help farmers decide: 1) Whether to store or sell their crop, 2) Which warehouse to choose, 3) How to get NWRP loans, 4) How long crops can be stored. Keep answers short (2-4 sentences), practical, and include specific numbers and names. Reply in the same language the farmer uses (English, Hindi, Kannada, Marathi, Telugu, or Tamil).`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json','X-goog-api-key': geminiKey},
+      body: JSON.stringify({contents: [{ parts: [{ text: sys + "\n\nFarmer's question: " + msg }] }]})
+    });
+    const data = await res.json();
+    td.textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text||'Sorry, could not get a response. Check your API key.';
+  } catch(e){td.textContent='Connection error. Check your Gemini API key and internet.';}
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ── INIT — single entry point, cards visible immediately ──
+document.addEventListener('DOMContentLoaded', function() {
+  applyLabels();   // sets all text labels + calcSavings
+  renderCards();   // renders cards (isInitialLoad=true → no animation)
+  isInitialLoad = false; // future renders will animate
+});
+</script>
+</body>
+</html>

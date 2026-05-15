@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriBridge — APMC Price Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gd:#1B4D2E;--gm:#2D7A4F;--gl:#4CAF78;--gp:#E8F5EE;--ga:#5DBF82;
+  --am:#F5A623;--ap:#FEF3DC;--ad:#8C5E10;
+  --rd:#D94F3D;--rp:#FDECEA;
+  --bg:#F4F7F2;--sf:#FFFFFF;--br:rgba(0,0,0,0.08);
+  --t1:#1A2B1F;--t2:#5A7060;--tm:#93AE99;
+  --shd:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shl:0 12px 32px rgba(0,0,0,0.12),0 4px 8px rgba(0,0,0,0.06);
+  --r:12px;--rs:8px;
+  --fd:'Baloo 2',cursive;--fb:'Noto Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+
+.back-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;flex-shrink:0;transition:background 0.2s,transform 0.15s;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,0.22);transform:translateX(-2px)}
+.back-btn svg{display:block}
+
+.topbar{background:var(--gd);height:60px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:100;gap:14px}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none}
+.logo-mark{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1}
+.logo-words{line-height:1.1}
+.logo-main{font-family:var(--fd);font-size:18px;font-weight:800;color:#fff;display:block;letter-spacing:0.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.2px;display:block}
+.topbar-spacer{flex:1}
+.topbar-search{display:flex;align-items:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:0 14px;gap:8px;height:36px;width:240px;transition:background 0.2s}
+.topbar-search:focus-within{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35)}
+.topbar-search input{background:none;border:none;outline:none;color:#fff;font-size:13px;font-family:var(--fb);width:100%}
+.topbar-search input::placeholder{color:rgba(255,255,255,0.45)}
+
+.lang-wrapper{position:relative;flex-shrink:0}
+.lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 12px;color:#fff;font-size:12px;font-family:var(--fb);cursor:pointer;transition:background 0.2s}
+.lang-btn:hover{background:rgba(255,255,255,0.2)}
+.lang-btn .chevron{transition:transform 0.2s;font-size:10px;display:inline-block}
+.lang-btn.open .chevron{transform:rotate(180deg)}
+.lang-dropdown{position:absolute;right:0;top:calc(100% + 8px);background:var(--sf);border:1px solid var(--br);border-radius:var(--rs);box-shadow:var(--shl);min-width:155px;overflow:hidden;display:none;z-index:200}
+.lang-dropdown.open{display:block}
+.lang-option{padding:9px 14px;font-size:13px;color:var(--t1);cursor:pointer;display:flex;align-items:center;gap:10px;border:none;background:none;width:100%;text-align:left;font-family:var(--fb);transition:background 0.15s}
+.lang-option:hover{background:var(--gp)}
+.lang-option.active{background:var(--gp);color:var(--gm);font-weight:600}
+
+.ai-float-btn{display:flex;align-items:center;gap:7px;background:var(--am);border:none;border-radius:20px;padding:7px 14px 7px 10px;color:#fff;font-size:13px;font-weight:700;font-family:var(--fd);cursor:pointer;box-shadow:0 2px 8px rgba(245,166,35,0.45);transition:box-shadow 0.2s,transform 0.15s;flex-shrink:0}
+.ai-float-btn:hover{box-shadow:0 4px 16px rgba(245,166,35,0.6);transform:translateY(-1px)}
+.ai-float-btn .ai-icon{width:22px;height:22px;background:rgba(255,255,255,0.25);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+.layout{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 60px)}
+.main{padding:22px;overflow-y:auto}
+
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--gd);display:flex;align-items:center;gap:8px}
+.update-badge{font-size:11px;color:var(--tm);display:flex;align-items:center;gap:4px}
+
+.trending-section{margin-bottom:28px}
+.news-scroll-wrap{position:relative}
+.news-scroll-track{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none;-ms-overflow-style:none;scroll-behavior:smooth}
+.news-scroll-track::-webkit-scrollbar{display:none}
+.news-pill{flex:0 0 210px;background:var(--sf);border:1.5px solid var(--br);border-radius:10px;padding:12px 13px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:6px}
+.news-pill:hover{border-color:var(--gm);box-shadow:var(--shd);transform:translateY(-2px)}
+.news-pill-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;display:flex;align-items:center;gap:4px}
+.tag-price{color:var(--gm)}.tag-weather{color:#1a6fa0}.tag-market{color:var(--ad)}.tag-alert{color:var(--rd)}
+.news-pill-headline{font-size:12px;font-weight:600;color:var(--t1);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-pill-foot{display:flex;align-items:center;justify-content:space-between;margin-top:2px}
+.news-pill-time{font-size:10px;color:var(--tm)}
+.news-pill-more{font-size:10px;color:var(--gm);font-weight:600}
+.impact-up{background:#E6F4EC;color:#1B5E35}
+.impact-down{background:var(--rp);color:#8B2020}
+.impact-neutral{background:#EBF2FA;color:#2B5070}
+
+.news-dialog-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:600;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.news-dialog-overlay.open{display:flex}
+.news-dialog{background:var(--sf);border-radius:16px;width:420px;max-width:94vw;box-shadow:var(--shl);overflow:hidden;animation:modalIn 0.2s ease}
+.news-dialog-header{padding:16px 18px 13px;border-bottom:1px solid var(--br);display:flex;align-items:flex-start;gap:10px}
+.news-dialog-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.news-dialog-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--t1);line-height:1.4}
+.news-dialog-close{margin-left:auto;flex-shrink:0;background:var(--bg);border:1px solid var(--br);border-radius:7px;width:28px;height:28px;color:var(--t2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.15s}
+.news-dialog-close:hover{background:var(--rp);color:var(--rd)}
+.news-dialog-body{padding:16px 18px}
+.news-dialog-impact{font-size:13px;padding:10px 12px;border-radius:8px;font-weight:500;line-height:1.5;margin-bottom:12px}
+.news-dialog-time{font-size:11px;color:var(--tm)}
+.news-disclaimer{margin-top:4px;padding:8px 10px;background:var(--ap);border-radius:6px;font-size:10px;color:var(--ad);line-height:1.5}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf);font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:all 0.15s;font-family:var(--fb);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.filter-chip:hover{border-color:var(--gm);color:var(--gm)}
+.filter-chip.active{background:var(--gd);border-color:var(--gd);color:#fff}
+.chip-icon{font-size:14px;line-height:1}
+.mandi-select{margin-left:auto;padding:6px 28px 6px 12px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2393AE99'/%3E%3C/svg%3E") no-repeat right 10px center;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--fb);appearance:none;outline:none;transition:border-color 0.15s}
+.mandi-select:focus{border-color:var(--gm)}
+
+.crops-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.crop-card{background:var(--sf);border-radius:var(--r);border:1.5px solid var(--br);padding:15px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;animation:cardIn 0.35s ease both;position:relative;overflow:hidden}
+.crop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gl);transform:scaleX(0);transform-origin:left;transition:transform 0.25s}
+.crop-card:hover{border-color:var(--gm);box-shadow:var(--shd);transform:translateY(-2px)}
+.crop-card:hover::before{transform:scaleX(1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.crop-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.crop-emoji-wrap{width:42px;height:42px;border-radius:11px;background:var(--gp);display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1}
+.trend-pill{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:4px 8px;border-radius:20px}
+.trend-up{background:#E6F4EC;color:#1B5E35}
+.trend-down{background:var(--rp);color:var(--rd)}
+.trend-flat{background:#F0F0F0;color:#777}
+.crop-name{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.crop-place{font-size:11px;color:var(--tm);display:flex;align-items:center;gap:3px;margin-bottom:10px}
+.price-modal{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--gd);line-height:1}
+.price-unit{font-size:11px;color:var(--tm);margin-bottom:2px}
+.price-row{display:flex;gap:5px;align-items:flex-end}
+.price-range{font-size:11px;color:var(--t2);margin-top:6px;display:flex;gap:7px}
+.price-range span{background:var(--bg);padding:2px 6px;border-radius:4px}
+.msp-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;border-radius:4px;margin-top:7px;font-weight:600}
+.msp-above{background:var(--gp);color:var(--gm)}.msp-below{background:var(--rp);color:var(--rd)}
+
+.ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:300;backdrop-filter:blur(2px)}
+.ai-overlay.open{display:block}
+.ai-panel{position:fixed;right:-430px;top:0;bottom:0;width:420px;background:var(--sf);box-shadow:var(--shl);z-index:400;display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(0.34,1.1,0.64,1)}
+.ai-panel.open{right:0}
+.ai-panel-header{background:var(--gd);padding:15px 18px;display:flex;align-items:center;gap:12px}
+.ai-panel-icon{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ai-panel-header h3{font-family:var(--fd);font-size:15px;font-weight:700;color:#fff}
+.ai-panel-header p{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px}
+.ai-close{margin-left:auto;background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:30px;height:30px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;line-height:1}
+.ai-close:hover{background:rgba(255,255,255,0.25)}
+.ai-chips{padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--br)}
+.ai-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--br);background:var(--bg);font-size:11px;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all 0.15s}
+.ai-chip:hover{border-color:var(--am);color:var(--ad);background:var(--ap)}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ai-messages::-webkit-scrollbar{width:3px}
+.ai-messages::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+.msg-bubble{max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.55}
+.msg-ai{background:var(--gp);color:var(--t1);align-self:flex-start;border-radius:4px 14px 14px 14px;border:1px solid rgba(45,122,79,0.15)}
+.msg-user{background:var(--gd);color:#fff;align-self:flex-end;border-radius:14px 4px 14px 14px}
+.ai-input-row{padding:12px 14px;border-top:1.5px solid var(--br);display:flex;gap:8px;align-items:center}
+.ai-input-row input{flex:1;padding:9px 13px;border-radius:24px;border:1.5px solid var(--br);font-size:13px;font-family:var(--fb);background:var(--bg);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-input-row input:focus{border-color:var(--gm)}
+.ai-send{width:36px;height:36px;background:var(--gd);border:none;border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.15s;flex-shrink:0}
+.ai-send:hover{background:var(--gm);transform:scale(1.06)}
+.gemini-tag{padding:7px 14px;font-size:10px;color:var(--tm);display:flex;align-items:center;gap:4px;border-top:1px solid var(--br);background:var(--bg)}
+.typing-dots{display:flex;gap:4px;padding:3px 0}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--gm);animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,60%,100%{opacity:1}30%{opacity:0.2}}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--sf);border-radius:18px;width:500px;max-width:95vw;box-shadow:var(--shl);overflow:hidden;animation:modalIn 0.22s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{background:var(--gd);padding:16px 20px;display:flex;align-items:center;gap:13px}
+.modal-header .m-emoji{font-size:34px;line-height:1}
+.modal-header h2{font-family:var(--fd);font-size:19px;font-weight:700;color:#fff}
+.modal-header p{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px}
+.modal-close{margin-left:auto;background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:30px;height:30px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.modal-close:hover{background:rgba(255,255,255,0.25)}
+.modal-body{padding:20px}
+.modal-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.modal-price-item{background:var(--bg);border-radius:var(--rs);padding:11px;text-align:center}
+.modal-price-item .lbl{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.modal-price-item .val{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--gd)}
+.chart-section{background:var(--bg);border-radius:var(--rs);padding:14px 14px 10px;margin-bottom:14px}
+.chart-section-title{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.chart-wrap{position:relative;height:170px}
+.chart-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.chart-stat{text-align:center}
+.chart-stat .cs-lbl{font-size:10px;color:var(--tm)}
+.chart-stat .cs-val{font-size:12px;font-weight:700;color:var(--t1);font-family:var(--fd)}
+.modal-arrivals{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--ap);border-radius:var(--rs)}
+.modal-arrivals .lbl{font-size:12px;color:var(--ad);font-weight:500}
+.modal-arrivals .val{font-family:var(--fd);font-weight:800;color:var(--ad)}
+
+@media(max-width:900px){.layout{grid-template-columns:1fr}.crops-grid{grid-template-columns:repeat(2,1fr)}.topbar-search{display:none}}
+@media(max-width:560px){.crops-grid{grid-template-columns:1fr}.topbar{padding:0 12px;gap:10px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="back-btn" href="#" onclick="history.back(); return false;" aria-label="Go back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  </a>
+  <a class="topbar-logo" href="#">
+    <div class="logo-mark">&#x1F309;</div>
+    <div class="logo-words">
+      <span class="logo-main" id="site-name">AgriBridge</span>
+      <span class="logo-sub" id="site-tagline">APMC Price Portal</span>
+    </div>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-search">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="main-search" placeholder="Search crop or mandi..." oninput="filterCards(this.value)">
+  </div>
+  <div class="lang-wrapper">
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span id="lang-label">English</span>
+      <span class="chevron">&#9660;</span>
+    </button>
+    <div class="lang-dropdown" id="lang-dropdown">
+      <button class="lang-option active" onclick="setLang('en')">&#x1F1EE;&#x1F1F3; English</button>
+      <button class="lang-option" onclick="setLang('hi')">&#x1F1EE;&#x1F1F3; &#2361;&#2367;&#2306;&#2342;&#2368;</button>
+      <button class="lang-option" onclick="setLang('kn')">&#x1F1EE;&#x1F1F3; &#3221;&#3240;&#3277;&#3240;&#3233;</button>
+      <button class="lang-option" onclick="setLang('mr')">&#x1F1EE;&#x1F1F3; &#2350;&#2352;&#2366;&#2336;&#2368;</button>
+      <button class="lang-option" onclick="setLang('te')">&#x1F1EE;&#x1F1F3; &#3108;&#3142;&#3122;&#3137;&#3095;&#3137;</button>
+      <button class="lang-option" onclick="setLang('ta')">&#x1F1EE;&#x1F1F3; &#2980;&#2990;&#3007;&#2996;&#3021;</button>
+    </div>
+  </div>
+  <button class="ai-float-btn" onclick="openAI()">
+    <div class="ai-icon">&#10024;</div>
+    <span id="ai-btn-label">Ask AI</span>
+  </button>
+</header>
+
+<div class="layout">
+  <main class="main">
+    <div class="trending-section">
+      <div class="sec-hd">
+        <div class="sec-title">&#x1F4F0; <span id="trend-heading">Trending Market News</span></div>
+        <div class="update-badge">&#x1F550; <span id="update-text">Today &middot; Live</span></div>
+      </div>
+      <div class="news-scroll-wrap">
+        <div class="news-scroll-track" id="trending-grid"></div>
+      </div>
+    </div>
+
+    <div class="news-dialog-overlay" id="news-dialog-overlay" onclick="closeNewsDialog(event)">
+      <div class="news-dialog" id="news-dialog-box">
+        <div class="news-dialog-header">
+          <div style="flex:1">
+            <div class="news-dialog-tag" id="nd-tag"></div>
+            <div class="news-dialog-title" id="nd-title"></div>
+          </div>
+          <button class="news-dialog-close" onclick="closeNewsDialog()">&#x2715;</button>
+        </div>
+        <div class="news-dialog-body">
+          <div class="news-dialog-impact" id="nd-impact"></div>
+          <div class="news-dialog-time" id="nd-time"></div>
+          <div class="news-disclaimer">&#x26A0;&#xFE0F; Prices shown are <strong>sample/demo data</strong>. Always verify from <strong>Agmarknet</strong> or your local APMC before selling.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-hd">
+      <div class="sec-title">&#x1F4CA; <span id="main-heading">Today's APMC Prices</span></div>
+      <div class="update-badge">&#x1F550; <span>9:00 AM &middot; Agmarknet</span></div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-chip active" onclick="setFilter(this,'all')">
+        <svg class="chip-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span id="f-all">All</span>
+      </button>
+      <button class="filter-chip" onclick="setFilter(this,'veg')"><span class="chip-icon">&#x1F966;</span> <span id="f-veg">Vegetables</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'fruit')"><span class="chip-icon">&#x1F34E;</span> <span id="f-fruit">Fruits</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'pulse')"><span class="chip-icon">&#x1FAD8;</span> <span id="f-pulse">Pulses</span></button>
+      <button class="filter-chip" onclick="setFilter(this,'cereal')"><span class="chip-icon">&#x1F33E;</span> <span id="f-cereal">Cereals</span></button>
+      <select class="mandi-select" onchange="filterMandi(this.value)">
+        <option value="all">All Mandis</option>
+        <option value="Kolar">Kolar APMC</option>
+        <option value="Hubli">Hubli APMC</option>
+        <option value="Raichur">Raichur APMC</option>
+        <option value="Belgaum">Belgaum APMC</option>
+        <option value="Mysuru">Mysuru APMC</option>
+      </select>
+    </div>
+    <div class="crops-grid" id="crops-grid"></div>
+  </main>
+</div>
+
+<!-- AI PANEL -->
+<div class="ai-overlay" id="ai-overlay" onclick="closeAI()"></div>
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-icon">&#10024;</div>
+    <div>
+      <h3 id="ai-panel-title">AI Farm Advisor</h3>
+      <p>Powered by Gemini &middot; Market &amp; crop intelligence</p>
+    </div>
+    <button class="ai-close" onclick="closeAI()">&#x2715;</button>
+  </div>
+  <div class="ai-chips">
+    <button class="ai-chip" onclick="askChip('Best crop to sell this week in Karnataka?')">&#x1F4C8; Best crop this week</button>
+    <button class="ai-chip" onclick="askChip('Will tomato prices rise in next 7 days?')">&#x1F345; Tomato forecast</button>
+    <button class="ai-chip" onclick="askChip('Which mandi gives best onion price today?')">&#x1F9C5; Best mandi for onion</button>
+    <button class="ai-chip" onclick="askChip('How will rain forecast affect prices?')">&#x1F327; Rain impact</button>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="msg-bubble msg-ai" id="ai-welcome">Namaste &#x1F64F; I'm your AI farming advisor. Ask me about today's prices, when to sell, or which mandi to go to — in English, Hindi, or Kannada!</div>
+  </div>
+  <div class="ai-input-row">
+    <input type="text" id="ai-input" placeholder="Ask about prices, crops, market..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+    </button>
+  </div>
+  <div class="gemini-tag">
+    <svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2z" fill="#4285F4"/></svg>
+    Gemini API &middot; Responses are advisory only
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <span class="m-emoji" id="m-emoji">&#x1F345;</span>
+      <div><h2 id="m-name">Tomato</h2><p id="m-place">Kolar APMC</p></div>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-prices">
+        <div class="modal-price-item"><div class="lbl">Min</div><div class="val" id="m-min">&#x20B9;1,800</div></div>
+        <div class="modal-price-item"><div class="lbl">Modal</div><div class="val" id="m-modal">&#x20B9;2,840</div></div>
+        <div class="modal-price-item"><div class="lbl">Max</div><div class="val" id="m-max">&#x20B9;3,200</div></div>
+      </div>
+      <div class="chart-section">
+        <div class="chart-section-title">
+          <span>&#x1F4C8; 7-Day Price Trend (&#x20B9;/qtl)</span>
+          <span id="chart-change-badge" style="font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700"></span>
+        </div>
+        <div class="chart-wrap"><canvas id="price-chart"></canvas></div>
+        <div class="chart-stats">
+          <div class="chart-stat"><div class="cs-lbl">7-Day Low</div><div class="cs-val" id="chart-low">—</div></div>
+          <div class="chart-stat"><div class="cs-lbl">7-Day Avg</div><div class="cs-val" id="chart-avg">—</div></div>
+          <div class="chart-stat"><div class="cs-lbl">7-Day High</div><div class="cs-val" id="chart-high">—</div></div>
+        </div>
+      </div>
+      <div class="modal-arrivals">
+        <span class="lbl">&#x1F4E6; Today's Arrivals</span>
+        <span class="val" id="m-arrivals">1,240 quintals</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const HARDCODED_KEY = 'AIzaSyDzxt4CPtWZ97rr9eGo1wdXsFhM8y4cuW8';
+let geminiKey = HARDCODED_KEY || localStorage.getItem('agribridge_gemini_key') || '';
+
+// ── DATA ──
+const crops = [
+  {id:1,  emoji:'🍅', name:'Tomato',     nameHi:'टमाटर',      nameKn:'ಟೊಮೆಟೊ',    nameMr:'टोमॅटो',   nameTe:'టమాటో',       nameTa:'தக்காளி',      place:'Kolar',   cat:'veg',    min:1800, modal:2840, max:3200,  change:18,  msp:null,  arrivals:'1,240 qtl', history:[2100,2200,1950,2400,2300,2600,2840]},
+  {id:2,  emoji:'🧅', name:'Onion',      nameHi:'प्याज',      nameKn:'ಈರುಳ್ಳಿ',   nameMr:'कांदा',    nameTe:'ఉల్లిపాయ',    nameTa:'வெங்காயம்',    place:'Hubli',   cat:'veg',    min:900,  modal:1120, max:1400,  change:-5,  msp:null,  arrivals:'2,100 qtl', history:[1300,1250,1180,1200,1150,1170,1120]},
+  {id:3,  emoji:'🥔', name:'Potato',     nameHi:'आलू',        nameKn:'ಆಲೂಗಡ್ಡೆ',  nameMr:'बटाटा',    nameTe:'బంగాళాదుంప',  nameTa:'உருளைக்கிழங்கு',place:'Belgaum', cat:'veg',  min:1100, modal:1380, max:1600,  change:7,   msp:null,  arrivals:'980 qtl',   history:[1100,1150,1200,1250,1300,1350,1380]},
+  {id:4,  emoji:'🌶️', name:'Red Chilli', nameHi:'लाल मिर्च',  nameKn:'ಕೆಂಪು ಮೆಣಸು',nameMr:'लाल मिरची',nameTe:'ఎర్ర మిర్చి', nameTa:'சிவப்பு மிளகாய்',place:'Raichur',cat:'veg',min:6200, modal:7800, max:9400,  change:12,  msp:null,  arrivals:'560 qtl',   history:[6000,6400,6800,7000,7200,7500,7800]},
+  {id:5,  emoji:'🥬', name:'Cabbage',    nameHi:'पत्तागोभी',  nameKn:'ಎಲೆಕೋಸು',   nameMr:'कोबी',     nameTe:'క్యాబేజీ',    nameTa:'முட்டைக்கோஸ்', place:'Mysuru',  cat:'veg',    min:400,  modal:620,  max:800,   change:0,   msp:null,  arrivals:'440 qtl',   history:[600,580,620,600,610,640,620]},
+  {id:6,  emoji:'🍌', name:'Banana',     nameHi:'केला',       nameKn:'ಬಾಳೆ',      nameMr:'केळी',     nameTe:'అరటిపండు',    nameTa:'வாழைப்பழம்',   place:'Mysuru',  cat:'fruit',  min:1200, modal:1560, max:1900,  change:9,   msp:null,  arrivals:'720 qtl',   history:[1300,1350,1380,1400,1450,1520,1560]},
+  {id:7,  emoji:'🍊', name:'Orange',     nameHi:'संतरा',      nameKn:'ಕಿತ್ತಳೆ',   nameMr:'संत्री',   nameTe:'నారింజ',       nameTa:'ஆரஞ்சு',       place:'Belgaum', cat:'fruit',  min:3000, modal:3800, max:4500,  change:-3,  msp:null,  arrivals:'330 qtl',   history:[4200,4100,4000,3900,3850,3820,3800]},
+  {id:8,  emoji:'🍇', name:'Grapes',     nameHi:'अंगूर',      nameKn:'ದ್ರಾಕ್ಷಿ',  nameMr:'द्राक्षे', nameTe:'ద్రాక్షలు',   nameTa:'திராட்சை',     place:'Raichur', cat:'fruit',  min:4500, modal:5200, max:6000,  change:6,   msp:null,  arrivals:'210 qtl',   history:[4600,4700,4800,4900,5000,5100,5200]},
+  {id:9,  emoji:'🫘', name:'Tur Dal',    nameHi:'अरहर दाल',   nameKn:'ತೊಗರಿ ಬೇಳೆ', nameMr:'तूर डाळ', nameTe:'కంది పప్పు',  nameTa:'துவரம் பருப்பு',place:'Raichur', cat:'pulse', min:8400, modal:9200, max:10000, change:4,   msp:7000,  arrivals:'890 qtl',   history:[8500,8600,8700,8800,8900,9000,9200]},
+  {id:10, emoji:'🟢', name:'Moong Dal',  nameHi:'मूंग दाल',   nameKn:'ಹೆಸರು ಬೇಳೆ', nameMr:'मूग डाळ', nameTe:'పెసర పప్పు',  nameTa:'பாசிப்பருப்பு', place:'Hubli',  cat:'pulse',  min:7200, modal:7800, max:8400,  change:-2,  msp:7275,  arrivals:'640 qtl',   history:[8000,7900,7800,7850,7900,7820,7800]},
+  {id:11, emoji:'🌾', name:'Wheat',      nameHi:'गेहूं',      nameKn:'ಗೋಧಿ',      nameMr:'गहू',      nameTe:'గోధుమ',        nameTa:'கோதுமை',       place:'Raichur', cat:'cereal', min:2100, modal:2275, max:2500,  change:3,   msp:2275,  arrivals:'3,200 qtl', history:[2150,2180,2200,2220,2240,2260,2275]},
+  {id:12, emoji:'🌾', name:'Paddy',      nameHi:'धान',        nameKn:'ಭತ್ತ',      nameMr:'भात',      nameTe:'వరి',          nameTa:'நெல்',          place:'Mysuru',  cat:'cereal', min:1800, modal:2183, max:2400,  change:1,   msp:2183,  arrivals:'4,100 qtl', history:[2100,2120,2140,2160,2170,2175,2183]},
+];
+
+const trendingNews = [
+  {tag:'price', emoji:'📈', tagLabel:{en:'Price Surge',hi:'मूल्य उछाल',kn:'ಬೆಲೆ ಏರಿಕೆ',mr:'किंमत वाढ',te:'ధర పెరుగుదల',ta:'விலை உயர்வு'},
+   headline:{en:'Tomato up 18% at Kolar — supply crunch from Pune region',hi:'कोलार में टमाटर 18% ऊपर',kn:'ಕೋಲಾರದಲ್ಲಿ ಟೊಮೆಟೊ 18% ಏರಿಕೆ',mr:'कोलारमध्ये टोमॅटो 18% वर',te:'కోలార్‌లో టమాటో 18% పెరిగింది',ta:'கோலாரில் தக்காளி 18% உயர்வு'},
+   impact:{en:'Good time to sell if you have stock. Hold if expecting further rise.',hi:'स्टॉक है तो बेचने का अच्छा समय।',kn:'ಸ್ಟಾಕ್ ಇದ್ದರೆ ಮಾರಲು ಉತ್ತಮ.',mr:'साठा असल्यास विकणे चांगले.',te:'స్టాక్ ఉంటే అమ్మడానికి మంచి సమయం.',ta:'இருப்பு இருந்தால் விற்க நல்ல நேரம்.'},
+   impactType:'up', time:'2h ago'},
+  {tag:'weather', emoji:'🌧️', tagLabel:{en:'Weather Alert',hi:'मौसम चेतावनी',kn:'ಹವಾಮಾನ ಎಚ್ಚರಿಕೆ',mr:'हवामान इशारा',te:'వాతావరణ హెచ్చరిక',ta:'வானிலை எச்சரிக்கை'},
+   headline:{en:'Heavy rain in North Karnataka next 3 days — transport disruptions likely',hi:'अगले 3 दिन उत्तर कर्नाटक में भारी बारिश',kn:'ಮುಂದಿನ 3 ದಿನ ಉತ್ತರ ಕರ್ನಾಟಕದಲ್ಲಿ ಭಾರೀ ಮಳೆ',mr:'पुढे 3 दिवस उत्तर कर्नाटकात भारी पाऊस',te:'రాబోయే 3 రోజులు ఉత్తర కర్ణాటకలో భారీ వర్షం',ta:'அடுத்த 3 நாட்களில் வட கர்நாடகாவில் கனமழை'},
+   impact:{en:'Delay sending produce to Hubli & Raichur mandis. Prices may spike.',hi:'हुबली और राइचूर में उपज भेजने में देरी करें।',kn:'ಹುಬ್ಬಳ್ಳಿ ಮತ್ತು ರಾಯಚೂರು ಮಂಡಿಗೆ ವಿಳಂಬ ಮಾಡಿ.',mr:'हुबळी आणि रायचूर मंडईला उशीर करा.',te:'హుబ్లీ, రాయచూర్ మండిలకు పంపడం ఆలస్యం చేయండి.',ta:'ஹுப்லி, ராய்ச்சூர் மண்டிகளுக்கு தாமதம் செய்யுங்கள்.'},
+   impactType:'neutral', time:'4h ago'},
+  {tag:'alert', emoji:'⚠️', tagLabel:{en:'MSP Alert',hi:'MSP चेतावनी',kn:'MSP ಎಚ್ಚರಿಕೆ',mr:'MSP इशारा',te:'MSP హెచ్చరిక',ta:'MSP எச்சரிக்கை'},
+   headline:{en:'Wheat modal price now at MSP ₹2,275 — negotiate firmly before selling',hi:'गेहूं मॉडल भाव MSP ₹2,275 पर',kn:'ಗೋಧಿ ಮೋಡಲ್ ಬೆಲೆ MSP ₹2,275',mr:'गव्हाचा मोडल भाव MSP ₹2,275',te:'గోధుమ మోడల్ ధర MSP ₹2,275',ta:'கோதுமை மோடல் விலை MSP ₹2,275'},
+   impact:{en:'Do not sell below MSP. Contact your nearest FPO or APMC if traders offer less.',hi:'MSP से कम पर न बेचें। FPO या APMC से संपर्क करें।',kn:'MSP ಗಿಂತ ಕಡಿಮೆಗೆ ಮಾರಬೇಡಿ. FPO ಸಂಪರ್ಕಿಸಿ.',mr:'MSP पेक्षा कमी दराने विकू नका.',te:'MSP కంటే తక్కువకు అమ్మకండి.',ta:'MSP விலைக்கு கீழே விற்காதீர்கள்.'},
+   impactType:'down', time:'5h ago'},
+  {tag:'price', emoji:'📉', tagLabel:{en:'Price Drop',hi:'गिरावट',kn:'ಇಳಿಕೆ',mr:'घट',te:'తగ్గుదల',ta:'வீழ்ச்சி'},
+   headline:{en:'Orange -3% Belgaum — Maharashtra arrivals flooding the market',hi:'बेलगाम संतरा 3% गिरा',kn:'ಬೆಳಗಾವಿ ಕಿತ್ತಳೆ 3% ಇಳಿಕೆ',mr:'बेळगाव संत्री 3% घसरली',te:'బెళగావ్ నారింజ 3% తగ్గింది',ta:'பெல்காவில் ஆரஞ்சு 3% குறைந்தது'},
+   impact:{en:'Hold stock 4–5 days until Maharashtra glut clears. Try Mysuru mandi.',hi:'4-5 दिन स्टॉक रोकें। मैसूर मंडी बेहतर भाव दे सकती है।',kn:'4-5 ದಿನ ಸ್ಟಾಕ್ ಇರಿಸಿ. ಮೈಸೂರು ಮಂಡಿ ಉತ್ತಮ.',mr:'4-5 दिवस साठा ठेवा.',te:'4-5 రోజులు స్టాక్ ఉంచండి.',ta:'4-5 நாட்கள் இருப்பு வைக்கவும்.'},
+   impactType:'down', time:'6h ago'},
+  {tag:'market', emoji:'🏪', tagLabel:{en:'Market',hi:'बाजार',kn:'ಮಾರ್ಕೆಟ್',mr:'बाजार',te:'మార్కెట్',ta:'சந்தை'},
+   headline:{en:'Red chilli +12% Raichur — traders stocking ahead of festive season',hi:'राइचूर लाल मिर्च +12%',kn:'ರಾಯಚೂರು ಕೆಂಪು ಮೆಣಸು +12%',mr:'रायचूर लाल मिरची +12%',te:'రాయచూర్ ఎర్ర మిర్చి +12%',ta:'ராய்ச்சூர் சிவப்பு மிளகாய் +12%'},
+   impact:{en:'Favourable time to sell chilli. Prices likely high for next 2 weeks.',hi:'मिर्च बेचने का अच्छा समय। अगले 2 हफ्ते भाव ऊंचे रह सकते हैं।',kn:'ಮೆಣಸು ಮಾರಲು ಉತ್ತಮ. 2 ವಾರ ಬೆಲೆ ಹೆಚ್ಚಿರಬಹುದು.',mr:'मिरची विकण्याची उत्तम वेळ.',te:'మిర్చి అమ్మడానికి మంచి సమయం.',ta:'மிளகாய் விற்க நல்ல நேரம்.'},
+   impactType:'up', time:'7h ago'},
+  {tag:'market', emoji:'🫘', tagLabel:{en:'Pulse Market',hi:'दाल बाजार',kn:'ಬೇಳೆ ಮಾರ್ಕೆಟ್',mr:'डाळ बाजार',te:'పప్పు మార్కెట్',ta:'பருப்பு சந்தை'},
+   headline:{en:'Tur Dal stays 31% above MSP — export demand keeps prices elevated',hi:'अरहर दाल MSP से 31% ऊपर',kn:'ತೊಗರಿ ಬೇಳೆ MSP ಗಿಂತ 31% ಮೇಲೆ',mr:'तूर डाळ MSP पेक्षा 31% वर',te:'కంది పప్పు MSP కంటే 31% ఎక్కువ',ta:'துவரம் பருப்பு MSP விட 31% அதிகம்'},
+   impact:{en:'Strong prices expected to hold. Good window to sell tur dal in bulk.',hi:'भाव मजबूत रहने की उम्मीद। थोक में बेचने का अच्छा मौका।',kn:'ಬೆಲೆ ಮಜಬೂತಾಗಿ ಇರುತ್ತದೆ. ಈಗ ಮಾರಿ.',mr:'भाव मजबूत राहण्याची शक्यता. घाऊक विक्री करा.',te:'ధర మంచిగా ఉంటుంది. ఇప్పుడు అమ్మండి.',ta:'விலை உறுதியாக இருக்கும். இப்போது விற்கவும்.'},
+   impactType:'up', time:'8h ago'},
+];
+
+// ── STATE ──
+let currentLang = 'en';
+let currentFilter = 'all';
+let currentMandi = 'all';
+let searchQuery = '';
+let chartInstance = null;
+
+const days = {
+  en:['Mon','Tue','Wed','Thu','Fri','Sat','Today'],
+  hi:['सोम','मंगल','बुध','गुरु','शुक्र','शनि','आज'],
+  kn:['ಸೋಮ','ಮಂಗಳ','ಬುಧ','ಗುರು','ಶುಕ್ರ','ಶನಿ','ಇಂದು'],
+  mr:['सोम','मंगळ','बुध','गुरु','शुक्र','शनि','आज'],
+  te:['సోమ','మంగళ','బుధ','గురు','శుక్ర','శని','ఈరోజు'],
+  ta:['திங்','செவ்','புதன்','வியா','வெள்','சனி','இன்று'],
+};
+
+const labels = {
+  en:{siteTagline:'APMC Price Portal',trendHead:'Trending Market News',mainHead:"Today's APMC Prices",aiBtn:'Ask AI',fAll:'All',fVeg:'Vegetables',fFruit:'Fruits',fPulse:'Pulses',fCereal:'Cereals',perQtl:'/qtl',min:'Min',max:'Max',mspAbove:'Above MSP',mspBelow:'Below MSP',langLabel:'English',aiWelcome:"Namaste 🙏 I'm your AI farming advisor. Ask me about today's prices, when to sell, or which mandi!"},
+  hi:{siteTagline:'APMC मूल्य पोर्टल',trendHead:'ट्रेंडिंग बाजार समाचार',mainHead:'आज के APMC भाव',aiBtn:'AI से पूछें',fAll:'सभी',fVeg:'सब्जियां',fFruit:'फल',fPulse:'दालें',fCereal:'अनाज',perQtl:'/क्विंटल',min:'न्यूनतम',max:'अधिकतम',mspAbove:'MSP से ऊपर',mspBelow:'MSP से नीचे',langLabel:'हिंदी',aiWelcome:'नमस्ते 🙏 मैं आपका AI कृषि सलाहकार हूं!'},
+  kn:{siteTagline:'APMC ಬೆಲೆ ಪೋರ್ಟಲ್',trendHead:'ಟ್ರೆಂಡಿಂಗ್ ಮಾರ್ಕೆಟ್ ಸುದ್ದಿ',mainHead:'ಇಂದಿನ APMC ಬೆಲೆಗಳು',aiBtn:'AI ಕೇಳಿ',fAll:'ಎಲ್ಲಾ',fVeg:'ತರಕಾರಿ',fFruit:'ಹಣ್ಣು',fPulse:'ದ್ವಿದಳ',fCereal:'ಧಾನ್ಯ',perQtl:'/ಕ್ವಿಂಟಾಲ್',min:'ಕನಿಷ್ಠ',max:'ಗರಿಷ್ಠ',mspAbove:'MSP ಮೇಲೆ',mspBelow:'MSP ಕೆಳಗೆ',langLabel:'ಕನ್ನಡ',aiWelcome:'ನಮಸ್ಕಾರ 🙏 ನಾನು ನಿಮ್ಮ AI ಕೃಷಿ ಸಲಹೆಗಾರ!'},
+  mr:{siteTagline:'APMC किंमत पोर्टल',trendHead:'ट्रेंडिंग बाजार बातम्या',mainHead:'आजचे APMC भाव',aiBtn:'AI ला विचारा',fAll:'सर्व',fVeg:'भाज्या',fFruit:'फळे',fPulse:'डाळी',fCereal:'धान्य',perQtl:'/क्विंटल',min:'किमान',max:'कमाल',mspAbove:'MSP वर',mspBelow:'MSP खाली',langLabel:'मराठी',aiWelcome:'नमस्कार 🙏 मी तुमचा AI शेती सल्लागार!'},
+  te:{siteTagline:'APMC ధర పోర్టల్',trendHead:'ట్రెండింగ్ మార్కెట్ వార్తలు',mainHead:'నేటి APMC ధరలు',aiBtn:'AI అడగండి',fAll:'అన్నీ',fVeg:'కూరగాయలు',fFruit:'పండ్లు',fPulse:'పప్పులు',fCereal:'ధాన్యాలు',perQtl:'/క్వింటాల్',min:'కనిష్ట',max:'గరిష్ట',mspAbove:'MSP పైన',mspBelow:'MSP దిగువన',langLabel:'తెలుగు',aiWelcome:'నమస్కారం 🙏 నేను మీ AI వ్యవసాయ సలహాదారుడిని!'},
+  ta:{siteTagline:'APMC விலை போர்டல்',trendHead:'டிரெண்டிங் சந்தை செய்திகள்',mainHead:'இன்றைய APMC விலைகள்',aiBtn:'AI கேளுங்கள்',fAll:'அனைத்தும்',fVeg:'காய்கறிகள்',fFruit:'பழங்கள்',fPulse:'பருப்பு வகைகள்',fCereal:'தானியங்கள்',perQtl:'/குவிண்டால்',min:'குறைந்தபட்சம்',max:'அதிகபட்சம்',mspAbove:'MSP மேலே',mspBelow:'MSP கீழே',langLabel:'தமிழ்',aiWelcome:'வணக்கம் 🙏 நான் உங்கள் AI வேளாண் ஆலோசகர்!'},
+};
+
+function getCropName(c){const m={en:c.name,hi:c.nameHi,kn:c.nameKn,mr:c.nameMr,te:c.nameTe,ta:c.nameTa};return m[currentLang]||c.name;}
+function fmt(n){return '₹'+n.toLocaleString('en-IN');}
+
+// ── RENDER TRENDING ──
+function renderTrending() {
+  const track = document.getElementById('trending-grid');
+  if (!track) return;
+  track.innerHTML = '';
+  trendingNews.forEach((n, idx) => {
+    const tagCls = {price:'tag-price',weather:'tag-weather',alert:'tag-alert',market:'tag-market'}[n.tag];
+    const pill = document.createElement('div');
+    pill.className = 'news-pill';
+    pill.onclick = () => openNewsDialog(idx);
+    pill.innerHTML = `
+      <div class="news-pill-tag ${tagCls}">${n.emoji} ${n.tagLabel[currentLang]||n.tagLabel.en}</div>
+      <div class="news-pill-headline">${n.headline[currentLang]||n.headline.en}</div>
+      <div class="news-pill-foot">
+        <span class="news-pill-time">&#x1F550; ${n.time}</span>
+        <span class="news-pill-more">Details ›</span>
+      </div>`;
+    track.appendChild(pill);
+  });
+}
+
+function openNewsDialog(idx) {
+  const n = trendingNews[idx];
+  const tagCls = {price:'tag-price',weather:'tag-weather',alert:'tag-alert',market:'tag-market'}[n.tag];
+  const impCls = {up:'impact-up',down:'impact-down',neutral:'impact-neutral'}[n.impactType];
+  document.getElementById('nd-tag').className = 'news-dialog-tag '+tagCls;
+  document.getElementById('nd-tag').innerHTML = n.emoji+' '+(n.tagLabel[currentLang]||n.tagLabel.en);
+  document.getElementById('nd-title').textContent = n.headline[currentLang]||n.headline.en;
+  document.getElementById('nd-impact').className = 'news-dialog-impact '+impCls;
+  document.getElementById('nd-impact').textContent = n.impact[currentLang]||n.impact.en;
+  document.getElementById('nd-time').textContent = '🕐 '+n.time;
+  document.getElementById('news-dialog-overlay').classList.add('open');
+}
+
+function closeNewsDialog(e) {
+  if (!e || e.target === document.getElementById('news-dialog-overlay') || !e.target)
+    document.getElementById('news-dialog-overlay').classList.remove('open');
+}
+
+document.getElementById('news-dialog-box').addEventListener('click', e => e.stopPropagation());
+
+// ── RENDER CARDS ──
+function renderCards() {
+  const grid = document.getElementById('crops-grid');
+  if (!grid) return;
+  const q = searchQuery.toLowerCase();
+  const filtered = crops.filter(c => {
+    const mc = currentFilter==='all'||c.cat===currentFilter;
+    const mm = currentMandi==='all'||c.place===currentMandi;
+    const ms = !q||getCropName(c).toLowerCase().includes(q)||c.place.toLowerCase().includes(q)||c.name.toLowerCase().includes(q);
+    return mc&&mm&&ms;
+  });
+  grid.innerHTML = '';
+  const L = labels[currentLang];
+  filtered.forEach((c, i) => {
+    const tc = c.change>0?'trend-up':c.change<0?'trend-down':'trend-flat';
+    const ti = c.change>0?'▲':c.change<0?'▼':'—';
+    const tt = c.change!==0?Math.abs(c.change)+'%':'—';
+    let msp = '';
+    if(c.msp){
+      const ab = c.modal>=c.msp;
+      msp = `<div class="msp-badge ${ab?'msp-above':'msp-below'}">${ab?'✓':'!'} ${ab?L.mspAbove:L.mspBelow} (${fmt(c.msp)})</div>`;
+    }
+    const card = document.createElement('div');
+    card.className = 'crop-card';
+    card.style.animationDelay = (i*0.045)+'s';
+    card.onclick = () => openModal(c);
+    card.innerHTML = `
+      <div class="crop-card-top">
+        <div class="crop-emoji-wrap">${c.emoji}</div>
+        <div class="trend-pill ${tc}">${ti} ${tt}</div>
+      </div>
+      <div class="crop-name">${getCropName(c)}</div>
+      <div class="crop-place">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${c.place} APMC
+      </div>
+      <div class="price-row">
+        <div class="price-modal">${fmt(c.modal)}</div>
+        <div class="price-unit">${L.perQtl}</div>
+      </div>
+      <div class="price-range">
+        <span>${L.min}: ${fmt(c.min)}</span>
+        <span>${L.max}: ${fmt(c.max)}</span>
+      </div>
+      ${msp}`;
+    grid.appendChild(card);
+  });
+  if(!filtered.length) grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--tm);font-size:14px">No crops found 🌾</div>`;
+}
+
+// ── RENDER SIDEBAR (safe — skips if HTML not present) ──
+function renderSidebar() {
+  // Sidebar is not in this layout — all getElementById calls are safely guarded
+  const _sb = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  const L = labels[currentLang];
+  _sb('sb-title', L.sbTitle);
+  _sb('sb-lbl-gainers', L.sbGainers);
+  _sb('sb-lbl-losers', L.sbLosers);
+  _sb('sb-lbl-msp', L.sbMsp);
+
+  const rising = crops.filter(c => c.change > 0).length;
+  const falling = crops.filter(c => c.change < 0).length;
+  _sb('sb-rising-count', rising);
+  _sb('sb-falling-sub', falling + ' falling');
+
+  const gDiv = document.getElementById('sb-gainers');
+  if (gDiv) {
+    const gainers = [...crops].filter(c=>c.change>0).sort((a,b)=>b.change-a.change).slice(0,3);
+    gDiv.innerHTML = gainers.map(c => `
+      <div class="sb-mover" onclick="openModal(crops.find(x=>x.id===${c.id}))">
+        <div class="sb-mover-emoji">${c.emoji}</div>
+        <div class="sb-mover-info">
+          <div class="sb-mover-name">${getCropName(c)}</div>
+          <div class="sb-mover-place">${c.place}</div>
+        </div>
+        <div class="sb-mover-price">
+          <div class="sb-mover-val">${fmt(c.modal)}</div>
+          <div class="sb-mover-chg chg-up">▲ ${c.change}%</div>
+        </div>
+      </div>`).join('');
+  }
+
+  const lDiv = document.getElementById('sb-losers');
+  if (lDiv) {
+    const losers = [...crops].filter(c=>c.change<0).sort((a,b)=>a.change-b.change).slice(0,3);
+    lDiv.innerHTML = losers.map(c => `
+      <div class="sb-mover" onclick="openModal(crops.find(x=>x.id===${c.id}))">
+        <div class="sb-mover-emoji">${c.emoji}</div>
+        <div class="sb-mover-info">
+          <div class="sb-mover-name">${getCropName(c)}</div>
+          <div class="sb-mover-place">${c.place}</div>
+        </div>
+        <div class="sb-mover-price">
+          <div class="sb-mover-val">${fmt(c.modal)}</div>
+          <div class="sb-mover-chg chg-dn">▼ ${Math.abs(c.change)}%</div>
+        </div>
+      </div>`).join('');
+  }
+
+  const mDiv = document.getElementById('sb-msp-list');
+  if (mDiv) {
+    const mspCrops = crops.filter(c => c.msp !== null);
+    mDiv.innerHTML = mspCrops.map(c => {
+      const pct = Math.round(((c.modal - c.msp)/c.msp)*100);
+      const above = c.modal >= c.msp;
+      const sign = pct >= 0 ? '+' : '';
+      return `
+      <div class="sb-msp-item">
+        <div class="sb-msp-emoji">${c.emoji}</div>
+        <div class="sb-msp-info">
+          <div class="sb-msp-name">${getCropName(c)}</div>
+          <div class="sb-msp-line">MSP ${fmt(c.msp)} · Modal ${fmt(c.modal)}</div>
+        </div>
+        <div class="sb-msp-badge ${above?'msp-ok':'msp-warn'}">${sign}${pct}%</div>
+      </div>`;
+    }).join('');
+  }
+
+  const catEl = document.getElementById('sb-cat-list');
+  if (catEl) {
+    const catInfo = [
+      {key:'veg',icon:'🥦',label:{en:'Veggies',hi:'सब्जियां',kn:'ತರಕಾರಿ',mr:'भाज्या',te:'కూరగాయలు',ta:'காய்கறி'}},
+      {key:'fruit',icon:'🍊',label:{en:'Fruits',hi:'फल',kn:'ಹಣ್ಣು',mr:'फळे',te:'పండ్లు',ta:'பழங்கள்'}},
+      {key:'pulse',icon:'🫘',label:{en:'Pulses',hi:'दालें',kn:'ದ್ವಿದಳ',mr:'डाळी',te:'పప్పులు',ta:'பருப்பு'}},
+      {key:'cereal',icon:'🌾',label:{en:'Cereals',hi:'अनाज',kn:'ಧಾನ್ಯ',mr:'धान्य',te:'ధాన్యాలు',ta:'தானியம்'}},
+    ];
+    catEl.innerHTML = catInfo.map(ci => {
+      const cnt = crops.filter(c=>c.cat===ci.key).length;
+      const pct = Math.round((cnt/crops.length)*100);
+      return `
+      <div class="sb-cat-item">
+        <div class="sb-cat-icon">${ci.icon}</div>
+        <div class="sb-cat-label">${ci.label[currentLang]||ci.label.en}</div>
+        <div class="sb-cat-bar-wrap"><div class="sb-cat-bar" style="width:${pct}%"></div></div>
+        <div class="sb-cat-count">${cnt}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── RENDER TICKER (safe — skips if element not present) ──
+function renderTicker() {
+  const tickerEl = document.getElementById('ticker');
+  if (!tickerEl) return;
+  let html = '';
+  crops.slice(0,8).forEach(c => {
+    const up = c.change>0?`<span class="ticker-up">▲${c.change}%</span>`:c.change<0?`<span class="ticker-dn">▼${Math.abs(c.change)}%</span>`:'';
+    html += `<span class="ticker-item">${c.emoji} ${getCropName(c)} <span class="ticker-price">${fmt(c.modal)}</span> ${up}</span>`;
+  });
+  tickerEl.innerHTML = html + html;
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  const L = labels[currentLang];
+  const _set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  _set('site-tagline', L.siteTagline);
+  _set('trend-heading', L.trendHead);
+  _set('main-heading', L.mainHead);
+  _set('ai-btn-label', L.aiBtn);
+  _set('f-all', L.fAll);
+  _set('f-veg', L.fVeg);
+  _set('f-fruit', L.fFruit);
+  _set('f-pulse', L.fPulse);
+  _set('f-cereal', L.fCereal);
+  _set('lang-label', L.langLabel);
+  _set('ai-welcome', L.aiWelcome);
+  const ph = {en:'Search crop or mandi...',hi:'फसल या मंडी खोजें...',kn:'ಬೆಳೆ ಅಥವಾ ಮಂಡಿ ಹುಡುಕಿ...',mr:'पीक किंवा मंडई शोधा...',te:'పంట లేదా మండి వెతకండి...',ta:'பயிர் அல்லது மண்டி தேடுங்கள்...'};
+  const ms = document.getElementById('main-search');
+  if (ms) ms.placeholder = ph[currentLang] || ph.en;
+  renderTrending();
+  renderCards();
+  renderSidebar();
+  renderTicker();
+}
+
+// ── FILTER / LANG ──
+function setFilter(btn, cat) {
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  renderCards();
+}
+function filterMandi(v) { currentMandi = v; renderCards(); }
+function filterCards(q) { searchQuery = q; renderCards(); }
+
+function toggleLang() {
+  document.getElementById('lang-btn').classList.toggle('open');
+  document.getElementById('lang-dropdown').classList.toggle('open');
+}
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-option').forEach((o,i) => o.classList.toggle('active', ['en','hi','kn','mr','te','ta'][i]===lang));
+  document.getElementById('lang-btn').classList.remove('open');
+  document.getElementById('lang-dropdown').classList.remove('open');
+  renderAll();
+}
+document.addEventListener('click', e => {
+  const w = document.querySelector('.lang-wrapper');
+  if (w && !w.contains(e.target)) {
+    document.getElementById('lang-btn').classList.remove('open');
+    document.getElementById('lang-dropdown').classList.remove('open');
+  }
+});
+
+// ── AI ──
+function openAI() { document.getElementById('ai-panel').classList.add('open'); document.getElementById('ai-overlay').classList.add('open'); }
+function closeAI() { document.getElementById('ai-panel').classList.remove('open'); document.getElementById('ai-overlay').classList.remove('open'); }
+function askChip(t) { document.getElementById('ai-input').value = t; sendAI(); }
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  if (!geminiKey) {
+    alert('No Gemini API key configured.');
+    return;
+  }
+  const msgs = document.getElementById('ai-messages');
+  const ud = document.createElement('div');
+  ud.className = 'msg-bubble msg-user';
+  ud.textContent = msg;
+  msgs.appendChild(ud);
+  input.value = '';
+  const td = document.createElement('div');
+  td.className = 'msg-bubble msg-ai';
+  td.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(td);
+  msgs.scrollTop = msgs.scrollHeight;
+  const ctx = crops.map(c => `${c.name}: modal ${fmt(c.modal)}/qtl at ${c.place}, change ${c.change}%`).join('; ');
+  const sys = `You are a helpful AI advisor for Indian farmers on AgriBridge APMC portal. Today's prices: ${ctx}. Keep answers short (2-3 sentences), practical. Give specific price numbers. Reply in the same language the farmer uses.`;
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-goog-api-key': geminiKey
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: sys + "\n\nFarmer's question: " + msg }] }]
+      })
+    });
+    const data = await res.json();
+    td.textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, could not get a response.';
+  } catch(e) {
+    td.textContent = 'Connection error. Check your Gemini API key and internet connection.';
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── MODAL ──
+function openModal(c) {
+  document.getElementById('m-emoji').textContent = c.emoji;
+  document.getElementById('m-name').textContent = getCropName(c);
+  document.getElementById('m-place').textContent = c.place + ' APMC';
+  document.getElementById('m-min').textContent = fmt(c.min);
+  document.getElementById('m-modal').textContent = fmt(c.modal);
+  document.getElementById('m-max').textContent = fmt(c.max);
+  document.getElementById('m-arrivals').textContent = c.arrivals;
+  const low = Math.min(...c.history);
+  const high = Math.max(...c.history);
+  const avg = Math.round(c.history.reduce((a,b) => a+b, 0) / c.history.length);
+  document.getElementById('chart-low').textContent = fmt(low);
+  document.getElementById('chart-avg').textContent = fmt(avg);
+  document.getElementById('chart-high').textContent = fmt(high);
+  const badge = document.getElementById('chart-change-badge');
+  const wc = Math.round(((c.history[6]-c.history[0])/c.history[0])*100);
+  if (wc > 0) { badge.textContent = `▲ ${wc}% this week`; badge.style.background = '#E6F4EC'; badge.style.color = '#1B5E35'; }
+  else if (wc < 0) { badge.textContent = `▼ ${Math.abs(wc)}% this week`; badge.style.background = '#FDECEA'; badge.style.color = '#D94F3D'; }
+  else { badge.textContent = '— Flat this week'; badge.style.background = '#F0F0F0'; badge.style.color = '#777'; }
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  const ctx = document.getElementById('price-chart').getContext('2d');
+  const lbls = days[currentLang] || days.en;
+  const isUp = c.change >= 0;
+  const lineCol = isUp ? '#2D7A4F' : '#D94F3D';
+  const grad = ctx.createLinearGradient(0,0,0,160);
+  grad.addColorStop(0, isUp ? 'rgba(45,122,79,0.18)' : 'rgba(217,79,61,0.12)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: lbls,
+      datasets: [{
+        label: 'Modal Price',
+        data: c.history,
+        borderColor: lineCol,
+        backgroundColor: grad,
+        borderWidth: 2.5,
+        pointBackgroundColor: c.history.map((_,i) => i===6 ? lineCol : '#fff'),
+        pointBorderColor: lineCol,
+        pointBorderWidth: 2,
+        pointRadius: c.history.map((_,i) => i===6 ? 7 : 4),
+        pointHoverRadius: 8,
+        fill: true,
+        tension: 0.38
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1B4D2E',
+          titleColor: 'rgba(255,255,255,0.65)',
+          bodyColor: '#fff',
+          bodyFont: { size:13, weight:'bold', family:"'Baloo 2',cursive" },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: c => '  ' + fmt(c.parsed.y) + '/qtl',
+            title: a => a[0].label
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { font:{size:11}, color:'#93AE99', padding:4 }
+        },
+        y: {
+          position: 'right',
+          grid: { color:'rgba(0,0,0,0.04)', drawBorder:false },
+          border: { display: false },
+          ticks: { font:{size:10}, color:'#93AE99', padding:6, maxTicksLimit:5, callback: v => '₹'+v.toLocaleString('en-IN') },
+          min: Math.floor(low * 0.96),
+          max: Math.ceil(high * 1.04)
+        }
+      }
+    }
+  });
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || !e.target) {
+    document.getElementById('modal-overlay').classList.remove('open');
+    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  }
+}
+
+document.getElementById('modal-box').addEventListener('click', e => e.stopPropagation());
+
+// ── INIT ──
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriBridge — Government Schemes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gd:#1B4D2E;--gm:#2D7A4F;--gl:#4CAF78;--gp:#E8F5EE;--ga:#5DBF82;
+  --am:#F5A623;--ap:#FEF3DC;--ad:#8C5E10;
+  --rd:#D94F3D;--rp:#FDECEA;
+  --bd:#1A3A6E;--bp:#E8EEFA;--bm:#2B5BC4;
+  --bg:#F4F7F2;--sf:#FFFFFF;--br:rgba(0,0,0,0.08);
+  --t1:#1A2B1F;--t2:#5A7060;--tm:#93AE99;
+  --shd:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shl:0 12px 32px rgba(0,0,0,0.12),0 4px 8px rgba(0,0,0,0.06);
+  --r:12px;--rs:8px;
+  --fd:'Baloo 2',cursive;--fb:'Noto Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{background:var(--gd);height:60px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:100;gap:14px}
+.back-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:10px;width:36px;height:36px;color:rgba(255,255,255,0.85);cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;flex-shrink:0;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35);color:#fff}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none}
+.logo-mark{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1}
+.logo-words{line-height:1.1}
+.logo-main{font-family:var(--fd);font-size:18px;font-weight:800;color:#fff;display:block;letter-spacing:0.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.2px;display:block}
+.topbar-spacer{flex:1}
+.topbar-search{display:flex;align-items:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:0 14px;gap:8px;height:36px;width:240px;transition:background 0.2s}
+.topbar-search:focus-within{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35)}
+.topbar-search input{background:none;border:none;outline:none;color:#fff;font-size:13px;font-family:var(--fb);width:100%}
+.topbar-search input::placeholder{color:rgba(255,255,255,0.45)}
+
+/* NAV TABS */
+.nav-tabs{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px}
+.nav-tab{padding:5px 14px;border-radius:16px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.65);cursor:pointer;font-family:var(--fd);border:none;background:none;transition:all 0.2s;white-space:nowrap;text-decoration:none;display:flex;align-items:center;gap:5px}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,0.12)}
+.nav-tab.active{background:var(--am);color:#fff;box-shadow:0 2px 8px rgba(245,166,35,0.4)}
+
+/* LANG DROPDOWN */
+.lang-wrapper{position:relative;flex-shrink:0}
+.lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 12px;color:#fff;font-size:12px;font-family:var(--fb);cursor:pointer;transition:background 0.2s}
+.lang-btn:hover{background:rgba(255,255,255,0.2)}
+.lang-btn .chevron{transition:transform 0.2s;font-size:10px;display:inline-block}
+.lang-btn.open .chevron{transform:rotate(180deg)}
+.lang-dropdown{position:absolute;right:0;top:calc(100% + 8px);background:var(--sf);border:1px solid var(--br);border-radius:var(--rs);box-shadow:var(--shl);min-width:155px;overflow:hidden;display:none;z-index:200}
+.lang-dropdown.open{display:block}
+.lang-option{padding:9px 14px;font-size:13px;color:var(--t1);cursor:pointer;display:flex;align-items:center;gap:10px;border:none;background:none;width:100%;text-align:left;font-family:var(--fb);transition:background 0.15s}
+.lang-option:hover{background:var(--gp)}
+.lang-option.active{background:var(--gp);color:var(--gm);font-weight:600}
+
+/* AI BUTTON */
+.ai-float-btn{display:flex;align-items:center;gap:7px;background:var(--am);border:none;border-radius:20px;padding:7px 14px 7px 10px;color:#fff;font-size:13px;font-weight:700;font-family:var(--fd);cursor:pointer;box-shadow:0 2px 8px rgba(245,166,35,0.45);transition:box-shadow 0.2s,transform 0.15s;flex-shrink:0}
+.ai-float-btn:hover{box-shadow:0 4px 16px rgba(245,166,35,0.6);transform:translateY(-1px)}
+.ai-float-btn .ai-icon{width:22px;height:22px;background:rgba(255,255,255,0.25);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* HERO BANNER */
+.hero-banner{background:linear-gradient(135deg,var(--gd) 0%,#0F3320 60%,#0A2518 100%);padding:28px 24px 24px;position:relative;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(76,175,120,0.15) 0%,transparent 70%);pointer-events:none}
+.hero-banner::after{content:'🌾';position:absolute;right:24px;bottom:-10px;font-size:80px;opacity:0.08;pointer-events:none}
+.hero-inner{max-width:100%;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.35);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--am);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.hero-title{font-family:var(--fd);font-size:26px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.6);max-width:520px;line-height:1.6;margin-bottom:16px}
+.hero-stats{display:flex;gap:20px;flex-wrap:wrap}
+.hero-stat{display:flex;flex-direction:column}
+.hero-stat-val{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--am);line-height:1}
+.hero-stat-lbl{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+
+/* MAIN LAYOUT */
+.layout{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 60px)}
+.main{padding:22px;overflow-y:auto}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf);font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:all 0.15s;font-family:var(--fb);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.filter-chip:hover{border-color:var(--gm);color:var(--gm)}
+.filter-chip.active{background:var(--gd);border-color:var(--gd);color:#fff}
+.chip-icon{font-size:14px;line-height:1}
+.state-select{margin-left:auto;padding:6px 28px 6px 12px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2393AE99'/%3E%3C/svg%3E") no-repeat right 10px center;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--fb);appearance:none;outline:none;transition:border-color 0.15s}
+.state-select:focus{border-color:var(--gm)}
+
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--gd);display:flex;align-items:center;gap:8px}
+.scheme-count-badge{font-size:11px;background:var(--gp);color:var(--gm);font-weight:700;padding:3px 10px;border-radius:10px}
+
+/* SCHEME CARDS GRID */
+.schemes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* SCHEME CARD */
+.scheme-card{background:var(--sf);border-radius:var(--r);border:1.5px solid var(--br);cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;animation:cardIn 0.35s ease both;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.scheme-card:hover{border-color:var(--gm);box-shadow:var(--shd);transform:translateY(-2px)}
+.scheme-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;transform:scaleX(0);transform-origin:left;transition:transform 0.25s}
+.scheme-card.central::before{background:linear-gradient(90deg,var(--am),#FFD580)}
+.scheme-card.state::before{background:linear-gradient(90deg,var(--bm),#5E9EFF)}
+.scheme-card:hover::before{transform:scaleX(1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.scheme-card-header{padding:16px 16px 12px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--br)}
+.scheme-icon-wrap{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;line-height:1;flex-shrink:0}
+.central .scheme-icon-wrap{background:var(--ap)}
+.state .scheme-icon-wrap{background:var(--bp)}
+.scheme-header-info{flex:1;min-width:0}
+.scheme-level-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:2px 8px;border-radius:10px;margin-bottom:5px}
+.badge-central{background:var(--ap);color:var(--ad)}
+.badge-state{background:var(--bp);color:var(--bd)}
+.scheme-name{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t1);line-height:1.3}
+.scheme-short-name{font-size:11px;color:var(--tm);margin-top:2px;font-style:italic}
+
+.scheme-card-body{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
+.scheme-desc{font-size:12px;color:var(--t2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.scheme-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.scheme-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;background:var(--bg);color:var(--t2);border:1px solid var(--br)}
+.scheme-card-footer{padding:10px 16px 13px;display:flex;align-items:center;justify-content:space-between}
+.scheme-ministry{font-size:10px;color:var(--tm);display:flex;align-items:center;gap:4px;line-height:1.3;flex:1;padding-right:8px}
+.scheme-cta{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--gm);background:var(--gp);padding:5px 12px;border-radius:20px;white-space:nowrap;transition:background 0.15s}
+.scheme-card:hover .scheme-cta{background:var(--gl);color:#fff}
+
+/* ═══════════════════════════════
+   SCHEME DETAIL MODAL
+   ═══════════════════════════════ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:flex-start;justify-content:center;backdrop-filter:blur(3px);overflow-y:auto;padding:30px 0}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--sf);border-radius:20px;width:620px;max-width:95vw;box-shadow:var(--shl);overflow:hidden;animation:modalIn 0.22s ease;margin:auto}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.modal-header{padding:20px 22px 18px;display:flex;align-items:flex-start;gap:14px;position:relative}
+.mh-central{background:linear-gradient(135deg,#7B4F00,#C27C00)}
+.mh-state{background:linear-gradient(135deg,#0D2B6E,#1F4DB3)}
+.modal-header .m-icon{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.modal-header-info{flex:1}
+.modal-level-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;padding:3px 10px;border-radius:10px;background:rgba(255,255,255,0.2);color:#fff;margin-bottom:6px}
+.modal-title{font-family:var(--fd);font-size:20px;font-weight:800;color:#fff;line-height:1.25}
+.modal-short{font-size:12px;color:rgba(255,255,255,0.6);margin-top:3px}
+.modal-close{background:rgba(255,255,255,0.18);border:none;border-radius:9px;width:32px;height:32px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s;line-height:1}
+.modal-close:hover{background:rgba(255,255,255,0.3)}
+
+.modal-body{padding:0 22px 22px}
+
+/* Quick info strip */
+.modal-quick-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.qi-item{background:var(--bg);border-radius:var(--rs);padding:10px 12px;text-align:center}
+.qi-label{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px}
+.qi-value{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--gd);line-height:1.3}
+
+/* Tabs inside modal */
+.modal-tabs{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:16px}
+.modal-tab{flex:1;padding:7px 10px;border-radius:7px;font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--fd);border:none;background:none;transition:all 0.2s;text-align:center}
+.modal-tab.active{background:var(--sf);color:var(--gd);box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+
+.modal-tab-content{display:none}
+.modal-tab-content.active{display:block}
+
+/* Overview */
+.modal-desc{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:14px}
+
+/* Benefits */
+.benefits-list{display:flex;flex-direction:column;gap:8px}
+.benefit-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--gp);border-radius:var(--rs);border-left:3px solid var(--gl)}
+.benefit-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.benefit-text{font-size:12px;color:var(--t1);line-height:1.5}
+.benefit-text strong{color:var(--gd);display:block;margin-bottom:2px;font-size:12px}
+
+/* Eligibility */
+.eligibility-list{display:flex;flex-direction:column;gap:6px}
+.elig-item{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--t2);line-height:1.5}
+.elig-dot{width:18px;height:18px;border-radius:50%;background:var(--gp);border:2px solid var(--gl);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.elig-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--gm)}
+
+/* Documents */
+.docs-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.doc-item{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--bg);border-radius:var(--rs);border:1.5px solid var(--br)}
+.doc-icon{width:30px;height:30px;border-radius:8px;background:var(--ap);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.doc-name{font-size:12px;font-weight:600;color:var(--t1);line-height:1.3}
+.doc-note{font-size:10px;color:var(--tm);margin-top:1px}
+
+/* How to Apply */
+.apply-steps{display:flex;flex-direction:column;gap:0}
+.apply-step{display:flex;gap:12px;position:relative;padding-bottom:16px}
+.apply-step:last-child{padding-bottom:0}
+.apply-step:last-child .step-line{display:none}
+.step-num-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--gd);color:#fff;font-family:var(--fd);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-line{width:2px;flex:1;background:var(--br);margin-top:4px;min-height:16px}
+.step-content{flex:1;padding-top:4px}
+.step-title{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.step-desc{font-size:11px;color:var(--t2);line-height:1.5}
+
+/* Helpline footer */
+.modal-helpline{margin-top:16px;padding:12px 14px;background:var(--gd);border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.helpline-left{display:flex;align-items:center;gap:10px}
+.helpline-icon{font-size:20px}
+.helpline-lbl{font-size:11px;color:rgba(255,255,255,0.6)}
+.helpline-num{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--am)}
+.helpline-link{font-size:11px;color:rgba(255,255,255,0.5)}
+.helpline-url{color:var(--ga);font-weight:600}
+
+/* ═══════════════════════════════
+   AI PANEL
+   ═══════════════════════════════ */
+.ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:300;backdrop-filter:blur(2px)}
+.ai-overlay.open{display:block}
+.ai-panel{position:fixed;right:-430px;top:0;bottom:0;width:420px;background:var(--sf);box-shadow:var(--shl);z-index:400;display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(0.34,1.1,0.64,1)}
+.ai-panel.open{right:0}
+.ai-panel-header{background:var(--gd);padding:15px 18px;display:flex;align-items:center;gap:12px}
+.ai-panel-icon{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ai-panel-header h3{font-family:var(--fd);font-size:15px;font-weight:700;color:#fff}
+.ai-panel-header p{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px}
+.ai-close{margin-left:auto;background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:30px;height:30px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;line-height:1}
+.ai-close:hover{background:rgba(255,255,255,0.25)}
+.ai-key-section{padding:10px 14px;border-bottom:1px solid var(--br);background:#FAFBF9}
+.ai-key-label{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.ai-key-hint{font-size:10px;color:var(--tm);margin-bottom:6px;line-height:1.4}
+.ai-key-row{display:flex;gap:6px}
+.ai-key-input{flex:1;padding:7px 10px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:12px;font-family:var(--fb);background:var(--sf);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-key-input:focus{border-color:var(--gm)}
+.ai-key-save{padding:7px 12px;background:var(--gd);border:none;border-radius:var(--rs);color:#fff;font-size:12px;font-weight:600;font-family:var(--fb);cursor:pointer;white-space:nowrap;transition:background 0.15s}
+.ai-key-save:hover{background:var(--gm)}
+.ai-key-status{font-size:10px;margin-top:4px;height:14px}
+.key-ok{color:var(--gm)}.key-no{color:var(--rd)}
+.ai-chips{padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--br)}
+.ai-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--br);background:var(--bg);font-size:11px;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all 0.15s}
+.ai-chip:hover{border-color:var(--am);color:var(--ad);background:var(--ap)}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ai-messages::-webkit-scrollbar{width:3px}
+.ai-messages::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+.msg-bubble{max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.55}
+.msg-ai{background:var(--gp);color:var(--t1);align-self:flex-start;border-radius:4px 14px 14px 14px;border:1px solid rgba(45,122,79,0.15)}
+.msg-user{background:var(--gd);color:#fff;align-self:flex-end;border-radius:14px 4px 14px 14px}
+.ai-input-row{padding:12px 14px;border-top:1.5px solid var(--br);display:flex;gap:8px;align-items:center}
+.ai-input-row input{flex:1;padding:9px 13px;border-radius:24px;border:1.5px solid var(--br);font-size:13px;font-family:var(--fb);background:var(--bg);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-input-row input:focus{border-color:var(--gm)}
+.ai-send{width:36px;height:36px;background:var(--gd);border:none;border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.15s;flex-shrink:0}
+.ai-send:hover{background:var(--gm);transform:scale(1.06)}
+.gemini-tag{padding:7px 14px;font-size:10px;color:var(--tm);display:flex;align-items:center;gap:4px;border-top:1px solid var(--br);background:var(--bg)}
+.typing-dots{display:flex;gap:4px;padding:3px 0}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--gm);animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,60%,100%{opacity:1}30%{opacity:0.2}}
+
+/* EMPTY STATE */
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--tm)}
+.empty-state-icon{font-size:48px;margin-bottom:12px;display:block;opacity:0.5}
+.empty-state-msg{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--t2)}
+.empty-state-sub{font-size:13px;margin-top:4px}
+
+@media(max-width:900px){.schemes-grid{grid-template-columns:repeat(2,1fr)}.topbar-search{display:none}.docs-list{grid-template-columns:1fr}.modal-quick-info{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.schemes-grid{grid-template-columns:1fr}.topbar{padding:0 12px;gap:8px}.nav-tabs{display:none}.modal-quick-info{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="back-btn" href="#" onclick="history.back(); return false;" title="Go back" aria-label="Go back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
+  </a>
+  <a class="topbar-logo" href="#">
+    <div class="logo-mark">&#x1F309;</div>
+    <div class="logo-words">
+      <span class="logo-main">AgriBridge</span>
+      <span class="logo-sub" id="site-tagline">Government Schemes</span>
+    </div>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="main-search" placeholder="Search schemes..." oninput="filterSchemes(this.value)">
+  </div>
+  <div class="lang-wrapper">
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span id="lang-label">English</span>
+      <span class="chevron">&#9660;</span>
+    </button>
+    <div class="lang-dropdown" id="lang-dropdown">
+      <button class="lang-option active" onclick="setLang('en')">&#x1F1EE;&#x1F1F3; English</button>
+      <button class="lang-option" onclick="setLang('hi')">&#x1F1EE;&#x1F1F3; हिंदी</button>
+      <button class="lang-option" onclick="setLang('kn')">&#x1F1EE;&#x1F1F3; ಕನ್ನಡ</button>
+      <button class="lang-option" onclick="setLang('mr')">&#x1F1EE;&#x1F1F3; मराठी</button>
+      <button class="lang-option" onclick="setLang('te')">&#x1F1EE;&#x1F1F3; తెలుగు</button>
+      <button class="lang-option" onclick="setLang('ta')">&#x1F1EE;&#x1F1F3; தமிழ்</button>
+    </div>
+  </div>
+  <button class="ai-float-btn" onclick="openAI()">
+    <div class="ai-icon">&#10024;</div>
+    <span id="ai-btn-label">Ask AI</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<div class="hero-banner">
+  <div class="hero-inner">
+    <div class="hero-badge">🏛️ <span id="hero-badge-text">Official Government Schemes Portal</span></div>
+    <div class="hero-title" id="hero-title">Farmer Welfare Schemes</div>
+    <div class="hero-sub" id="hero-sub">All central &amp; state government schemes in one place. Know your benefits, required documents, and how to apply — in your language.</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-val" id="total-schemes-count">16</span><span class="hero-stat-lbl" id="hero-stat1">Total Schemes</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">9</span><span class="hero-stat-lbl" id="hero-stat2">Central Schemes</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">7</span><span class="hero-stat-lbl" id="hero-stat3">State Schemes</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">₹14,000Cr+</span><span class="hero-stat-lbl" id="hero-stat4">Annual Benefit</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="sec-hd">
+    <div class="sec-title">📋 <span id="main-heading">All Schemes</span></div>
+    <div class="scheme-count-badge" id="scheme-count-badge">16 schemes</div>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="setFilter(this,'all')"><span class="chip-icon">🏛️</span> <span id="f-all">All Schemes</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'central')"><span class="chip-icon">🇮🇳</span> <span id="f-central">Central Govt</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'state')"><span class="chip-icon">📍</span> <span id="f-state">State Schemes</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'insurance')"><span class="chip-icon">🛡️</span> <span id="f-ins">Insurance</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'income')"><span class="chip-icon">💰</span> <span id="f-inc">Income Support</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'credit')"><span class="chip-icon">🏦</span> <span id="f-cred">Credit & Loans</span></button>
+    <select class="state-select" id="state-select" onchange="filterState(this.value)">
+      <option value="all">All States</option>
+      <option value="All India">All India</option>
+      <option value="Karnataka">Karnataka</option>
+      <option value="Maharashtra">Maharashtra</option>
+      <option value="Telangana">Telangana</option>
+      <option value="Tamil Nadu">Tamil Nadu</option>
+      <option value="Andhra Pradesh">Andhra Pradesh</option>
+      <option value="Punjab">Punjab</option>
+      <option value="Uttar Pradesh">Uttar Pradesh</option>
+    </select>
+  </div>
+  <div class="schemes-grid" id="schemes-grid"></div>
+</main>
+
+<!-- SCHEME DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header" id="modal-header">
+      <div class="m-icon" id="m-icon">🌾</div>
+      <div class="modal-header-info">
+        <div class="modal-level-badge" id="m-level-badge">Central Govt</div>
+        <div class="modal-title" id="m-title">Scheme Name</div>
+        <div class="modal-short" id="m-short">Short name</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-quick-info">
+        <div class="qi-item"><div class="qi-label">Valid For</div><div class="qi-value" id="qi-state">All India</div></div>
+        <div class="qi-item"><div class="qi-label">Benefit Amount</div><div class="qi-value" id="qi-benefit">—</div></div>
+        <div class="qi-item"><div class="qi-label">Launched</div><div class="qi-value" id="qi-launch">—</div></div>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab active" onclick="switchTab(0)">📋 <span id="tab0">Overview</span></button>
+        <button class="modal-tab" onclick="switchTab(1)">✅ <span id="tab1">Benefits</span></button>
+        <button class="modal-tab" onclick="switchTab(2)">📄 <span id="tab2">Documents</span></button>
+        <button class="modal-tab" onclick="switchTab(3)">🚪 <span id="tab3">How to Apply</span></button>
+      </div>
+
+      <!-- TAB 0: Overview + Eligibility -->
+      <div class="modal-tab-content active" id="tc-0">
+        <div class="modal-desc" id="m-desc"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--gd);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Who is Eligible?</div>
+        <div class="eligibility-list" id="m-eligibility"></div>
+      </div>
+
+      <!-- TAB 1: Benefits -->
+      <div class="modal-tab-content" id="tc-1">
+        <div class="benefits-list" id="m-benefits"></div>
+      </div>
+
+      <!-- TAB 2: Documents -->
+      <div class="modal-tab-content" id="tc-2">
+        <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5;" id="m-doc-note">Carry original + photocopy of all documents to the nearest CSC or bank branch.</div>
+        <div class="docs-list" id="m-docs"></div>
+      </div>
+
+      <!-- TAB 3: How to Apply -->
+      <div class="modal-tab-content" id="tc-3">
+        <div class="apply-steps" id="m-steps"></div>
+      </div>
+
+      <div class="modal-helpline">
+        <div class="helpline-left">
+          <div class="helpline-icon">📞</div>
+          <div>
+            <div class="helpline-lbl" id="helpline-lbl">Helpline & Support</div>
+            <div class="helpline-num" id="m-helpline">1800-180-1111</div>
+          </div>
+        </div>
+        <div>
+          <div class="helpline-link" id="website-lbl">Official Website</div>
+          <div class="helpline-url" id="m-website">pmkisan.gov.in</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI PANEL -->
+<div class="ai-overlay" id="ai-overlay" onclick="closeAI()"></div>
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-icon">✨</div>
+    <div>
+      <h3 id="ai-panel-title">AI Scheme Advisor</h3>
+      <p>Powered by Gemini · Know your rights &amp; benefits</p>
+    </div>
+    <button class="ai-close" onclick="closeAI()">✕</button>
+  </div>
+  <div class="ai-chips">
+    <button class="ai-chip" onclick="askChip('Which government scheme gives me direct cash? How much?')">💰 Cash benefit schemes</button>
+    <button class="ai-chip" onclick="askChip('Am I eligible for PM-KISAN if I own 2 acres of land?')">🌾 PM-KISAN eligibility</button>
+    <button class="ai-chip" onclick="askChip('How do I claim Pradhan Mantri Fasal Bima Yojana insurance for my crop loss?')">🛡️ Crop insurance claim</button>
+    <button class="ai-chip" onclick="askChip('What is Kisan Credit Card and how to apply?')">🏦 Kisan Credit Card</button>
+    <button class="ai-chip" onclick="askChip('Which state schemes are available for farmers in Karnataka?')">📍 Karnataka schemes</button>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="msg-bubble msg-ai" id="ai-welcome">Namaste 🙏 I'm your AI Scheme Advisor! Ask me which government schemes you qualify for, what documents you need, or how to apply — in English, Hindi, or Kannada!</div>
+  </div>
+  <div class="ai-input-row">
+    <input type="text" id="ai-input" placeholder="Ask about any scheme..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+    </button>
+  </div>
+  <div class="gemini-tag">
+    <svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2z" fill="#4285F4"/></svg>
+    Gemini API · For official details, always verify at scheme's official website
+  </div>
+</div>
+
+<script>
+const HARDCODED_KEY = 'AIzaSyDzxt4CPtWZ97rr9eGo1wdXsFhM8y4cuW8';
+let geminiKey = HARDCODED_KEY || localStorage.getItem('agribridge_gemini_key') || '';
+let currentLang = 'en';
+let currentFilter = 'all';
+let currentState = 'all';
+let searchQuery = '';
+
+// ── KEY MANAGEMENT ──
+function saveKey() {
+  const val = document.getElementById('gemini-key-input').value.trim();
+  if (!val) { showKeyStatus('Please enter a key', false); return; }
+  geminiKey = val;
+  localStorage.setItem('agribridge_gemini_key', val);
+  showKeyStatus('✓ Key saved!', true);
+}
+function showKeyStatus(msg, ok) {
+  const el = document.getElementById('key-status');
+  el.textContent = msg;
+  el.className = 'ai-key-status ' + (ok ? 'key-ok' : 'key-no');
+  if (ok) setTimeout(() => { el.textContent = ''; el.className = 'ai-key-status'; }, 3000);
+}
+window.addEventListener('DOMContentLoaded', () => {
+  if (geminiKey) { document.getElementById('gemini-key-input').value = geminiKey; showKeyStatus('✓ Key loaded', true); }
+});
+
+// ═══════════════════════════════════════════
+// SCHEMES DATA
+// ═══════════════════════════════════════════
+const schemes = [
+  // ── CENTRAL SCHEMES ──
+  {
+    id: 1, level: 'central', state: 'All India', emoji: '🌾',
+    name: { en: 'PM Kisan Samman Nidhi', hi: 'पीएम किसान सम्मान निधि', kn: 'ಪಿಎಂ ಕಿಸಾನ್ ಸಮ್ಮಾನ ನಿಧಿ', mr: 'पीएम किसान सन्मान निधी', te: 'పీఎం కిసాన్ సమ్మాన్ నిధి', ta: 'பிஎம் கிசான் சம்மான் நிதி' },
+    shortName: 'PM-KISAN',
+    category: ['income'],
+    ministry: { en: 'Ministry of Agriculture & Farmers Welfare', hi: 'कृषि मंत्रालय', kn: 'ಕೃಷಿ ಮಂತ್ರಾಲಯ', mr: 'कृषी मंत्रालय', te: 'వ్యవసాయ మంత్రిత్వం', ta: 'வேளாண்மை அமைச்சகம்' },
+    benefit: '₹6,000/year', launched: '2019',
+    desc: { en: 'PM-KISAN provides direct income support of ₹6,000 per year to all eligible landholding farmer families across India. The amount is transferred in 3 equal instalments of ₹2,000 directly to the farmer\'s Aadhaar-linked bank account.', hi: 'पीएम किसान योजना पात्र किसानों को सालाना ₹6,000 सीधे बैंक खाते में देती है।', kn: 'ಪಿಎಂ ಕಿಸಾನ್ ಯೋಜನೆ ₹6,000 ವಾರ್ಷಿಕ ಆದಾಯ ಬೆಂಬಲ ನೀಡುತ್ತದೆ.', mr: 'पीएम किसान योजना शेतकऱ्यांना वार्षिक ₹6,000 देते.', te: 'పీఎం కిసాన్ రైతులకు సంవత్సరానికి ₹6,000 ఇస్తుంది.', ta: 'பிஎம் கிசான் திட்டம் ஆண்டுக்கு ₹6,000 வழங்குகிறது.' },
+    eligibility: [
+      { en: 'All landholding farmer families with cultivable land', hi: 'कृषि योग्य भूमि वाले सभी किसान परिवार' },
+      { en: 'Valid Aadhaar card linked to bank account', hi: 'आधार से जुड़ा बैंक खाता' },
+      { en: 'Not applicable if income tax payer or government employee', hi: 'आयकर दाता या सरकारी कर्मचारी को नहीं' },
+      { en: 'Institutional land holders not eligible', hi: 'संस्थागत भूमि धारक पात्र नहीं' },
+    ],
+    benefits: [
+      { icon: '💵', title: { en: '₹6,000 Annual Income Support', hi: '₹6,000 वार्षिक सहायता' }, desc: { en: '₹2,000 paid every 4 months directly to bank account in 3 instalments per year', hi: '₹2,000 हर 4 महीने में सीधे बैंक खाते में' } },
+      { icon: '🏦', title: { en: 'Direct Bank Transfer', hi: 'सीधे बैंक ट्रांसफर' }, desc: { en: 'No middlemen. Money credited via DBT directly to Aadhaar-seeded bank account', hi: 'कोई बिचौलिया नहीं। DBT के माध्यम से सीधे खाते में' } },
+      { icon: '📱', title: { en: 'Easy Status Check', hi: 'आसान स्थिति जांच' }, desc: { en: 'Track your payment status online at pmkisan.gov.in or via PM Kisan app', hi: 'pmkisan.gov.in पर ऑनलाइन स्थिति जांचें' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card', hi: 'आधार कार्ड' }, note: { en: 'Original + photocopy', hi: 'मूल + फोटोकॉपी' } },
+      { icon: '🏦', name: { en: 'Bank Passbook / Account', hi: 'बैंक पासबुक' }, note: { en: 'Aadhaar-linked account', hi: 'आधार से जुड़ा खाता' } },
+      { icon: '📄', name: { en: 'Land Records (RoR/7-12)', hi: 'भूमि रिकॉर्ड' }, note: { en: 'Khatiyaan or Pahani', hi: 'खतियान या पहानी' } },
+      { icon: '📞', name: { en: 'Mobile Number', hi: 'मोबाइल नंबर' }, note: { en: 'Active number for OTP', hi: 'OTP के लिए सक्रिय नंबर' } },
+    ],
+    steps: [
+      { title: { en: 'Visit nearest CSC or Bank', hi: 'नजदीकी CSC या बैंक जाएं' }, desc: { en: 'Go to your nearest Common Service Centre (Jan Seva Kendra) or bank branch', hi: 'नजदीकी जन सेवा केंद्र या बैंक शाखा जाएं' } },
+      { title: { en: 'Fill PM-KISAN Registration Form', hi: 'पीएम किसान फॉर्म भरें' }, desc: { en: 'Submit your Aadhaar, land records and bank details for registration', hi: 'आधार, भूमि रिकॉर्ड और बैंक विवरण जमा करें' } },
+      { title: { en: 'Verification by Patwari/Village Officer', hi: 'पटवारी द्वारा जांच' }, desc: { en: 'Local revenue officials verify your land ownership and eligibility', hi: 'स्थानीय राजस्व अधिकारी आपकी पात्रता जांचते हैं' } },
+      { title: { en: 'Receive money in your bank account', hi: 'बैंक खाते में पैसे मिलेंगे' }, desc: { en: 'Once approved, ₹2,000 will be credited every 4 months', hi: 'अनुमोदन के बाद हर 4 महीने में ₹2,000 मिलेंगे' } },
+    ],
+    helpline: '155261 / 011-23381092', website: 'pmkisan.gov.in',
+  },
+  {
+    id: 2, level: 'central', state: 'All India', emoji: '🛡️',
+    name: { en: 'Pradhan Mantri Fasal Bima Yojana', hi: 'प्रधानमंत्री फसल बीमा योजना', kn: 'ಪ್ರಧಾನ ಮಂತ್ರಿ ಫಸಲ್ ಬಿಮಾ ಯೋಜನೆ', mr: 'पंतप्रधान पीक विमा योजना', te: 'ప్రధాన మంత్రి ఫసల్ బీమా యోజన', ta: 'பிரதம மந்திரி பயிர் காப்பீடு திட்டம்' },
+    shortName: 'PMFBY',
+    category: ['insurance'],
+    ministry: { en: 'Ministry of Agriculture & Farmers Welfare' },
+    benefit: 'Up to full crop loss', launched: '2016',
+    desc: { en: 'PMFBY provides comprehensive crop insurance coverage against natural calamities, pests & diseases at very low premium rates. Farmers pay only 2% for Kharif, 1.5% for Rabi crops, and 5% for commercial/horticultural crops. The rest is borne by state & central government.', hi: 'PMFBY बहुत कम प्रीमियम पर प्राकृतिक आपदाओं से फसल बीमा प्रदान करती है।' },
+    eligibility: [
+      { en: 'All farmers growing notified crops in notified areas' },
+      { en: 'Compulsory for loanee farmers under KCC/crop loans' },
+      { en: 'Voluntary for non-loanee farmers' },
+      { en: 'Both tenant farmers and sharecroppers are eligible' },
+    ],
+    benefits: [
+      { icon: '🌧️', title: { en: 'Natural Calamity Coverage' }, desc: { en: 'Covers drought, flood, hailstorm, cyclone, waterlogging, pest attacks, and disease' } },
+      { icon: '💸', title: { en: 'Low Premium Rates' }, desc: { en: 'Only 2% for Kharif, 1.5% for Rabi. Government subsidizes remaining premium amount' } },
+      { icon: '📱', title: { en: 'Quick Claim Settlement' }, desc: { en: 'Use Crop Insurance App to report crop loss within 72 hours. Faster settlement via technology' } },
+      { icon: '🌱', title: { en: 'Post-harvest Coverage' }, desc: { en: 'Covers losses up to 14 days after harvest if crop is left to dry in field' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory for enrollment' } },
+      { icon: '🏦', name: { en: 'Bank Account Details' }, note: { en: 'For claim settlement' } },
+      { icon: '📄', name: { en: 'Land Records / Lease Deed' }, note: { en: '7/12 extract or RoR' } },
+      { icon: '🌾', name: { en: 'Crop Sown Certificate' }, note: { en: 'From village patwari' } },
+      { icon: '📸', name: { en: 'Crop Loss Photos (for claim)' }, note: { en: 'Within 72 hrs of loss' } },
+      { icon: '📋', name: { en: 'Bank Loan Documents' }, note: { en: 'If loanee farmer (KCC)' } },
+    ],
+    steps: [
+      { title: { en: 'Enroll before cutoff date' }, desc: { en: 'Visit your bank, CSC, or insurance company before the last date for the season' } },
+      { title: { en: 'Pay premium amount' }, desc: { en: 'Pay your share of premium (2% Kharif / 1.5% Rabi) through your bank or online' } },
+      { title: { en: 'Report crop loss within 72 hours' }, desc: { en: 'Use Crop Insurance App, call 14447 helpline, or inform bank/insurance company' } },
+      { title: { en: 'Submit claim documents' }, desc: { en: 'Crop loss assessment done by government. Claim amount transferred to your bank' } },
+    ],
+    helpline: '14447 (Crop Insurance)', website: 'pmfby.gov.in',
+  },
+  {
+    id: 3, level: 'central', state: 'All India', emoji: '🏦',
+    name: { en: 'Kisan Credit Card Scheme', hi: 'किसान क्रेडिट कार्ड', kn: 'ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್', mr: 'किसान क्रेडिट कार्ड', te: 'కిసాన్ క్రెడిట్ కార్డ్', ta: 'கிசான் கடன் அட்டை' },
+    shortName: 'KCC',
+    category: ['credit'],
+    ministry: { en: 'Ministry of Finance / NABARD' },
+    benefit: '₹3 lakh @ 4% interest', launched: '1998',
+    desc: { en: 'Kisan Credit Card (KCC) provides short-term credit for crop cultivation, post-harvest expenses, farm maintenance, and allied activities. Farmers get a revolving credit limit at highly subsidized interest rate of just 4% per annum (after government interest subvention of 2% + prompt repayment bonus 3%).', hi: 'KCC किसानों को 4% ब्याज दर पर ₹3 लाख तक का ऋण देती है।' },
+    eligibility: [
+      { en: 'All farmers — individual, joint borrowers, tenant farmers, SHGs' },
+      { en: 'Minimum age 18 years, maximum 75 years (co-borrower required if >60)' },
+      { en: 'Must have own or leased agricultural land' },
+      { en: 'Allied activity farmers: fishermen, animal husbandry farmers also eligible' },
+    ],
+    benefits: [
+      { icon: '💳', title: { en: '₹3 Lakh Credit at 4% Interest' }, desc: { en: 'Up to ₹3 lakh at highly subsidized 4% p.a. rate after interest subvention. Above ₹3L at normal bank rates' } },
+      { icon: '🔄', title: { en: 'Revolving Credit Facility' }, desc: { en: 'Flexible repayment — repay after harvest, re-draw anytime. Works like a credit card' } },
+      { icon: '🛡️', title: { en: 'Personal Accident Insurance' }, desc: { en: 'Includes personal accident insurance cover of ₹50,000 for death/permanent disability' } },
+      { icon: '🌾', title: { en: 'Covers All Farm Expenses' }, desc: { en: 'Crop production, post-harvest, allied activities, farm maintenance — all covered under one card' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'KYC mandatory' } },
+      { icon: '📸', name: { en: 'Passport Size Photos' }, note: { en: '2 recent photos' } },
+      { icon: '📄', name: { en: 'Land Records (7/12 / RoR)' }, note: { en: 'Latest copy' } },
+      { icon: '🏠', name: { en: 'Address Proof' }, note: { en: 'Voter ID / Ration card' } },
+      { icon: '📋', name: { en: 'Crop Details / Cropping Pattern' }, note: { en: 'Self-declaration form' } },
+      { icon: '🏦', name: { en: 'Bank Account (if new)' }, note: { en: 'Account opening documents' } },
+    ],
+    steps: [
+      { title: { en: 'Visit nearest bank branch' }, desc: { en: 'Go to your nearest bank (SBI, cooperative bank, or regional rural bank)' } },
+      { title: { en: 'Submit KCC application form' }, desc: { en: 'Fill KCC application with land details, crop details, and required documents' } },
+      { title: { en: 'Bank assessment & approval' }, desc: { en: 'Bank officer verifies land records and determines credit limit based on landholding' } },
+      { title: { en: 'Receive KCC and use it' }, desc: { en: 'Card issued within 14 working days. Withdraw cash from bank/ATM for crop needs' } },
+    ],
+    helpline: '1800-180-1111 (NABARD)', website: 'nabard.org/kcc',
+  },
+  {
+    id: 4, level: 'central', state: 'All India', emoji: '🌊',
+    name: { en: 'Pradhan Mantri Krishi Sinchai Yojana', hi: 'प्रधानमंत्री कृषि सिंचाई योजना', kn: 'ಪ್ರಧಾನ ಮಂತ್ರಿ ಕೃಷಿ ಸಿಂಚಾಯಿ ಯೋಜನೆ', mr: 'पंतप्रधान कृषी सिंचन योजना', te: 'ప్రధాన మంత్రి కృషి సించాయి యోజన', ta: 'பிரதம மந்திரி வேளாண்மை நீர்ப்பாசன திட்டம்' },
+    shortName: 'PMKSY',
+    category: ['income'],
+    ministry: { en: 'Ministry of Jal Shakti / Agriculture' },
+    benefit: '45–55% subsidy on drip/sprinkler', launched: '2015',
+    desc: { en: 'PMKSY aims at "Har Khet Ko Pani" (water to every field) and "More Crop Per Drop". The scheme provides subsidy of 45% to small & marginal farmers and 35% to others for micro-irrigation (drip and sprinkler) systems, helping save water and increase productivity.', hi: 'PMKSY सिंचाई के लिए 45% तक सब्सिडी देती है।' },
+    eligibility: [
+      { en: 'All farmers with cultivable land (own or leased)' },
+      { en: 'Priority to small & marginal farmers (< 2 hectares)' },
+      { en: 'SC/ST farmers get additional 10% subsidy' },
+      { en: 'Water source must be available on field or nearby' },
+    ],
+    benefits: [
+      { icon: '💧', title: { en: '45% Subsidy on Drip Irrigation' }, desc: { en: 'Small & marginal farmers get 45% subsidy; other farmers get 35% on installation of drip/sprinkler systems' } },
+      { icon: '📈', title: { en: '40–50% Water Saving' }, desc: { en: 'Drip irrigation saves 40-50% water compared to flood irrigation, reducing irrigation cost significantly' } },
+      { icon: '🌾', title: { en: '30–40% Yield Increase' }, desc: { en: 'Micro-irrigation leads to 30-40% increase in crop yield through better water-use efficiency' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Identity proof' } },
+      { icon: '📄', name: { en: 'Land Records' }, note: { en: '7/12 or RoR' } },
+      { icon: '📸', name: { en: 'Passport Photo' }, note: { en: '2 copies' } },
+      { icon: '🏦', name: { en: 'Bank Passbook' }, note: { en: 'For subsidy transfer' } },
+    ],
+    steps: [
+      { title: { en: 'Apply at Agriculture Dept.' }, desc: { en: 'Visit your district agriculture office or apply online on state portal' } },
+      { title: { en: 'Field inspection' }, desc: { en: 'Agriculture officer visits your field to assess water source and suitability' } },
+      { title: { en: 'Purchase approved equipment' }, desc: { en: 'Buy drip/sprinkler from empanelled manufacturer. Get installation done' } },
+      { title: { en: 'Subsidy credited to account' }, desc: { en: 'After verification, subsidy is directly transferred to your bank account' } },
+    ],
+    helpline: '1800-180-1551', website: 'pmksy.gov.in',
+  },
+  {
+    id: 5, level: 'central', state: 'All India', emoji: '👴',
+    name: { en: 'PM Kisan Maan Dhan Yojana', hi: 'पीएम किसान मानधन योजना', kn: 'ಪಿಎಂ ಕಿಸಾನ್ ಮಾನ್ ಧನ್ ಯೋಜನೆ', mr: 'पीएम किसान मानधन योजना', te: 'పీఎం కిసాన్ మాన్ ధన్ యోజన', ta: 'பிஎம் கிசான் மான் தன் திட்டம்' },
+    shortName: 'PM-KMY',
+    category: ['income'],
+    ministry: { en: 'Ministry of Agriculture & Farmers Welfare' },
+    benefit: '₹3,000/month pension', launched: '2019',
+    desc: { en: 'PM Kisan Maan Dhan Yojana is a voluntary pension scheme for small and marginal farmers. Farmers aged 18-40 contribute a small monthly amount (₹55–₹200 based on age) and receive ₹3,000/month pension after reaching age 60. Government matches your contribution 1:1.', hi: 'यह योजना 60 वर्ष के बाद ₹3,000 प्रति माह पेंशन देती है।' },
+    eligibility: [
+      { en: 'Small & marginal farmers with up to 2 hectares land' },
+      { en: 'Age between 18 to 40 years at time of enrollment' },
+      { en: 'Must not be a member of NPS / ESIC / EPFO / other pension scheme' },
+      { en: 'Must not be an income tax payer' },
+    ],
+    benefits: [
+      { icon: '👴', title: { en: '₹3,000 Monthly Pension after 60' }, desc: { en: 'Guaranteed ₹3,000 per month (₹36,000/year) pension after reaching 60 years of age' } },
+      { icon: '🤝', title: { en: 'Government Matches Contribution' }, desc: { en: 'For every rupee you contribute, central government contributes equal amount to your pension account' } },
+      { icon: '💔', title: { en: 'Family Pension Benefit' }, desc: { en: 'On farmer\'s death, spouse receives 50% (₹1,500/month) as family pension' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '📄', name: { en: 'Land Records' }, note: { en: 'Proof of small/marginal farmer' } },
+      { icon: '🏦', name: { en: 'Bank Savings Account' }, note: { en: 'IFSC code required' } },
+      { icon: '📞', name: { en: 'Mobile Number' }, note: { en: 'For OTP verification' } },
+    ],
+    steps: [
+      { title: { en: 'Enroll at nearest CSC' }, desc: { en: 'Go to Common Service Centre (Jan Seva Kendra) with Aadhaar and savings account details' } },
+      { title: { en: 'Auto-debit mandate setup' }, desc: { en: 'Give consent for monthly contribution auto-debit from your PM-KISAN or savings account' } },
+      { title: { en: 'Receive pension card' }, desc: { en: 'You get a Kisan Pension Card with unique pension account number' } },
+      { title: { en: 'Get pension after age 60' }, desc: { en: '₹3,000 credited to your bank account every month after you turn 60' } },
+    ],
+    helpline: '1800-267-6888', website: 'maandhan.in',
+  },
+  {
+    id: 6, level: 'central', state: 'All India', emoji: '🌿',
+    name: { en: 'Paramparagat Krishi Vikas Yojana', hi: 'परम्परागत कृषि विकास योजना', kn: 'ಪರಂಪರಾಗತ ಕೃಷಿ ವಿಕಾಸ ಯೋಜನೆ', mr: 'परंपरागत कृषी विकास योजना', te: 'పరంపరాగత కృషి వికాస్ యోజన', ta: 'பாரம்பரிய வேளாண்மை மேம்பாட்டு திட்டம்' },
+    shortName: 'PKVY',
+    category: ['income'],
+    ministry: { en: 'Ministry of Agriculture & Farmers Welfare' },
+    benefit: '₹50,000/hectare over 3 years', launched: '2015',
+    desc: { en: 'PKVY promotes organic farming in India by providing ₹50,000 per hectare financial assistance to farmer groups/clusters over 3 years. Covers certification costs, capacity building, value addition and organic produce marketing to help farmers get premium prices.', hi: 'PKVY जैविक खेती के लिए ₹50,000 प्रति हेक्टेयर सहायता देती है।' },
+    eligibility: [
+      { en: 'Farmers willing to adopt organic farming for minimum 3 years' },
+      { en: 'Group of 50 farmers forming a cluster of 50 acres (20 hectares)' },
+      { en: 'Land should be free from chemical inputs for certification' },
+      { en: 'Priority to tribal, NE state, and hilly area farmers' },
+    ],
+    benefits: [
+      { icon: '🌿', title: { en: '₹50,000/hectare Grant' }, desc: { en: '₹50,000 per hectare spread over 3 years for organic inputs, certification, and marketing' } },
+      { icon: '📜', title: { en: 'Free Organic Certification' }, desc: { en: 'Participatory Guarantee System (PGS) organic certification provided free of cost' } },
+      { icon: '💰', title: { en: 'Premium Price for Organic Produce' }, desc: { en: 'Help in branding, packaging, and linking to organic market for 20-50% premium prices' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'All group members' } },
+      { icon: '📄', name: { en: 'Land Records' }, note: { en: 'All 50 hectare cluster' } },
+      { icon: '📋', name: { en: 'Group Formation Documents' }, note: { en: 'Farmer group registration' } },
+      { icon: '🏦', name: { en: 'Bank Account Details' }, note: { en: 'Group bank account' } },
+    ],
+    steps: [
+      { title: { en: 'Form a farmer cluster group' }, desc: { en: 'Gather 50 farmers with 50 acres total area and form a group/FPO' } },
+      { title: { en: 'Apply at district agriculture office' }, desc: { en: 'Submit group application with land records and conversion plan' } },
+      { title: { en: 'Training & capacity building' }, desc: { en: 'Attend organic farming training provided by government agri department' } },
+      { title: { en: 'Receive grants & certification' }, desc: { en: 'PGS certification done in 3 years. Grants released in instalments based on progress' } },
+    ],
+    helpline: '011-23382012', website: 'pgsindia-ncof.gov.in',
+  },
+  {
+    id: 7, level: 'central', state: 'All India', emoji: '📦',
+    name: { en: 'Agriculture Infrastructure Fund', hi: 'कृषि आधारभूत संरचना कोष', kn: 'ಕೃಷಿ ಮೂಲ ಸೌಕರ್ಯ ನಿಧಿ', mr: 'कृषी पायाभूत सुविधा निधी', te: 'వ్యవసాయ మౌలిక సదుపాయాల నిధి', ta: 'வேளாண்மை உள்கட்டமைப்பு நிதி' },
+    shortName: 'AIF',
+    category: ['credit'],
+    ministry: { en: 'Ministry of Agriculture & Farmers Welfare' },
+    benefit: '3% interest subvention on loans', launched: '2020',
+    desc: { en: 'Agriculture Infrastructure Fund (AIF) provides medium-long term debt financing for post-harvest management infrastructure and community farming assets. Offers 3% interest subvention for loans up to ₹2 crore for setting up cold storage, warehouses, processing units, packaging, sorting grading units.', hi: 'AIF कोल्ड स्टोरेज, गोदाम जैसे कृषि बुनियादी ढांचे के लिए 3% ब्याज सब्सिडी देता है।' },
+    eligibility: [
+      { en: 'Farmers, FPOs, PACS, cooperatives, agri-entrepreneurs' },
+      { en: 'Startups in agriculture sector' },
+      { en: 'SHGs involved in agriculture activities' },
+      { en: 'State Agencies, Local Bodies for community assets' },
+    ],
+    benefits: [
+      { icon: '🏭', title: { en: '3% Interest Subvention on Loans' }, desc: { en: '3% per annum interest subvention on loans up to ₹2 crore from banks for agri infrastructure' } },
+      { icon: '❄️', title: { en: 'Cold Storage, Warehouse Support' }, desc: { en: 'Finance cold chains, warehouses, assaying units, sorting/grading, packaging units for farmers' } },
+      { icon: '🔒', title: { en: 'Credit Guarantee Cover' }, desc: { en: 'CGTMSE credit guarantee for loans up to ₹2 crore, reducing collateral burden' } },
+    ],
+    docs: [
+      { icon: '📋', name: { en: 'Project Report (DPR)' }, note: { en: 'Detailed project report' } },
+      { icon: '🪪', name: { en: 'Identity & Address Proof' }, note: { en: 'Aadhaar/PAN' } },
+      { icon: '🏦', name: { en: 'Bank Account & ITR' }, note: { en: 'Last 3 years ITR' } },
+      { icon: '📄', name: { en: 'Land / Lease Documents' }, note: { en: 'For proposed site' } },
+    ],
+    steps: [
+      { title: { en: 'Register on AIF portal' }, desc: { en: 'Create account on agriinfra.dac.gov.in and submit project application' } },
+      { title: { en: 'Prepare detailed project report' }, desc: { en: 'Prepare DPR with cost estimates, revenue projections and technical feasibility' } },
+      { title: { en: 'Approach bank for loan' }, desc: { en: 'Submit application to bank of your choice. Bank processes loan against CGTMSE guarantee' } },
+      { title: { en: 'Receive interest subvention' }, desc: { en: '3% interest subvention credited quarterly directly to your loan account' } },
+    ],
+    helpline: '011-23070946', website: 'agriinfra.dac.gov.in',
+  },
+  {
+    id: 8, level: 'central', state: 'All India', emoji: '🤝',
+    name: { en: 'PM Formalization of Micro Food Enterprises', hi: 'सूक्ष्म खाद्य उद्यम उन्नयन योजना', kn: 'ಸೂಕ್ಷ್ಮ ಆಹಾರ ಉದ್ಯಮ ಔಪಚಾರಿಕೀಕರಣ', mr: 'सूक्ष्म अन्न उद्योग उन्नयन', te: 'సూక్ష్మ ఆహార పరిశ్రమ అభివృద్ధి', ta: 'நுண் உணவு தொழில் முறைப்படுத்தல்' },
+    shortName: 'PM-FME',
+    category: ['credit'],
+    ministry: { en: 'Ministry of Food Processing Industries' },
+    benefit: '35% capital subsidy (max ₹10L)', launched: '2020',
+    desc: { en: 'PM FME Scheme supports existing micro food processing enterprises including farmer-processors for upgrading. Provides 35% capital subsidy (maximum ₹10 lakh per unit) for upgrading plant, machinery and technology. Focuses on One District One Product (ODOP) clusters.', hi: 'PM FME योजना खाद्य प्रसंस्करण के लिए 35% पूंजी सब्सिडी देती है।' },
+    eligibility: [
+      { en: 'Existing micro food processing units with annual turnover < ₹1 crore' },
+      { en: 'Individual farmer-processors, SHGs, cooperatives, FPOs' },
+      { en: 'Must be engaged in ODOP product of that district' },
+      { en: 'Should be willing to formalize (FSSAI license, GST registration)' },
+    ],
+    benefits: [
+      { icon: '🏭', title: { en: '35% Capital Subsidy' }, desc: { en: 'Up to ₹10 lakh subsidy on plant, machinery & equipment for food processing upgrade' } },
+      { icon: '📜', title: { en: 'Formalization Support' }, desc: { en: 'Help with FSSAI license, GST registration, Udyam registration for your processing unit' } },
+      { icon: '📚', title: { en: 'Training & Technical Support' }, desc: { en: 'Free capacity building, training and technical handholding support for quality improvement' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card / PAN' }, note: { en: 'KYC documents' } },
+      { icon: '📋', name: { en: 'Business Registration' }, note: { en: 'Udyam/MSME certificate' } },
+      { icon: '🏦', name: { en: 'Bank Loan Sanction Letter' }, note: { en: 'For subsidy eligibility' } },
+      { icon: '📄', name: { en: 'Project Report' }, note: { en: 'Upgrade plan & cost' } },
+    ],
+    steps: [
+      { title: { en: 'Apply on PM FME portal' }, desc: { en: 'Register and apply on pmfme.mofpi.gov.in with business details' } },
+      { title: { en: 'District resource person visit' }, desc: { en: 'DRP visits your unit to assess current situation and upgrade potential' } },
+      { title: { en: 'Avail bank loan & install machinery' }, desc: { en: 'Take bank loan, upgrade machinery, install new equipment for processing' } },
+      { title: { en: 'Claim subsidy after inspection' }, desc: { en: 'After installation verified, 35% subsidy released to your bank account' } },
+    ],
+    helpline: '011-26406557', website: 'pmfme.mofpi.gov.in',
+  },
+  {
+    id: 9, level: 'central', state: 'All India', emoji: '🌱',
+    name: { en: 'National Mission for Sustainable Agriculture', hi: 'राष्ट्रीय सतत कृषि मिशन', kn: 'ರಾಷ್ಟ್ರೀಯ ಸಸ್ಯ ಕೃಷಿ ಮಿಷನ್', mr: 'राष्ट्रीय शाश्वत कृषी मिशन', te: 'జాతీయ స్థిరమైన వ్యవసాయ మిషన్', ta: 'தேசிய நிலையான வேளாண்மை இயக்கம்' },
+    shortName: 'NMSA',
+    category: ['income'],
+    ministry: { en: 'Ministry of Agriculture & Farmers Welfare' },
+    benefit: 'Various — soil health, water, inputs', launched: '2014',
+    desc: { en: 'NMSA promotes sustainable agriculture through integrated soil health management, integrated farming systems, enhanced resource use efficiency and soil & moisture conservation practices. Includes Soil Health Card scheme to provide free soil testing and fertilizer recommendations.', hi: 'NMSA टिकाऊ खेती और मिट्टी स्वास्थ्य कार्ड प्रदान करता है।' },
+    eligibility: [
+      { en: 'All farmers with agricultural land' },
+      { en: 'SC/ST and small/marginal farmers get priority' },
+      { en: 'Rainfed area farmers get special focus' },
+    ],
+    benefits: [
+      { icon: '🧪', title: { en: 'Free Soil Health Card' }, desc: { en: 'Free soil testing every 2 years. Card shows nutrient deficiency and fertilizer recommendation' } },
+      { icon: '🌾', title: { en: 'Integrated Farming System Support' }, desc: { en: 'Support for combining crops, horticulture, livestock, fishery for multiple income sources' } },
+      { icon: '💧', title: { en: 'Water Conservation Support' }, desc: { en: 'Technical and financial support for water harvesting, conservation structures and efficiency' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Identity proof' } },
+      { icon: '📄', name: { en: 'Land Records' }, note: { en: 'Survey number details' } },
+    ],
+    steps: [
+      { title: { en: 'Get Soil Health Card' }, desc: { en: 'Contact your Krishi Vigyan Kendra or agriculture dept for soil sampling and free testing' } },
+      { title: { en: 'Follow fertilizer recommendations' }, desc: { en: 'Apply fertilizers as per card recommendation to reduce costs and improve yield' } },
+      { title: { en: 'Apply for specific components' }, desc: { en: 'Apply at district agriculture office for specific NMSA components like water conservation works' } },
+    ],
+    helpline: '1800-180-1551', website: 'agricoop.nic.in',
+  },
+
+  // ── STATE SCHEMES ──
+  {
+    id: 10, level: 'state', state: 'Karnataka', emoji: '🌻',
+    name: { en: 'Raitha Siri Scheme (Karnataka)', hi: 'रायथा सिरि योजना', kn: 'ರೈತ ಸಿರಿ ಯೋಜನೆ', mr: 'रायथा सिरि योजना', te: 'రైతు సిరి పథకం', ta: 'ரைதா சிரி திட்டம்' },
+    shortName: 'Raitha Siri',
+    category: ['income', 'insurance'],
+    ministry: { en: 'Karnataka Dept. of Agriculture' },
+    benefit: '₹5,000 input subsidy/season', launched: '2018',
+    desc: { en: 'Raitha Siri is Karnataka government\'s comprehensive farmer support package providing ₹5,000 per hectare input subsidy during drought/natural calamity, free crop insurance premium waiver, interest-free crop loans up to ₹3 lakh, and distribution of quality seeds at subsidized rates to registered farmers in Karnataka.', kn: 'ರೈತ ಸಿರಿ ಯೋಜನೆ ಕರ್ನಾಟಕ ಸರ್ಕಾರದ ರೈತ ಪರ ಉಪಕ್ರಮ.' },
+    eligibility: [
+      { en: 'Registered farmers in Karnataka with valid Raitha Samparka Kendra registration' },
+      { en: 'Own or leased agricultural land in Karnataka' },
+      { en: 'Must have PM-KISAN registration for full benefits' },
+      { en: 'Annual family income below ₹2 lakh for some components' },
+    ],
+    benefits: [
+      { icon: '💵', title: { en: '₹5,000 Input Subsidy' }, desc: { en: '₹5,000 per hectare (max 2 hectare) input subsidy during drought or natural calamity seasons' } },
+      { icon: '🛡️', title: { en: 'Free Crop Insurance Premium' }, desc: { en: 'Karnataka govt pays state share of PMFBY premium, farmers pay only minimal amount' } },
+      { icon: '🏦', title: { en: 'Interest-free Crop Loans up to ₹3L' }, desc: { en: '0% interest on short-term crop loans up to ₹3 lakh through cooperative banks' } },
+      { icon: '🌱', title: { en: 'Subsidized Quality Seeds' }, desc: { en: 'High yielding variety seeds at 50% subsidized price through Raitha Samparka Kendras' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '📋', name: { en: 'Raitha Samparka ID' }, note: { en: 'Karnataka farmer registration' } },
+      { icon: '📄', name: { en: 'Land Records (RTC/Pahani)' }, note: { en: 'Karnataka land records' } },
+      { icon: '🏦', name: { en: 'Bank Account (co-op preferred)' }, note: { en: 'For subsidy credit' } },
+    ],
+    steps: [
+      { title: { en: 'Register at Raitha Samparka Kendra' }, desc: { en: 'Visit nearest Raitha Samparka Kendra (RSK) in your hobli with Aadhaar and land documents' } },
+      { title: { en: 'Get Raitha ID Card' }, desc: { en: 'Receive unique farmer ID card linked to your land and bank account' } },
+      { title: { en: 'Apply for specific components' }, desc: { en: 'Apply for input subsidy, seeds, or insurance at RSK or online on Karnataka Agri portal' } },
+      { title: { en: 'Benefits transferred to account' }, desc: { en: 'All cash benefits transferred directly to your Aadhaar-linked bank account' } },
+    ],
+    helpline: '1800-425-1661 (Karnataka Agriculture)', website: 'raitamitra.kar.nic.in',
+  },
+  {
+    id: 11, level: 'state', state: 'Maharashtra', emoji: '🧅',
+    name: { en: 'Namo Shetkari Maha Samman Nidhi (Maharashtra)', hi: 'नमो शेतकरी महा सम्मान निधी', kn: 'ನಮೋ ಶೇತ್ಕರಿ ಯೋಜನೆ', mr: 'नमो शेतकरी महा सम्मान निधी', te: 'నమో శేత్కారీ పథకం', ta: 'நமோ ஷேட்காரி திட்டம்' },
+    shortName: 'Namo Shetkari',
+    category: ['income'],
+    ministry: { en: 'Maharashtra Dept. of Agriculture' },
+    benefit: '₹6,000/year (top-up to PM-KISAN)', launched: '2023',
+    desc: { en: 'Maharashtra\'s Namo Shetkari Maha Samman Nidhi provides an additional ₹6,000 per year to eligible farmers over and above PM-KISAN\'s ₹6,000 — making it a total of ₹12,000/year for eligible Maharashtra farmers. Same eligibility criteria as PM-KISAN. Amount paid in 3 equal instalments.', mr: 'महाराष्ट्र सरकारची नमो शेतकरी योजना PM-KISAN वर अतिरिक्त ₹6,000 देते.' },
+    eligibility: [
+      { en: 'All farmers eligible for PM-KISAN in Maharashtra' },
+      { en: 'Must have existing PM-KISAN registration' },
+      { en: 'Maharashtra state domicile required' },
+      { en: 'Not applicable to income tax payers & govt employees' },
+    ],
+    benefits: [
+      { icon: '💵', title: { en: '₹6,000 Additional Income' }, desc: { en: 'On top of PM-KISAN ₹6,000, get another ₹6,000/year — total ₹12,000 annually' } },
+      { icon: '🛡️', title: { en: 'Free Crop Insurance' }, desc: { en: 'Maharashtra covers full crop insurance premium for Rabi and Kharif under PMFBY for eligible farmers' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '📋', name: { en: 'PM-KISAN Registration Number' }, note: { en: 'Existing PM-KISAN beneficiary' } },
+      { icon: '📄', name: { en: 'Land Records (7/12 extract)' }, note: { en: 'Maharashtra Satbara utara' } },
+      { icon: '🏦', name: { en: 'Bank Account' }, note: { en: 'Aadhaar-linked account' } },
+    ],
+    steps: [
+      { title: { en: 'No separate application needed' }, desc: { en: 'Eligible PM-KISAN farmers in Maharashtra automatically enrolled if details match' } },
+      { title: { en: 'Verify your 7/12 at taluka office' }, desc: { en: 'Ensure your land records are updated and Aadhaar is seeded in bank account' } },
+      { title: { en: 'Check status on MahaDBT portal' }, desc: { en: 'Track your benefit status on mahadbtmahait.gov.in or PM-KISAN portal' } },
+    ],
+    helpline: '1800-233-4422 (Maharashtra Agri)', website: 'mahadbtmahait.gov.in',
+  },
+  {
+    id: 12, level: 'state', state: 'Telangana', emoji: '🌾',
+    name: { en: 'Rythu Bandhu (Telangana)', hi: 'रितु बंधु योजना', kn: 'ರೈತು ಬಂಧು ಯೋಜನೆ', mr: 'रितू बंधू योजना', te: 'రైతు బంధు పథకం', ta: 'ரைத்து பந்து திட்டம்' },
+    shortName: 'Rythu Bandhu',
+    category: ['income'],
+    ministry: { en: 'Telangana Dept. of Agriculture' },
+    benefit: '₹10,000/acre/year (₹5,000 per season)', launched: '2018',
+    desc: { en: 'Rythu Bandhu is Telangana\'s flagship farmer investment support scheme. It provides ₹5,000 per acre per crop season (Kharif and Rabi) directly to land-owning farmers before the crop season starts — to purchase seeds, fertilizers and pesticides. Considered one of India\'s best state farm support schemes.', te: 'రైతు బంధు తెలంగాణ ప్రభుత్వం యొక్క ప్రముఖ రైతు సహాయ పథకం.' },
+    eligibility: [
+      { en: 'All land-owning farmers in Telangana — no income or land size limit' },
+      { en: 'Name must be on pattadar passbook' },
+      { en: 'Tenant farmers not eligible (only landowners)' },
+      { en: 'No ceiling on land size — all area covered' },
+    ],
+    benefits: [
+      { icon: '💵', title: { en: '₹5,000/acre Each Season' }, desc: { en: '₹5,000 per acre for Kharif and ₹5,000 for Rabi — ₹10,000/acre/year. No upper limit on acres' } },
+      { icon: '📅', title: { en: 'Pre-season Investment Support' }, desc: { en: 'Money deposited before season starts so farmer can buy inputs on time without loan burden' } },
+      { icon: '📱', title: { en: 'Direct to Bank Account' }, desc: { en: 'Amount directly transferred to farmer\'s bank account — no middlemen, no queues' } },
+    ],
+    docs: [
+      { icon: '📋', name: { en: 'Pattadar Passbook' }, note: { en: 'Telangana land ownership proof' } },
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '🏦', name: { en: 'Bank Account (linked to Aadhaar)' }, note: { en: 'For direct transfer' } },
+    ],
+    steps: [
+      { title: { en: 'Ensure pattadar passbook is updated' }, desc: { en: 'Verify your land records are in your name with updated pattadar passbook at revenue office' } },
+      { title: { en: 'Link Aadhaar to bank account' }, desc: { en: 'Ensure your Aadhaar is seeded in your bank account for DBT transfer' } },
+      { title: { en: 'Automatic enrollment each season' }, desc: { en: 'Government deposits ₹5,000/acre before each Kharif and Rabi season based on land records' } },
+    ],
+    helpline: '1800-425-2977 (Telangana Agri)', website: 'epas.telangana.gov.in',
+  },
+  {
+    id: 13, level: 'state', state: 'Tamil Nadu', emoji: '🍚',
+    name: { en: 'Uzhavar Pathukappu Thittam (Tamil Nadu)', hi: 'उझावर पाथुकाप्पू', kn: 'ಉಝವರ್ ಪಾಥುಕಾಪ್ಪು', mr: 'उझावर पाथुकाप्पू', te: 'ఉళవర్ పాతుకాప్పు', ta: 'உழவர் பாதுகாப்பு திட்டம்' },
+    shortName: 'Uzhavar Pathukappu',
+    category: ['insurance'],
+    ministry: { en: 'Tamil Nadu Dept. of Agriculture' },
+    benefit: 'Enhanced crop insurance coverage', launched: '2016',
+    desc: { en: 'Tamil Nadu\'s Uzhavar Pathukappu Thittam (Farmer Protection Scheme) is state\'s comprehensive crop protection initiative that enhances PMFBY with state top-up, provides 100% premium subsidy for small and marginal farmers in TN, and includes additional drought relief package for farmers facing 2+ consecutive drought years.', ta: 'தமிழ்நாட்டின் உழவர் பாதுகாப்பு திட்டம் விவசாயிகளுக்கு முழுமையான பயிர் காப்பீடு வழங்குகிறது.' },
+    eligibility: [
+      { en: 'All farmers cultivating notified crops in Tamil Nadu' },
+      { en: '100% premium subsidy for small (< 1 ha) and marginal (< 2 ha) farmers' },
+      { en: 'Tenant farmers covered with registered lease agreements' },
+      { en: 'Landless labourers not eligible for crop insurance component' },
+    ],
+    benefits: [
+      { icon: '🛡️', title: { en: '100% Premium Subsidy for Small Farmers' }, desc: { en: 'Small and marginal farmers pay zero premium — Tamil Nadu govt pays entire crop insurance cost' } },
+      { icon: '🌧️', title: { en: 'Drought Relief Top-up' }, desc: { en: 'Additional ₹2,000/acre state relief when farmer faces consecutive drought years' } },
+      { icon: '⚡', title: { en: 'Free Power for Irrigation' }, desc: { en: 'Free electricity supply for agricultural pumpsets up to 100 units/month for small farmers' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '📄', name: { en: 'Chitta/Adangal (land records)' }, note: { en: 'Tamil Nadu land records' } },
+      { icon: '🏦', name: { en: 'Bank Savings Account' }, note: { en: 'Nationalized bank preferred' } },
+      { icon: '📸', name: { en: 'Passport Photo' }, note: { en: '2 copies' } },
+    ],
+    steps: [
+      { title: { en: 'Register at Agriculture Dept. office' }, desc: { en: 'Visit your block-level agriculture office or agriculture sub-inspector with land documents' } },
+      { title: { en: 'Enroll before crop season cutoff' }, desc: { en: 'Register before the notified last date for Kharif / Rabi enrollment each year' } },
+      { title: { en: 'Receive insurance coverage confirmation' }, desc: { en: 'Insurance certificate issued. For claims, report loss within 72 hours of calamity' } },
+    ],
+    helpline: '1800-425-6684 (TN Agri)', website: 'agri.tn.gov.in',
+  },
+  {
+    id: 14, level: 'state', state: 'Andhra Pradesh', emoji: '🌴',
+    name: { en: 'YSR Rythu Bharosa (Andhra Pradesh)', hi: 'वाईएसआर रैतू भरोसा', kn: 'YSR ರೈತು ಭರೋಸಾ', mr: 'वाईएसआर रैतु भरोसा', te: 'వైఎస్ఆర్ రైతు భరోసా', ta: 'YSR ரைத்து பரோசா' },
+    shortName: 'YSR Rythu Bharosa',
+    category: ['income'],
+    ministry: { en: 'Andhra Pradesh Dept. of Agriculture' },
+    benefit: '₹13,500/year (incl. PM-KISAN top-up)', launched: '2019',
+    desc: { en: 'YSR Rythu Bharosa provides ₹13,500 per year per farmer in AP — comprising ₹7,500 from state government plus ₹6,000 from PM-KISAN. Covers landless tenant farmers too (unlike PM-KISAN). Also includes free crop insurance under AP State Govt scheme and Rythu Bharosa Kendras for one-stop farmer service.', te: 'YSR రైతు భరోసా ఆంధ్రప్రదేశ్‌లో రైతులకు ₹13,500 వార్షిక మద్దతు ఇస్తుంది.' },
+    eligibility: [
+      { en: 'All landowner farmers in Andhra Pradesh' },
+      { en: 'Tenant farmers (landless) also covered — unique feature' },
+      { en: 'No upper limit on land size (state component for all area)' },
+      { en: 'Must be AP domicile with land in AP' },
+    ],
+    benefits: [
+      { icon: '💵', title: { en: '₹13,500/Year Total Support' }, desc: { en: '₹7,500 from AP state + ₹6,000 from PM-KISAN = ₹13,500 total per farmer per year' } },
+      { icon: '🌾', title: { en: 'Tenant Farmers Also Covered' }, desc: { en: 'Landless farmers who cultivate leased land also get ₹7,500/year state support' } },
+      { icon: '🏢', title: { en: 'Rythu Bharosa Kendra Services' }, desc: { en: 'One-stop centres providing soil testing, quality inputs, farm advisory and banking services' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '📄', name: { en: 'Pattadar Passbook / Lease deed' }, note: { en: 'Land ownership or lease' } },
+      { icon: '🏦', name: { en: 'Bank Account (AP Bank preferred)' }, note: { en: 'For DBT transfer' } },
+      { icon: '📋', name: { en: 'AP White Ration Card' }, note: { en: 'Additional identity for tenant farmers' } },
+    ],
+    steps: [
+      { title: { en: 'Visit Rythu Bharosa Kendra (RBK)' }, desc: { en: 'Go to your village-level Rythu Bharosa Kendra with documents for registration' } },
+      { title: { en: 'Complete eKYC verification' }, desc: { en: 'Biometric verification done at RBK. Land and bank account verified against Aadhaar' } },
+      { title: { en: 'Receive benefit every season' }, desc: { en: 'Amount credited before Kharif and Rabi seasons. Track on AP farmers portal' } },
+    ],
+    helpline: '1902 (AP Farmers)', website: 'apagrisnet.gov.in',
+  },
+  {
+    id: 15, level: 'state', state: 'Punjab', emoji: '🌽',
+    name: { en: 'Mukhyamantri Kisan Kalyan Yojana (Punjab)', hi: 'मुख्यमंत्री किसान कल्याण योजना', kn: 'ಮುಖ್ಯಮಂತ್ರಿ ಕಿಸಾನ್ ಕಲ್ಯಾಣ', mr: 'मुख्यमंत्री किसान कल्याण योजना', te: 'ముఖ్యమంత్రి కిసాన్ కల్యాణ్ పథకం', ta: 'முதல்வர் கிசான் கல்யாண் திட்டம்' },
+    shortName: 'MK Kalyan Punjab',
+    category: ['income', 'credit'],
+    ministry: { en: 'Punjab Dept. of Agriculture' },
+    benefit: '₹2,000 top-up + subsidized inputs', launched: '2021',
+    desc: { en: 'Punjab\'s Mukhyamantri Kisan Kalyan Yojana provides an additional ₹2,000 per year top-up to PM-KISAN beneficiaries in Punjab, along with subsidized access to quality seeds, pesticides, and farm machinery rental through Punjab Agri Dept. Also includes debt relief component for distressed farmers.', hi: 'पंजाब किसान कल्याण योजना PM-KISAN पर ₹2,000 अतिरिक्त देती है।' },
+    eligibility: [
+      { en: 'PM-KISAN beneficiary farmers in Punjab' },
+      { en: 'Registered with Punjab Agriculture Department' },
+      { en: 'Punjab state domicile with land in Punjab' },
+      { en: 'Small & marginal farmers get priority for input subsidy component' },
+    ],
+    benefits: [
+      { icon: '💵', title: { en: '₹2,000 Additional Income' }, desc: { en: 'Extra ₹2,000 per year on top of PM-KISAN for Punjab farmers' } },
+      { icon: '🌾', title: { en: 'Subsidized Quality Seeds' }, desc: { en: '50% subsidy on certified paddy, wheat and other crop seeds from Punjab Agri Dept' } },
+      { icon: '🚜', title: { en: 'Farm Machinery Rental' }, desc: { en: 'Access to subsidized Custom Hiring Centres for tractors and harvesters at low hourly rates' } },
+    ],
+    docs: [
+      { icon: '🪪', name: { en: 'Aadhaar Card' }, note: { en: 'Mandatory' } },
+      { icon: '📋', name: { en: 'PM-KISAN Registration' }, note: { en: 'Existing PM-KISAN number' } },
+      { icon: '📄', name: { en: 'Fard (Punjab land records)' }, note: { en: 'Jamabandi / Fard copy' } },
+      { icon: '🏦', name: { en: 'Bank Account' }, note: { en: 'Aadhaar-linked bank account' } },
+    ],
+    steps: [
+      { title: { en: 'Visit Punjab Agriculture Dept. office' }, desc: { en: 'Contact your block agriculture office or apply on Punjab e-services portal' } },
+      { title: { en: 'Link PM-KISAN with state scheme' }, desc: { en: 'Provide PM-KISAN registration number to receive state top-up automatically' } },
+      { title: { en: 'Benefits credited with PM-KISAN' }, desc: { en: 'State top-up transferred alongside PM-KISAN instalments to bank account' } },
+    ],
+    helpline: '1800-180-1551 (Punjab Agri)', website: 'agripb.gov.in',
+  },
+  {
+    id: 16, level: 'state', state: 'Uttar Pradesh', emoji: '🥭',
+    name: { en: 'UP Mukhyamantri Krishak Durghatna Kalyan Yojana', hi: 'मुख्यमंत्री कृषक दुर्घटना कल्याण योजना', kn: 'UP ಕೃಷಕ ದುರ್ಘಟನಾ ಕಲ್ಯಾಣ', mr: 'यूपी कृषक अपघात कल्याण', te: 'UP రైతు ప్రమాద సంక్షేమ పథకం', ta: 'UP கிருஷக் விபத்து திட்டம்' },
+    shortName: 'UP Krishak Durghatna',
+    category: ['insurance'],
+    ministry: { en: 'Uttar Pradesh Agriculture Dept.' },
+    benefit: '₹5 lakh accident coverage', launched: '2019',
+    desc: { en: 'UP Mukhyamantri Krishak Durghatna Kalyan Yojana provides accidental death and disability insurance of ₹5 lakh to all registered farmers in Uttar Pradesh aged 18-70 years. In case of death due to accident, family gets ₹5 lakh compensation. For permanent disability, ₹2-5 lakh based on severity. Covers natural calamity deaths too.', hi: 'UP योजना किसानों को ₹5 लाख दुर्घटना बीमा कवर देती है।' },
+    eligibility: [
+      { en: 'All registered farmers in Uttar Pradesh aged 18-70 years' },
+      { en: 'Death or disability must be due to accident (not natural illness)' },
+      { en: 'Natural calamity deaths (lightning, flood, crop machinery) also covered' },
+      { en: 'Claim must be filed within 30 days of accident' },
+    ],
+    benefits: [
+      { icon: '💔', title: { en: '₹5 Lakh Accidental Death Cover' }, desc: { en: '₹5 lakh compensation to family if farmer dies due to accident, lightning, drowning, or crop machinery' } },
+      { icon: '♿', title: { en: '₹2-5 Lakh Disability Cover' }, desc: { en: '₹2 lakh for partial disability, ₹5 lakh for permanent total disability from any accident' } },
+      { icon: '⚡', title: { en: 'Lightning & Calamity Deaths Covered' }, desc: { en: 'Deaths due to lightning, flood, snake bite, fire while farming also included' } },
+    ],
+    docs: [
+      { icon: '📋', name: { en: 'FIR / Death Certificate' }, note: { en: 'Police FIR if accident' } },
+      { icon: '🪪', name: { en: 'Aadhaar Card (deceased / victim)' }, note: { en: 'Farmer identity' } },
+      { icon: '📄', name: { en: 'Land Records' }, note: { en: 'Proof of being farmer' } },
+      { icon: '👨‍👩‍👧', name: { en: 'Heir / Legal heir certificate' }, note: { en: 'For death claims' } },
+      { icon: '🏦', name: { en: 'Bank Account of claimant' }, note: { en: 'Legal heir account' } },
+    ],
+    steps: [
+      { title: { en: 'Report accident to Tehsildar within 30 days' }, desc: { en: 'File claim at Tehsil office within 30 days of accident with FIR and death certificate' } },
+      { title: { en: 'District Magistrate verification' }, desc: { en: 'DM office verifies documents, land records and accident circumstance' } },
+      { title: { en: 'Compensation transferred' }, desc: { en: '₹5 lakh credited to legal heir\'s bank account within 45 days of approval' } },
+    ],
+    helpline: '1800-180-5567 (UP Agri)', website: 'upagripardarshi.gov.in',
+  },
+];
+
+// ── STATE ──
+let activeModal = null;
+let activeTab = 0;
+
+// ── LANG DATA ──
+const langLabels = {
+  en: { langLabel: 'English', aiBtn: 'Ask AI', mainHead: 'All Schemes', fAll: 'All Schemes', fCentral: 'Central Govt', fState: 'State Schemes', fIns: 'Insurance', fInc: 'Income Support', fCred: 'Credit & Loans', heroBadge: 'Official Government Schemes Portal', heroTitle: 'Farmer Welfare Schemes', heroSub: 'All central & state government schemes in one place. Know your benefits, required documents, and how to apply — in your language.', stat1: 'Total Schemes', stat2: 'Central Schemes', stat3: 'State Schemes', stat4: 'Annual Benefit', tab0: 'Overview', tab1: 'Benefits', tab2: 'Documents', tab3: 'How to Apply', detailsBtn: 'View Details', central: 'Central Govt', state: 'State Scheme', validFor: 'Valid For', benefit: 'Benefit Amount', launched: 'Launched', helplineLbl: 'Helpline & Support', websiteLbl: 'Official Website', docNote: 'Carry original + photocopy of all documents to the nearest CSC or bank branch.', aiWelcome: "Namaste 🙏 I'm your AI Scheme Advisor! Ask me which government schemes you qualify for, what documents you need, or how to apply!" },
+  hi: { langLabel: 'हिंदी', aiBtn: 'AI से पूछें', mainHead: 'सभी योजनाएं', fAll: 'सभी योजनाएं', fCentral: 'केंद्र सरकार', fState: 'राज्य योजनाएं', fIns: 'बीमा', fInc: 'आय सहायता', fCred: 'ऋण & लोन', heroBadge: 'सरकारी योजना पोर्टल', heroTitle: 'किसान कल्याण योजनाएं', heroSub: 'सभी केंद्र और राज्य योजनाएं एक जगह।', stat1: 'कुल योजनाएं', stat2: 'केंद्रीय', stat3: 'राज्य', stat4: 'वार्षिक लाभ', tab0: 'अवलोकन', tab1: 'लाभ', tab2: 'दस्तावेज', tab3: 'आवेदन कैसे करें', detailsBtn: 'विवरण देखें', central: 'केंद्र सरकार', state: 'राज्य योजना', validFor: 'मान्य', benefit: 'लाभ राशि', launched: 'शुरू हुई', helplineLbl: 'हेल्पलाइन', websiteLbl: 'आधिकारिक वेबसाइट', docNote: 'सभी दस्तावेज मूल + फोटोकॉपी के साथ CSC या बैंक शाखा ले जाएं।', aiWelcome: 'नमस्ते 🙏 मैं आपका AI योजना सलाहकार हूं!' },
+  kn: { langLabel: 'ಕನ್ನಡ', aiBtn: 'AI ಕೇಳಿ', mainHead: 'ಎಲ್ಲಾ ಯೋಜನೆಗಳು', fAll: 'ಎಲ್ಲಾ', fCentral: 'ಕೇಂದ್ರ ಸರ್ಕಾರ', fState: 'ರಾಜ್ಯ ಯೋಜನೆ', fIns: 'ವಿಮೆ', fInc: 'ಆದಾಯ ಸಹಾಯ', fCred: 'ಸಾಲ & ಕ್ರೆಡಿಟ್', heroBadge: 'ಸರ್ಕಾರಿ ಯೋಜನಾ ಪೋರ್ಟಲ್', heroTitle: 'ರೈತ ಕಲ್ಯಾಣ ಯೋಜನೆಗಳು', heroSub: 'ಕೇಂದ್ರ ಮತ್ತು ರಾಜ್ಯ ಯೋಜನೆಗಳು ಒಂದೆಡೆ.', stat1: 'ಒಟ್ಟು ಯೋಜನೆ', stat2: 'ಕೇಂದ್ರೀಯ', stat3: 'ರಾಜ್ಯ', stat4: 'ವಾರ್ಷಿಕ ಲಾಭ', tab0: 'ಅವಲೋಕನ', tab1: 'ಲಾಭಗಳು', tab2: 'ದಾಖಲೆಗಳು', tab3: 'ಅರ್ಜಿ ಹೇಗೆ', detailsBtn: 'ವಿವರ ನೋಡಿ', central: 'ಕೇಂದ್ರ ಸರ್ಕಾರ', state: 'ರಾಜ್ಯ ಯೋಜನೆ', validFor: 'ಮಾನ್ಯ', benefit: 'ಲಾಭ ಮೊತ್ತ', launched: 'ಪ್ರಾರಂಭ', helplineLbl: 'ಹೆಲ್ಪ್‌ಲೈನ್', websiteLbl: 'ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್', docNote: 'ಎಲ್ಲಾ ದಾಖಲೆಗಳ ಮೂಲ + ಜೆರಾಕ್ಸ್ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ.', aiWelcome: 'ನಮಸ್ಕಾರ 🙏 ನಾನು ನಿಮ್ಮ AI ಯೋಜನಾ ಸಲಹೆಗಾರ!' },
+  mr: { langLabel: 'मराठी', aiBtn: 'AI ला विचारा', mainHead: 'सर्व योजना', fAll: 'सर्व', fCentral: 'केंद्र सरकार', fState: 'राज्य योजना', fIns: 'विमा', fInc: 'उत्पन्न सहाय्य', fCred: 'कर्ज & कर्ज', heroBadge: 'सरकारी योजना पोर्टल', heroTitle: 'शेतकरी कल्याण योजना', heroSub: 'केंद्र आणि राज्य सरकारच्या सर्व योजना एकाच ठिकाणी.', stat1: 'एकूण योजना', stat2: 'केंद्रीय', stat3: 'राज्य', stat4: 'वार्षिक लाभ', tab0: 'आढावा', tab1: 'फायदे', tab2: 'कागदपत्रे', tab3: 'अर्ज कसा करावा', detailsBtn: 'तपशील पहा', central: 'केंद्र सरकार', state: 'राज्य योजना', validFor: 'वैध', benefit: 'लाभ रक्कम', launched: 'सुरू', helplineLbl: 'हेल्पलाइन', websiteLbl: 'अधिकृत संकेतस्थळ', docNote: 'सर्व कागदपत्रे मूळ + झेरॉक्स सोबत नजीकच्या CSC किंवा बँकेत घेऊन जा.', aiWelcome: 'नमस्कार 🙏 मी तुमचा AI योजना सल्लागार!' },
+  te: { langLabel: 'తెలుగు', aiBtn: 'AI అడగండి', mainHead: 'అన్ని పథకాలు', fAll: 'అన్నీ', fCentral: 'కేంద్ర ప్రభుత్వం', fState: 'రాష్ట్ర పథకాలు', fIns: 'బీమా', fInc: 'ఆదాయ మద్దతు', fCred: 'రుణాలు', heroBadge: 'ప్రభుత్వ పథకాల పోర్టల్', heroTitle: 'రైతు సంక్షేమ పథకాలు', heroSub: 'కేంద్ర మరియు రాష్ట్ర పథకాలు అన్నీ ఒక చోట.', stat1: 'మొత్తం పథకాలు', stat2: 'కేంద్ర', stat3: 'రాష్ట్ర', stat4: 'వార్షిక లాభం', tab0: 'వివరణ', tab1: 'ప్రయోజనాలు', tab2: 'పత్రాలు', tab3: 'దరఖాస్తు చేయడం', detailsBtn: 'వివరాలు చూడండి', central: 'కేంద్ర ప్రభుత్వం', state: 'రాష్ట్ర పథకం', validFor: 'చెల్లుతుంది', benefit: 'ప్రయోజన మొత్తం', launched: 'ప్రారంభం', helplineLbl: 'హెల్ప్‌లైన్', websiteLbl: 'అధికారిక వెబ్‌సైట్', docNote: 'అన్ని పత్రాల మూలం + జెరాక్స్ తీసుకుని CSC లేదా బ్యాంకు శాఖకు వెళ్ళండి.', aiWelcome: 'నమస్కారం 🙏 నేను మీ AI పథకాల సలహాదారుడిని!' },
+  ta: { langLabel: 'தமிழ்', aiBtn: 'AI கேளுங்கள்', mainHead: 'அனைத்து திட்டங்கள்', fAll: 'அனைத்தும்', fCentral: 'மத்திய அரசு', fState: 'மாநில திட்டங்கள்', fIns: 'காப்பீடு', fInc: 'வருமான ஆதரவு', fCred: 'கடன்கள்', heroBadge: 'அரசு திட்டங்கள் போர்டல்', heroTitle: 'விவசாயி நல திட்டங்கள்', heroSub: 'மத்திய மற்றும் மாநில திட்டங்கள் அனைத்தும் ஒரே இடத்தில்.', stat1: 'மொத்த திட்டங்கள்', stat2: 'மத்திய', stat3: 'மாநில', stat4: 'வருடாந்திர பலன்', tab0: 'விவரம்', tab1: 'நன்மைகள்', tab2: 'ஆவணங்கள்', tab3: 'விண்ணப்பிக்க', detailsBtn: 'விவரம் காண', central: 'மத்திய அரசு', state: 'மாநில திட்டம்', validFor: 'செல்லுபடி', benefit: 'பலன் தொகை', launched: 'தொடங்கியது', helplineLbl: 'உதவி எண்', websiteLbl: 'அதிகாரப்பூர்வ தளம்', docNote: 'அனைத்து ஆவணங்களின் அசல் + நகல் எடுத்துச் செல்லவும்.', aiWelcome: 'வணக்கம் 🙏 நான் உங்கள் AI திட்ட ஆலோசகர்!' },
+};
+
+function L(key) { return (langLabels[currentLang] || langLabels.en)[key] || langLabels.en[key] || key; }
+function T(obj) { if (!obj) return ''; return obj[currentLang] || obj.en || ''; }
+
+// ── RENDER CARDS ──
+function renderCards() {
+  const grid = document.getElementById('schemes-grid');
+  const q = searchQuery.toLowerCase();
+  const filtered = schemes.filter(s => {
+    const matchFilter = currentFilter === 'all' || s.level === currentFilter || s.category.includes(currentFilter);
+    const matchState = currentState === 'all' || s.state === currentState;
+    const matchSearch = !q || T(s.name).toLowerCase().includes(q) || s.shortName.toLowerCase().includes(q) || s.state.toLowerCase().includes(q) || s.benefit.toLowerCase().includes(q);
+    return matchFilter && matchState && matchSearch;
+  });
+
+  document.getElementById('scheme-count-badge').textContent = filtered.length + ' schemes';
+  grid.innerHTML = '';
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state"><span class="empty-state-icon">📋</span><div class="empty-state-msg">${currentLang === 'hi' ? 'कोई योजना नहीं मिली' : currentLang === 'kn' ? 'ಯೋಜನೆ ಇಲ್ಲ' : 'No schemes found'}</div><div class="empty-state-sub">${currentLang === 'hi' ? 'फ़िल्टर बदलें या खोज हटाएं' : 'Try changing the filter or search'}</div></div>`;
+    return;
+  }
+
+  filtered.forEach((s, i) => {
+    const isState = s.level === 'state';
+    const card = document.createElement('div');
+    card.className = `scheme-card ${s.level}`;
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.onclick = () => openModal(s);
+
+    const cats = s.category.map(c => {
+      const catNames = { insurance: '🛡️ ' + L('fIns'), income: '💰 ' + L('fInc'), credit: '🏦 ' + L('fCred') };
+      return `<span class="scheme-tag">${catNames[c] || c}</span>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="scheme-card-header">
+        <div class="scheme-icon-wrap">${s.emoji}</div>
+        <div class="scheme-header-info">
+          <div class="scheme-level-badge ${isState ? 'badge-state' : 'badge-central'}">${isState ? '📍 ' + s.state : '🇮🇳 ' + L('central')}</div>
+          <div class="scheme-name">${T(s.name)}</div>
+          <div class="scheme-short-name">${s.shortName}</div>
+        </div>
+      </div>
+      <div class="scheme-card-body">
+        <div class="scheme-desc">${T(s.desc)}</div>
+        <div class="scheme-tags">${cats}</div>
+      </div>
+      <div class="scheme-card-footer">
+        <div class="scheme-ministry">🏛️ ${T(s.ministry)}</div>
+        <div class="scheme-cta">📋 ${L('detailsBtn')}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── MODAL ──
+function openModal(s) {
+  activeModal = s;
+  activeTab = 0;
+  const isState = s.level === 'state';
+
+  const hdr = document.getElementById('modal-header');
+  hdr.className = `modal-header ${isState ? 'mh-state' : 'mh-central'}`;
+  document.getElementById('m-icon').textContent = s.emoji;
+  document.getElementById('m-level-badge').textContent = isState ? ('📍 ' + s.state) : ('🇮🇳 ' + L('central'));
+  document.getElementById('m-title').textContent = T(s.name);
+  document.getElementById('m-short').textContent = s.shortName + ' · ' + s.launched;
+
+  // Quick info
+  document.getElementById('qi-state').textContent = s.state;
+  document.getElementById('qi-benefit').textContent = s.benefit;
+  document.getElementById('qi-launch').textContent = s.launched;
+
+  // Tab labels
+  document.getElementById('tab0').textContent = L('tab0');
+  document.getElementById('tab1').textContent = L('tab1');
+  document.getElementById('tab2').textContent = L('tab2');
+  document.getElementById('tab3').textContent = L('tab3');
+
+  // Overview
+  document.getElementById('m-desc').textContent = T(s.desc);
+  document.getElementById('m-eligibility').innerHTML = (s.eligibility || []).map(e => `
+    <div class="elig-item"><div class="elig-dot"></div><span>${T(e) || e.en || e}</span></div>`).join('');
+
+  // Benefits
+  document.getElementById('m-benefits').innerHTML = (s.benefits || []).map(b => `
+    <div class="benefit-item">
+      <div class="benefit-icon">${b.icon}</div>
+      <div class="benefit-text"><strong>${T(b.title)}</strong>${T(b.desc)}</div>
+    </div>`).join('');
+
+  // Documents
+  document.getElementById('m-doc-note').textContent = L('docNote');
+  document.getElementById('m-docs').innerHTML = (s.docs || []).map(d => `
+    <div class="doc-item">
+      <div class="doc-icon">${d.icon}</div>
+      <div><div class="doc-name">${T(d.name)}</div><div class="doc-note">${T(d.note)}</div></div>
+    </div>`).join('');
+
+  // Steps
+  document.getElementById('m-steps').innerHTML = (s.steps || []).map((st, i) => `
+    <div class="apply-step">
+      <div class="step-num-wrap"><div class="step-num">${i+1}</div><div class="step-line"></div></div>
+      <div class="step-content"><div class="step-title">${T(st.title)}</div><div class="step-desc">${T(st.desc)}</div></div>
+    </div>`).join('');
+
+  // Helpline
+  document.getElementById('helpline-lbl').textContent = L('helplineLbl');
+  document.getElementById('website-lbl').textContent = L('websiteLbl');
+  document.getElementById('m-helpline').textContent = s.helpline;
+  document.getElementById('m-website').textContent = s.website;
+
+  // Reset tabs
+  switchTab(0);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function switchTab(idx) {
+  activeTab = idx;
+  document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.modal-tab-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || !e.target) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+document.getElementById('modal-box').addEventListener('click', e => e.stopPropagation());
+
+// ── FILTERS ──
+function setFilter(btn, cat) {
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  renderCards();
+}
+function filterState(v) { currentState = v; renderCards(); }
+function filterSchemes(q) { searchQuery = q; renderCards(); }
+
+// ── LANG ──
+function toggleLang() {
+  document.getElementById('lang-btn').classList.toggle('open');
+  document.getElementById('lang-dropdown').classList.toggle('open');
+}
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-option').forEach((o, i) => o.classList.toggle('active', ['en','hi','kn','mr','te','ta'][i] === lang));
+  document.getElementById('lang-btn').classList.remove('open');
+  document.getElementById('lang-dropdown').classList.remove('open');
+  renderAll();
+  if (activeModal) openModal(activeModal);
+}
+document.addEventListener('click', e => {
+  const w = document.querySelector('.lang-wrapper');
+  if (!w.contains(e.target)) { document.getElementById('lang-btn').classList.remove('open'); document.getElementById('lang-dropdown').classList.remove('open'); }
+});
+
+// ── AI ──
+function openAI() { document.getElementById('ai-panel').classList.add('open'); document.getElementById('ai-overlay').classList.add('open'); }
+function closeAI() { document.getElementById('ai-panel').classList.remove('open'); document.getElementById('ai-overlay').classList.remove('open'); }
+function askChip(t) { document.getElementById('ai-input').value = t; sendAI(); }
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  if (!geminiKey) { showKeyStatus('Please save your Gemini API key first!', false); document.getElementById('gemini-key-input').focus(); return; }
+  const msgs = document.getElementById('ai-messages');
+  const ud = document.createElement('div'); ud.className = 'msg-bubble msg-user'; ud.textContent = msg; msgs.appendChild(ud);
+  input.value = '';
+  const td = document.createElement('div'); td.className = 'msg-bubble msg-ai'; td.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>'; msgs.appendChild(td);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const schemeList = schemes.map(s => `${s.shortName} (${s.state}): ${s.benefit}, level: ${s.level}`).join('; ');
+  const sys = `You are a helpful AI advisor on AgriBridge Government Schemes portal for Indian farmers. Available schemes: ${schemeList}. Help farmers understand which schemes they qualify for, what documents they need, and how to apply. Keep answers short (3-4 sentences), practical and specific. Mention specific scheme names, benefit amounts, helpline numbers. Reply in the same language the farmer uses (Hindi, Kannada, Telugu, Tamil, Marathi, or English).`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-goog-api-key':'AIzaSyDzxt4CPtWZ97rr9eGo1wdXsFhM8y4cuW8'
+  },
+  body: JSON.stringify({
+    contents: [{ parts: [{ text: sys + "\n\nFarmer's question: " + msg }] }]
+  })
+});
+    const data = await res.json();
+    td.textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, could not get a response. Check your API key.';
+  } catch (e) { td.textContent = 'Connection error. Check your Gemini API key and internet connection.'; }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  document.getElementById('lang-label').textContent = L('langLabel');
+  document.getElementById('ai-btn-label').textContent = L('aiBtn');
+  document.getElementById('main-heading').textContent = L('mainHead');
+  document.getElementById('hero-badge-text').textContent = L('heroBadge');
+  document.getElementById('hero-title').textContent = L('heroTitle');
+  document.getElementById('hero-sub').textContent = L('heroSub');
+  document.getElementById('hero-stat1').textContent = L('stat1');
+  document.getElementById('hero-stat2').textContent = L('stat2');
+  document.getElementById('hero-stat3').textContent = L('stat3');
+  document.getElementById('hero-stat4').textContent = L('stat4');
+  document.getElementById('f-all').textContent = L('fAll');
+  document.getElementById('f-central').textContent = L('fCentral');
+  document.getElementById('f-state').textContent = L('fState');
+  document.getElementById('f-ins').textContent = L('fIns');
+  document.getElementById('f-inc').textContent = L('fInc');
+  document.getElementById('f-cred').textContent = L('fCred');
+  document.getElementById('ai-welcome').textContent = L('aiWelcome');
+  const ph = { en: 'Search schemes...', hi: 'योजना खोजें...', kn: 'ಯೋಜನೆ ಹುಡುಕಿ...', mr: 'योजना शोधा...', te: 'పథకాలు వెతకండి...', ta: 'திட்டம் தேடுங்கள்...' };
+  document.getElementById('main-search').placeholder = ph[currentLang] || ph.en;
+  renderCards();
+}
+
+// ── INIT ──
+renderAll();
+</script>
+</body>
+</html>

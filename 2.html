@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriBridge — Bank Schemes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gd:#1B4D2E;--gm:#2D7A4F;--gl:#4CAF78;--gp:#E8F5EE;--ga:#5DBF82;
+  --am:#F5A623;--ap:#FEF3DC;--ad:#8C5E10;
+  --rd:#D94F3D;--rp:#FDECEA;
+  --bd:#1A3A6E;--bp:#E8EEFA;--bm:#2B5BC4;
+  --bg:#F4F7F2;--sf:#FFFFFF;--br:rgba(0,0,0,0.08);
+  --t1:#1A2B1F;--t2:#5A7060;--tm:#93AE99;
+  --shd:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shl:0 12px 32px rgba(0,0,0,0.12),0 4px 8px rgba(0,0,0,0.06);
+  --r:12px;--rs:8px;
+  --fd:'Baloo 2',cursive;--fb:'Noto Sans',sans-serif;
+  --gov:#1A5276;--govp:#D6EAF8;
+  --pvt:#6C3483;--pvtp:#F4ECF7;
+  --coop:#117A65;--coopp:#D1F2EB;
+  --rr:#784212;--rrp:#FDEBD0;
+  --nb:#1B2631;--nbp:#EAECEE;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{background:var(--gd);height:60px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:100;gap:14px}
+.back-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:10px;width:36px;height:36px;color:rgba(255,255,255,0.85);cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;flex-shrink:0;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35);color:#fff}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none}
+.logo-mark{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1}
+.logo-words{line-height:1.1}
+.logo-main{font-family:var(--fd);font-size:18px;font-weight:800;color:#fff;display:block;letter-spacing:0.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1.2px;display:block}
+.topbar-spacer{flex:1}
+.topbar-search{display:flex;align-items:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:0 14px;gap:8px;height:36px;width:240px;transition:background 0.2s}
+.topbar-search:focus-within{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.35)}
+.topbar-search input{background:none;border:none;outline:none;color:#fff;font-size:13px;font-family:var(--fb);width:100%}
+.topbar-search input::placeholder{color:rgba(255,255,255,0.45)}
+
+/* NAV TABS */
+.nav-tabs{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,0.08);border-radius:20px;padding:3px}
+.nav-tab{padding:5px 14px;border-radius:16px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.65);cursor:pointer;font-family:var(--fd);border:none;background:none;transition:all 0.2s;white-space:nowrap;text-decoration:none;display:flex;align-items:center;gap:5px}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,0.12)}
+.nav-tab.active{background:var(--am);color:#fff;box-shadow:0 2px 8px rgba(245,166,35,0.4)}
+
+/* LANG DROPDOWN */
+.lang-wrapper{position:relative;flex-shrink:0}
+.lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 12px;color:#fff;font-size:12px;font-family:var(--fb);cursor:pointer;transition:background 0.2s}
+.lang-btn:hover{background:rgba(255,255,255,0.2)}
+.lang-btn .chevron{transition:transform 0.2s;font-size:10px;display:inline-block}
+.lang-btn.open .chevron{transform:rotate(180deg)}
+.lang-dropdown{position:absolute;right:0;top:calc(100% + 8px);background:var(--sf);border:1px solid var(--br);border-radius:var(--rs);box-shadow:var(--shl);min-width:155px;overflow:hidden;display:none;z-index:200}
+.lang-dropdown.open{display:block}
+.lang-option{padding:9px 14px;font-size:13px;color:var(--t1);cursor:pointer;display:flex;align-items:center;gap:10px;border:none;background:none;width:100%;text-align:left;font-family:var(--fb);transition:background 0.15s}
+.lang-option:hover{background:var(--gp)}
+.lang-option.active{background:var(--gp);color:var(--gm);font-weight:600}
+
+/* AI BUTTON */
+.ai-float-btn{display:flex;align-items:center;gap:7px;background:var(--am);border:none;border-radius:20px;padding:7px 14px 7px 10px;color:#fff;font-size:13px;font-weight:700;font-family:var(--fd);cursor:pointer;box-shadow:0 2px 8px rgba(245,166,35,0.45);transition:box-shadow 0.2s,transform 0.15s;flex-shrink:0}
+.ai-float-btn:hover{box-shadow:0 4px 16px rgba(245,166,35,0.6);transform:translateY(-1px)}
+.ai-float-btn .ai-icon{width:22px;height:22px;background:rgba(255,255,255,0.25);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* HERO BANNER */
+.hero-banner{background:linear-gradient(135deg,#0D2B6E 0%,#1A3A6E 60%,#0A1F4E 100%);padding:28px 24px 24px;position:relative;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(43,91,196,0.25) 0%,transparent 70%);pointer-events:none}
+.hero-banner::after{content:'🏦';position:absolute;right:24px;bottom:-10px;font-size:80px;opacity:0.08;pointer-events:none}
+.hero-inner{max-width:100%;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.35);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--am);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.hero-title{font-family:var(--fd);font-size:26px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.6);max-width:560px;line-height:1.6;margin-bottom:16px}
+.hero-stats{display:flex;gap:20px;flex-wrap:wrap}
+.hero-stat{display:flex;flex-direction:column}
+.hero-stat-val{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--am);line-height:1}
+.hero-stat-lbl{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+
+/* MAIN */
+.main{padding:22px;overflow-y:auto}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf);font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:all 0.15s;font-family:var(--fb);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.filter-chip:hover{border-color:var(--bm);color:var(--bm)}
+.filter-chip.active{background:var(--bd);border-color:var(--bd);color:#fff}
+.chip-icon{font-size:14px;line-height:1}
+.bank-type-select{margin-left:auto;padding:6px 28px 6px 12px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2393AE99'/%3E%3C/svg%3E") no-repeat right 10px center;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:var(--fb);appearance:none;outline:none;transition:border-color 0.15s}
+.bank-type-select:focus{border-color:var(--bm)}
+
+/* SECTION HEADER */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--bd);display:flex;align-items:center;gap:8px}
+.scheme-count-badge{font-size:11px;background:var(--bp);color:var(--bm);font-weight:700;padding:3px 10px;border-radius:10px}
+
+/* SCHEME CARDS GRID */
+.schemes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* SCHEME CARD */
+.scheme-card{background:var(--sf);border-radius:var(--r);border:1.5px solid var(--br);cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;animation:cardIn 0.35s ease both;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.scheme-card:hover{box-shadow:var(--shd);transform:translateY(-2px)}
+.scheme-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;transform:scaleX(0);transform-origin:left;transition:transform 0.25s}
+.scheme-card.govt::before{background:linear-gradient(90deg,#1A5276,#5DADE2)}
+.scheme-card.pvt::before{background:linear-gradient(90deg,#6C3483,#A569BD)}
+.scheme-card.coop::before{background:linear-gradient(90deg,#117A65,#52BE80)}
+.scheme-card.rr::before{background:linear-gradient(90deg,#784212,#E59866)}
+.scheme-card.nb::before{background:linear-gradient(90deg,#1B2631,#717D7E)}
+.scheme-card:hover::before{transform:scaleX(1)}
+.scheme-card.govt:hover{border-color:#1A5276}
+.scheme-card.pvt:hover{border-color:#6C3483}
+.scheme-card.coop:hover{border-color:#117A65}
+.scheme-card.rr:hover{border-color:#784212}
+.scheme-card.nb:hover{border-color:#1B2631}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.scheme-card-header{padding:16px 16px 12px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--br)}
+.scheme-icon-wrap{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;line-height:1;flex-shrink:0}
+.govt .scheme-icon-wrap{background:var(--govp)}
+.pvt .scheme-icon-wrap{background:var(--pvtp)}
+.coop .scheme-icon-wrap{background:var(--coopp)}
+.rr .scheme-icon-wrap{background:var(--rrp)}
+.nb .scheme-icon-wrap{background:var(--nbp)}
+
+.scheme-header-info{flex:1;min-width:0}
+.bank-type-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:2px 8px;border-radius:10px;margin-bottom:5px}
+.badge-govt{background:var(--govp);color:var(--gov)}
+.badge-pvt{background:var(--pvtp);color:var(--pvt)}
+.badge-coop{background:var(--coopp);color:var(--coop)}
+.badge-rr{background:var(--rrp);color:var(--rr)}
+.badge-nb{background:var(--nbp);color:var(--nb)}
+
+.scheme-name{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t1);line-height:1.3}
+.scheme-short-name{font-size:11px;color:var(--tm);margin-top:2px;font-style:italic}
+.scheme-card-body{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
+.scheme-desc{font-size:12px;color:var(--t2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.scheme-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.scheme-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;background:var(--bg);color:var(--t2);border:1px solid var(--br)}
+.scheme-card-footer{padding:10px 16px 13px;display:flex;align-items:center;justify-content:space-between}
+.scheme-bank{font-size:10px;color:var(--tm);display:flex;align-items:center;gap:4px;line-height:1.3;flex:1;padding-right:8px}
+.scheme-cta{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--bm);background:var(--bp);padding:5px 12px;border-radius:20px;white-space:nowrap;transition:background 0.15s}
+.scheme-card:hover .scheme-cta{background:var(--bm);color:#fff}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:flex-start;justify-content:center;backdrop-filter:blur(3px);overflow-y:auto;padding:30px 0}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--sf);border-radius:20px;width:640px;max-width:95vw;box-shadow:var(--shl);overflow:hidden;animation:modalIn 0.22s ease;margin:auto}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.modal-header{padding:20px 22px 18px;display:flex;align-items:flex-start;gap:14px;position:relative}
+.mh-govt{background:linear-gradient(135deg,#0D2B6E,#1A5276)}
+.mh-pvt{background:linear-gradient(135deg,#4A235A,#6C3483)}
+.mh-coop{background:linear-gradient(135deg,#0A4B3E,#117A65)}
+.mh-rr{background:linear-gradient(135deg,#4D2C0A,#784212)}
+.mh-nb{background:linear-gradient(135deg,#0D0F12,#1B2631)}
+
+.modal-header .m-icon{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.modal-header-info{flex:1}
+.modal-level-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;padding:3px 10px;border-radius:10px;background:rgba(255,255,255,0.2);color:#fff;margin-bottom:6px}
+.modal-title{font-family:var(--fd);font-size:20px;font-weight:800;color:#fff;line-height:1.25}
+.modal-short{font-size:12px;color:rgba(255,255,255,0.6);margin-top:3px}
+.modal-close{background:rgba(255,255,255,0.18);border:none;border-radius:9px;width:32px;height:32px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s;line-height:1}
+.modal-close:hover{background:rgba(255,255,255,0.3)}
+
+.modal-body{padding:0 22px 22px}
+.modal-quick-info{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+.qi-item{background:var(--bg);border-radius:var(--rs);padding:10px 12px;text-align:center}
+.qi-label{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px}
+.qi-value{font-family:var(--fd);font-size:12px;font-weight:700;color:var(--bd);line-height:1.3}
+
+.modal-tabs{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:16px}
+.modal-tab{flex:1;padding:7px 10px;border-radius:7px;font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--fd);border:none;background:none;transition:all 0.2s;text-align:center}
+.modal-tab.active{background:var(--sf);color:var(--bd);box-shadow:0 2px 6px rgba(0,0,0,0.08)}
+.modal-tab-content{display:none}
+.modal-tab-content.active{display:block}
+
+.modal-desc{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:14px}
+.benefits-list{display:flex;flex-direction:column;gap:8px}
+.benefit-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bp);border-radius:var(--rs);border-left:3px solid var(--bm)}
+.benefit-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.benefit-text{font-size:12px;color:var(--t1);line-height:1.5}
+.benefit-text strong{color:var(--bd);display:block;margin-bottom:2px;font-size:12px}
+
+.eligibility-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.elig-item{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--t2);line-height:1.5}
+.elig-dot{width:18px;height:18px;border-radius:50%;background:var(--bp);border:2px solid var(--bm);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.elig-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--bm)}
+
+.docs-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.doc-item{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--bg);border-radius:var(--rs);border:1.5px solid var(--br)}
+.doc-icon{width:30px;height:30px;border-radius:8px;background:var(--bp);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.doc-name{font-size:12px;font-weight:600;color:var(--t1);line-height:1.3}
+.doc-note{font-size:10px;color:var(--tm);margin-top:1px}
+
+.apply-steps{display:flex;flex-direction:column;gap:0}
+.apply-step{display:flex;gap:12px;position:relative;padding-bottom:16px}
+.apply-step:last-child{padding-bottom:0}
+.apply-step:last-child .step-line{display:none}
+.step-num-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--bd);color:#fff;font-family:var(--fd);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-line{width:2px;flex:1;background:var(--br);margin-top:4px;min-height:16px}
+.step-content{flex:1;padding-top:4px}
+.step-title{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.step-desc{font-size:11px;color:var(--t2);line-height:1.5}
+
+.modal-helpline{margin-top:16px;padding:12px 14px;background:var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.helpline-left{display:flex;align-items:center;gap:10px}
+.helpline-icon{font-size:20px}
+.helpline-lbl{font-size:11px;color:rgba(255,255,255,0.6)}
+.helpline-num{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--am)}
+.helpline-link{font-size:11px;color:rgba(255,255,255,0.5)}
+.helpline-url{color:#7FB3F5;font-weight:600}
+
+/* EMI CALCULATOR */
+.emi-section{background:var(--sf);border-radius:var(--r);border:1.5px solid var(--br);margin-top:28px;overflow:hidden}
+.emi-header{background:linear-gradient(135deg,#0D2B6E,#1A5276);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.emi-header-icon{width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.emi-header h3{font-family:var(--fd);font-size:16px;font-weight:700;color:#fff}
+.emi-header p{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px}
+.emi-body{padding:20px}
+.emi-sliders{display:flex;flex-direction:column;gap:18px;margin-bottom:20px}
+.emi-slider-row{display:flex;flex-direction:column;gap:6px}
+.emi-slider-label{display:flex;justify-content:space-between;align-items:center}
+.emi-slider-name{font-size:12px;font-weight:600;color:var(--t2)}
+.emi-slider-val{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--bd);background:var(--bp);padding:3px 10px;border-radius:20px}
+.emi-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--bm) 0%,var(--bm) 50%,#D0D6E8 50%,#D0D6E8 100%)}
+.emi-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--bd);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);cursor:pointer;transition:transform 0.15s}
+.emi-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.emi-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--bd);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);cursor:pointer}
+.emi-results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.emi-result-card{background:var(--bg);border-radius:var(--rs);padding:14px 16px;text-align:center}
+.emi-result-card.highlight{background:var(--bd)}
+.emi-result-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--tm);margin-bottom:6px}
+.emi-result-card.highlight .emi-result-label{color:rgba(255,255,255,0.6)}
+.emi-result-value{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--bd)}
+.emi-result-card.highlight .emi-result-value{color:var(--am)}
+.emi-result-sub{font-size:10px;color:var(--tm);margin-top:3px}
+.emi-result-card.highlight .emi-result-sub{color:rgba(255,255,255,0.4)}
+.emi-pie-wrap{margin-top:16px;display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--bg);border-radius:var(--rs)}
+.emi-pie{position:relative;width:80px;height:80px;flex-shrink:0}
+.emi-pie svg{width:80px;height:80px;transform:rotate(-90deg)}
+.emi-pie-legend{flex:1;display:flex;flex-direction:column;gap:8px}
+.emi-legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)}
+.emi-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.emi-legend-val{margin-left:auto;font-weight:700;color:var(--t1);font-family:var(--fd)}
+
+/* AI PANEL */
+.ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:300;backdrop-filter:blur(2px)}
+.ai-overlay.open{display:block}
+.ai-panel{position:fixed;right:-430px;top:0;bottom:0;width:420px;background:var(--sf);box-shadow:var(--shl);z-index:400;display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(0.34,1.1,0.64,1)}
+.ai-panel.open{right:0}
+.ai-panel-header{background:var(--bd);padding:15px 18px;display:flex;align-items:center;gap:12px}
+.ai-panel-icon{width:36px;height:36px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ai-panel-header h3{font-family:var(--fd);font-size:15px;font-weight:700;color:#fff}
+.ai-panel-header p{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px}
+.ai-close{margin-left:auto;background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:30px;height:30px;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;line-height:1}
+.ai-close:hover{background:rgba(255,255,255,0.25)}
+.ai-key-section{padding:10px 14px;border-bottom:1px solid var(--br);background:#FAFBF9}
+.ai-key-label{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.ai-key-hint{font-size:10px;color:var(--tm);margin-bottom:6px;line-height:1.4}
+.ai-key-row{display:flex;gap:6px}
+.ai-key-input{flex:1;padding:7px 10px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:12px;font-family:var(--fb);background:var(--sf);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-key-input:focus{border-color:var(--bm)}
+.ai-key-save{padding:7px 12px;background:var(--bd);border:none;border-radius:var(--rs);color:#fff;font-size:12px;font-weight:600;font-family:var(--fb);cursor:pointer;white-space:nowrap;transition:background 0.15s}
+.ai-key-save:hover{background:var(--bm)}
+.ai-key-status{font-size:10px;margin-top:4px;height:14px}
+.key-ok{color:var(--gm)}.key-no{color:var(--rd)}
+.ai-chips{padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--br)}
+.ai-chip{padding:5px 11px;border-radius:20px;border:1.5px solid var(--br);background:var(--bg);font-size:11px;color:var(--t2);cursor:pointer;font-family:var(--fb);transition:all 0.15s}
+.ai-chip:hover{border-color:var(--am);color:var(--ad);background:var(--ap)}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ai-messages::-webkit-scrollbar{width:3px}
+.ai-messages::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px}
+.msg-bubble{max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.55}
+.msg-ai{background:var(--bp);color:var(--t1);align-self:flex-start;border-radius:4px 14px 14px 14px;border:1px solid rgba(43,91,196,0.15)}
+.msg-user{background:var(--bd);color:#fff;align-self:flex-end;border-radius:14px 4px 14px 14px}
+.ai-input-row{padding:12px 14px;border-top:1.5px solid var(--br);display:flex;gap:8px;align-items:center}
+.ai-input-row input{flex:1;padding:9px 13px;border-radius:24px;border:1.5px solid var(--br);font-size:13px;font-family:var(--fb);background:var(--bg);color:var(--t1);outline:none;transition:border-color 0.2s}
+.ai-input-row input:focus{border-color:var(--bm)}
+.ai-send{width:36px;height:36px;background:var(--bd);border:none;border-radius:50%;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.15s;flex-shrink:0}
+.ai-send:hover{background:var(--bm);transform:scale(1.06)}
+.gemini-tag{padding:7px 14px;font-size:10px;color:var(--tm);display:flex;align-items:center;gap:4px;border-top:1px solid var(--br);background:var(--bg)}
+.typing-dots{display:flex;gap:4px;padding:3px 0}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--bm);animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,60%,100%{opacity:1}30%{opacity:0.2}}
+
+/* EMPTY STATE */
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--tm)}
+.empty-state-icon{font-size:48px;margin-bottom:12px;display:block;opacity:0.5}
+.empty-state-msg{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--t2)}
+.empty-state-sub{font-size:13px;margin-top:4px}
+
+@media(max-width:900px){.schemes-grid{grid-template-columns:repeat(2,1fr)}.topbar-search{display:none}.docs-list{grid-template-columns:1fr}.modal-quick-info{grid-template-columns:1fr 1fr}.emi-results{grid-template-columns:1fr}}
+@media(max-width:560px){.schemes-grid{grid-template-columns:1fr}.topbar{padding:0 12px;gap:8px}.nav-tabs{display:none}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="back-btn" href="#" onclick="history.back(); return false;" title="Go back" aria-label="Go back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></svg>
+  </a>
+  <a class="topbar-logo" href="#">
+    <div class="logo-mark">🌉</div>
+    <div class="logo-words">
+      <span class="logo-main">AgriBridge</span>
+      <span class="logo-sub" id="site-tagline">Bank Schemes</span>
+    </div>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="main-search" placeholder="Search bank schemes..." oninput="filterSchemes(this.value)">
+  </div>
+  <div class="lang-wrapper">
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span id="lang-label">English</span>
+      <span class="chevron">&#9660;</span>
+    </button>
+    <div class="lang-dropdown" id="lang-dropdown">
+      <button class="lang-option active" onclick="setLang('en')">🇮🇳 English</button>
+      <button class="lang-option" onclick="setLang('hi')">🇮🇳 हिंदी</button>
+      <button class="lang-option" onclick="setLang('kn')">🇮🇳 ಕನ್ನಡ</button>
+      <button class="lang-option" onclick="setLang('mr')">🇮🇳 मराठी</button>
+      <button class="lang-option" onclick="setLang('te')">🇮🇳 తెలుగు</button>
+      <button class="lang-option" onclick="setLang('ta')">🇮🇳 தமிழ்</button>
+    </div>
+  </div>
+  <button class="ai-float-btn" onclick="openAI()">
+    <div class="ai-icon">✨</div>
+    <span id="ai-btn-label">Ask AI</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<div class="hero-banner">
+  <div class="hero-inner">
+    <div class="hero-badge">🏦 <span id="hero-badge-text">Farmer Banking Schemes Portal</span></div>
+    <div class="hero-title" id="hero-title">Bank Schemes for Indian Farmers</div>
+    <div class="hero-sub" id="hero-sub">Explore loans, credit, and financial schemes from government, private, cooperative & regional rural banks — all in one place.</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-val" id="total-schemes-count">18</span><span class="hero-stat-lbl" id="hero-stat1">Total Schemes</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">7</span><span class="hero-stat-lbl" id="hero-stat2">Govt Banks</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">4</span><span class="hero-stat-lbl" id="hero-stat3">Private Banks</span></div>
+      <div class="hero-stat"><span class="hero-stat-val">₹25,000Cr+</span><span class="hero-stat-lbl" id="hero-stat4">Credit Deployed</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="sec-hd">
+    <div class="sec-title">🏦 <span id="main-heading">All Bank Schemes</span></div>
+    <div class="scheme-count-badge" id="scheme-count-badge">18 schemes</div>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="setFilter(this,'all')"><span class="chip-icon">🏛️</span> <span id="f-all">All Schemes</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'loan')"><span class="chip-icon">💰</span> <span id="f-loan">Crop Loans</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'credit')"><span class="chip-icon">💳</span> <span id="f-credit">Credit Cards</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'equipment')"><span class="chip-icon">🚜</span> <span id="f-equip">Equipment</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'savings')"><span class="chip-icon">🏦</span> <span id="f-save">Savings & Deposits</span></button>
+    <button class="filter-chip" onclick="setFilter(this,'insurance')"><span class="chip-icon">🛡️</span> <span id="f-ins">Insurance</span></button>
+    <select class="bank-type-select" id="banktype-select" onchange="filterBankType(this.value)">
+      <option value="all" id="bt-all">All Bank Types</option>
+      <option value="govt">Government Banks</option>
+      <option value="pvt">Private Banks</option>
+      <option value="coop">Cooperative Banks</option>
+      <option value="rr">Regional Rural Banks</option>
+      <option value="nb">NABARD / Apex</option>
+    </select>
+  </div>
+  <div class="schemes-grid" id="schemes-grid"></div>
+
+  <!-- EMI CALCULATOR -->
+  <div class="emi-section">
+    <div class="emi-header">
+      <div class="emi-header-icon">🧮</div>
+      <div>
+        <h3 id="emi-title">EMI Calculator</h3>
+        <p id="emi-sub">Calculate your monthly farm loan repayment</p>
+      </div>
+    </div>
+    <div class="emi-body">
+      <div class="emi-sliders">
+        <div class="emi-slider-row">
+          <div class="emi-slider-label">
+            <span class="emi-slider-name" id="emi-lbl-amount">Loan Amount</span>
+            <span class="emi-slider-val" id="emi-val-amount">₹1,80,000</span>
+          </div>
+          <input type="range" class="emi-slider" id="emi-amount" min="10000" max="5000000" step="10000" value="180000" oninput="updateEMI()">
+        </div>
+        <div class="emi-slider-row">
+          <div class="emi-slider-label">
+            <span class="emi-slider-name" id="emi-lbl-rate">Interest Rate</span>
+            <span class="emi-slider-val" id="emi-val-rate">7.0%</span>
+          </div>
+          <input type="range" class="emi-slider" id="emi-rate" min="4" max="18" step="0.5" value="7" oninput="updateEMI()">
+        </div>
+        <div class="emi-slider-row">
+          <div class="emi-slider-label">
+            <span class="emi-slider-name" id="emi-lbl-tenure">Tenure</span>
+            <span class="emi-slider-val" id="emi-val-tenure">36 months</span>
+          </div>
+          <input type="range" class="emi-slider" id="emi-tenure" min="6" max="120" step="6" value="36" oninput="updateEMI()">
+        </div>
+      </div>
+      <div class="emi-results">
+        <div class="emi-result-card highlight">
+          <div class="emi-result-label" id="emi-lbl-monthly">MONTHLY EMI</div>
+          <div class="emi-result-value" id="emi-monthly">₹5,558</div>
+          <div class="emi-result-sub">per month</div>
+        </div>
+        <div class="emi-result-card">
+          <div class="emi-result-label" id="emi-lbl-interest">TOTAL INTEREST</div>
+          <div class="emi-result-value" id="emi-interest">₹20,084</div>
+          <div class="emi-result-sub" id="emi-lbl-over">over loan period</div>
+        </div>
+        <div class="emi-result-card">
+          <div class="emi-result-label" id="emi-lbl-total">TOTAL PAYMENT</div>
+          <div class="emi-result-value" id="emi-total">₹2,00,084</div>
+          <div class="emi-result-sub" id="emi-lbl-principal">principal + interest</div>
+        </div>
+      </div>
+      <div class="emi-pie-wrap">
+        <div class="emi-pie">
+          <svg viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#D0D6E8" stroke-width="3.5"/>
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#1A3A6E" stroke-width="3.5" stroke-dasharray="90 10" id="emi-pie-principal" stroke-linecap="round"/>
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#F5A623" stroke-width="3.5" stroke-dasharray="10 90" id="emi-pie-interest" stroke-dashoffset="-90" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="emi-pie-legend">
+          <div class="emi-legend-item"><div class="emi-legend-dot" style="background:#1A3A6E"></div><span id="emi-leg-p">Principal Amount</span><span class="emi-legend-val" id="emi-leg-pval">₹1,80,000</span></div>
+          <div class="emi-legend-item"><div class="emi-legend-dot" style="background:#F5A623"></div><span id="emi-leg-i">Total Interest</span><span class="emi-legend-val" id="emi-leg-ival">₹20,084</span></div>
+          <div class="emi-legend-item" style="border-top:1px solid var(--br);padding-top:8px;margin-top:2px"><div class="emi-legend-dot" style="background:#E0E0E0"></div><span id="emi-leg-t">Total Payable</span><span class="emi-legend-val" id="emi-leg-tval">₹2,00,084</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- SCHEME DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header" id="modal-header">
+      <div class="m-icon" id="m-icon">🏦</div>
+      <div class="modal-header-info">
+        <div class="modal-level-badge" id="m-level-badge">Government Bank</div>
+        <div class="modal-title" id="m-title">Scheme Name</div>
+        <div class="modal-short" id="m-short">Bank name</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-quick-info">
+        <div class="qi-item"><div class="qi-label">Bank Type</div><div class="qi-value" id="qi-banktype">Govt Bank</div></div>
+        <div class="qi-item"><div class="qi-label">Interest Rate</div><div class="qi-value" id="qi-interest">—</div></div>
+        <div class="qi-item"><div class="qi-label">Max Loan</div><div class="qi-value" id="qi-maxloan">—</div></div>
+        <div class="qi-item"><div class="qi-label">Tenure</div><div class="qi-value" id="qi-tenure">—</div></div>
+      </div>
+      <div class="modal-tabs">
+        <button class="modal-tab active" onclick="switchTab(0)">📋 <span id="tab0">Overview</span></button>
+        <button class="modal-tab" onclick="switchTab(1)">✅ <span id="tab1">Benefits</span></button>
+        <button class="modal-tab" onclick="switchTab(2)">📄 <span id="tab2">Documents</span></button>
+        <button class="modal-tab" onclick="switchTab(3)">🚪 <span id="tab3">How to Apply</span></button>
+      </div>
+      <div class="modal-tab-content active" id="tc-0">
+        <div class="modal-desc" id="m-desc"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--bd);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Who is Eligible?</div>
+        <div class="eligibility-list" id="m-eligibility"></div>
+      </div>
+      <div class="modal-tab-content" id="tc-1">
+        <div class="benefits-list" id="m-benefits"></div>
+      </div>
+      <div class="modal-tab-content" id="tc-2">
+        <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5;" id="m-doc-note">Carry original + photocopy of all documents to the bank branch.</div>
+        <div class="docs-list" id="m-docs"></div>
+      </div>
+      <div class="modal-tab-content" id="tc-3">
+        <div class="apply-steps" id="m-steps"></div>
+      </div>
+      <div class="modal-helpline">
+        <div class="helpline-left">
+          <div class="helpline-icon">📞</div>
+          <div>
+            <div class="helpline-lbl" id="helpline-lbl">Helpline & Support</div>
+            <div class="helpline-num" id="m-helpline">1800-180-1111</div>
+          </div>
+        </div>
+        <div>
+          <div class="helpline-link" id="website-lbl">Official Website</div>
+          <div class="helpline-url" id="m-website">sbi.co.in</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI PANEL -->
+<div class="ai-overlay" id="ai-overlay" onclick="closeAI()"></div>
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-icon">✨</div>
+    <div>
+      <h3 id="ai-panel-title">AI Banking Advisor</h3>
+      <p>Powered by Gemini · Farm finance guidance</p>
+    </div>
+    <button class="ai-close" onclick="closeAI()">✕</button>
+  </div>
+  <div class="ai-chips">
+    <button class="ai-chip" onclick="askChip('Which bank scheme gives the lowest interest rate for crop loans?')">💰 Lowest interest crop loan</button>
+    <button class="ai-chip" onclick="askChip('How do I apply for Kisan Credit Card from SBI?')">💳 Kisan Credit Card</button>
+    <button class="ai-chip" onclick="askChip('What is the difference between government bank and cooperative bank loans for farmers?')">🏦 Govt vs Cooperative bank</button>
+    <button class="ai-chip" onclick="askChip('Can I get a tractor loan with no collateral?')">🚜 Tractor loan help</button>
+    <button class="ai-chip" onclick="askChip('What documents do I need to apply for any farm loan in India?')">📄 Documents needed</button>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="msg-bubble msg-ai" id="ai-welcome">Namaste 🙏 I'm your AI Banking Advisor! Ask me about farm loans, interest rates, required documents, or which bank scheme suits your needs — in English, Hindi, or Kannada!</div>
+  </div>
+  <div class="ai-input-row">
+    <input type="text" id="ai-input" placeholder="Ask about any bank scheme..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+    </button>
+  </div>
+  <div class="gemini-tag">
+    <svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2L2 19h20L12 2z" fill="#4285F4"/></svg>
+    Gemini API · Always verify rates & terms at the bank's official website
+  </div>
+</div>
+
+<script>
+// ─── GLOBAL STATE (single declarations only) ───────────────────────────────
+const HARDCODED_KEY = 'AIzaSyDzxt4CPtWZ97rr9eGo1wdXsFhM8y4cuW8';
+let geminiKey = HARDCODED_KEY || localStorage.getItem('agribridge_bank_gemini_key') || '';
+let currentLang = 'en';
+let currentFilter = 'all';
+let currentBankType = 'all';
+let searchQuery = '';
+let activeModal = null;
+let activeTab = 0;
+
+// ─── KEY MANAGEMENT ────────────────────────────────────────────────────────
+function saveKey() {
+  const val = document.getElementById('gemini-key-input').value.trim();
+  if (!val) { showKeyStatus('Please enter a key', false); return; }
+  geminiKey = val;
+  localStorage.setItem('agribridge_bank_gemini_key', val);
+  showKeyStatus('✓ Key saved!', true);
+}
+
+function showKeyStatus(msg, ok) {
+  const el = document.getElementById('key-status');
+  el.textContent = msg;
+  el.className = 'ai-key-status ' + (ok ? 'key-ok' : 'key-no');
+  if (ok) setTimeout(() => { el.textContent = ''; el.className = 'ai-key-status'; }, 3000);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (geminiKey) {
+    document.getElementById('gemini-key-input').value = geminiKey;
+    showKeyStatus('✓ Key loaded', true);
+  }
+  renderAll();
+  updateEMI();
+});
+
+// ─── BANK SCHEMES DATA ─────────────────────────────────────────────────────
+const schemes = [
+  // GOVERNMENT BANKS
+  {
+    id:1, bankType:'govt', emoji:'🌾',
+    name:{en:'SBI Kisan Credit Card',hi:'एसबीआई किसान क्रेडिट कार्ड',kn:'ಎಸ್‌ಬಿಐ ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್',mr:'एसबीआय किसान क्रेडिट कार्ड',te:'ఎస్‌బిఐ కిసాన్ క్రెడిట్ కార్డ్',ta:'எஸ்பிஐ கிசான் கடன் அட்டை'},
+    shortName:'SBI KCC', bankName:'State Bank of India',
+    category:['credit','loan'],
+    interestRate:'4%–7% p.a.', maxLoan:'₹3 Lakh', tenure:'1 year (renewable)',
+    desc:{en:'SBI Kisan Credit Card offers flexible revolving credit to farmers for crop cultivation, post-harvest, and allied activities at just 4% interest (after govt subvention). Credit limit fixed based on landholding. ATM/RuPay card included for easy withdrawals.',hi:'SBI KCC किसानों को 4% ब्याज पर ₹3 लाख तक फसल ऋण देता है।',kn:'SBI KCC ರೈತರಿಗೆ 4% ಬಡ್ಡಿಯಲ್ಲಿ ₹3 ಲಕ್ಷ ಸಾಲ ನೀಡುತ್ತದೆ।',mr:'SBI KCC शेतकऱ्यांना 4% व्याजावर ₹3 लाख पर्यंत पीक कर्ज देतो.',te:'SBI KCC రైతులకు 4% వడ్డీకి ₹3 లక్షల వరకు పంట రుణం అందిస్తుంది.',ta:'SBI KCC விவசாயிகளுக்கு 4% வட்டியில் ₹3 லட்சம் வரை பயிர் கடன் வழங்குகிறது.'},
+    eligibility:[
+      {en:'All farmers — individual, joint borrowers, tenant farmers, SHGs/JLGs'},
+      {en:'Age 18–75 years (co-borrower if age > 60)'},
+      {en:'Must have agricultural land (owned or leased)'},
+      {en:'Valid Aadhaar + active bank account required'},
+    ],
+    benefits:[
+      {icon:'💳',title:{en:'Revolving Credit — Withdraw Anytime'},desc:{en:'Use funds as needed, repay after harvest. Works like a credit card with no fixed repayment schedule'}},
+      {icon:'💰',title:{en:'4% Subsidized Interest Rate'},desc:{en:'Government pays 2% interest subvention + 3% prompt repayment bonus = effective 4% p.a. for up to ₹3L'}},
+      {icon:'🛡️',title:{en:'Personal Accident Insurance ₹50,000'},desc:{en:'Automatic PA cover of ₹50,000 for death/disability included with every KCC'}},
+      {icon:'📱',title:{en:'RuPay ATM/Debit Card'},desc:{en:'Get a RuPay card to withdraw cash from any ATM — no need to visit bank branch every time'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'KYC mandatory'}},
+      {icon:'📸',name:{en:'Passport Photos'},note:{en:'2 recent photos'}},
+      {icon:'📄',name:{en:'Land Records (7/12 / RoR)'},note:{en:'Latest copy'}},
+      {icon:'🏠',name:{en:'Address Proof'},note:{en:'Voter ID / Ration Card'}},
+      {icon:'📋',name:{en:'Crop Sowing Declaration'},note:{en:'Self-declaration form'}},
+      {icon:'🏦',name:{en:'Bank Account (if new)'},note:{en:'Account opening docs'}},
+    ],
+    steps:[
+      {title:{en:'Visit nearest SBI branch'},desc:{en:'Carry all documents to the nearest SBI branch or apply via YONO SBI app'}},
+      {title:{en:'Submit KCC application form'},desc:{en:'Fill KCC form with landholding details, crop pattern and bank account info'}},
+      {title:{en:'Bank assessment & sanction'},desc:{en:'Bank verifies land records and determines credit limit in 14 working days'}},
+      {title:{en:'Receive KCC RuPay Card'},desc:{en:'Card dispatched to your address. Activate at branch or ATM and start using'}},
+    ],
+    helpline:'1800-11-2211 (SBI Toll Free)', website:'sbi.co.in/agri',
+  },
+  {
+    id:2, bankType:'govt', emoji:'🚜',
+    name:{en:'PNB Krishi Vahaan Yojana',hi:'पीएनबी कृषि वाहन योजना',kn:'ಪಿಎನ್‌ಬಿ ಕೃಷಿ ವಾಹನ ಯೋಜನೆ',mr:'पीएनबी कृषी वाहन योजना',te:'పిఎన్‌బి కృషి వాహన్ యోజన',ta:'பிஎன்பி விவசாய வாகன திட்டம்'},
+    shortName:'PNB Krishi Vahaan', bankName:'Punjab National Bank',
+    category:['equipment'],
+    interestRate:'8.5%–10% p.a.', maxLoan:'₹25 Lakh', tenure:'Up to 9 years',
+    desc:{en:'PNB Krishi Vahaan Yojana provides loan for purchase of tractors, power tillers, combine harvesters, and other farm equipment. Covers up to 90% of equipment cost. Flexible repayment tied to crop harvests. Available for individual farmers, FPOs, and farmer cooperatives.',hi:'PNB ट्रैक्टर और कृषि उपकरण खरीदने के लिए ₹25 लाख तक लोन देता है।'},
+    eligibility:[
+      {en:'Farmers with minimum 2 acres of land for tractor loans'},
+      {en:'FPOs, cooperatives, and agri-entrepreneurs eligible'},
+      {en:'Age 18–65 years at loan application'},
+      {en:'No overdue on any existing bank loan'},
+    ],
+    benefits:[
+      {icon:'🚜',title:{en:'Up to 90% Equipment Financing'},desc:{en:'Finance tractors, tillers, harvesters up to 90% of cost. Only 10% margin needed from farmer'}},
+      {icon:'📅',title:{en:'Harvest-linked Repayment'},desc:{en:'Repayment schedule aligned with crop harvest season — pay after you earn, not before'}},
+      {icon:'🏭',title:{en:'Wide Equipment Coverage'},desc:{en:'Tractors, power tillers, rotavators, combine harvesters, sprayers, irrigation pumps all covered'}},
+      {icon:'💰',title:{en:'No Processing Fee for Small Farmers'},desc:{en:'Zero processing fee for small & marginal farmers with landholding below 2 hectares'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + PAN Card'},note:{en:'Identity proof'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'Proof of farmland ownership'}},
+      {icon:'📋',name:{en:'Equipment Quotation'},note:{en:'From authorized dealer'}},
+      {icon:'🏦',name:{en:'Bank Statements'},note:{en:'Last 6 months'}},
+      {icon:'📸',name:{en:'Passport Photos'},note:{en:'2 copies'}},
+      {icon:'🏠',name:{en:'Address Proof'},note:{en:'Voter ID / Utility bill'}},
+    ],
+    steps:[
+      {title:{en:'Get quotation from dealer'},desc:{en:'Obtain equipment quotation from an authorized PNB-empanelled dealer'}},
+      {title:{en:'Visit PNB branch with documents'},desc:{en:'Submit loan application with land records, quotation and identity documents'}},
+      {title:{en:'Bank appraisal & sanction'},desc:{en:'Loan officer assesses repayment capacity. Sanction letter issued in 15 days'}},
+      {title:{en:'Payment & equipment delivery'},desc:{en:'Bank pays dealer directly. Equipment delivered to your farm. Hypothecation created'}},
+    ],
+    helpline:'1800-180-2222 (PNB Toll Free)', website:'pnbindia.in/agri',
+  },
+  {
+    id:3, bankType:'govt', emoji:'🌱',
+    name:{en:'Bank of Baroda Kisan Samadhan',hi:'बैंक ऑफ बड़ौदा किसान समाधान',kn:'ಬ್ಯಾಂಕ್ ಆಫ್ ಬರೋಡಾ ಕಿಸಾನ್ ಸಮಾಧಾನ',mr:'बँक ऑफ बडोदा किसान समाधान',te:'బ్యాంక్ ఆఫ్ బరోడా కిసాన్ సమాధాన్',ta:'பேங்க் ஆஃப் பரோடா கிசான் சமாதான்'},
+    shortName:'BOB Kisan Samadhan', bankName:'Bank of Baroda',
+    category:['loan'],
+    interestRate:'7%–9% p.a.', maxLoan:'₹10 Lakh', tenure:'Up to 5 years',
+    desc:{en:'BOB Kisan Samadhan is a comprehensive agricultural term loan scheme for land development, well/borewell sinking, horticulture, allied activities and post-harvest infrastructure. Covers up to ₹10 lakh at competitive interest rates with flexible repayment tied to income cycles.',hi:'BOB किसान समाधान भूमि विकास और कृषि संरचना के लिए ₹10 लाख तक टर्म लोन देता है।'},
+    eligibility:[
+      {en:'Individual farmers and joint borrowers'},
+      {en:'Tenant farmers with valid lease agreements'},
+      {en:'SHGs and farmer joint liability groups (JLGs)'},
+      {en:'Age between 18 and 70 years'},
+    ],
+    benefits:[
+      {icon:'🌊',title:{en:'Borewell & Irrigation Financing'},desc:{en:'Fund drilling borewells, digging wells, installing pumps and drip/sprinkler systems for irrigation'}},
+      {icon:'🌳',title:{en:'Horticulture & Plantation Loans'},desc:{en:'Finance orchard development, greenhouse construction, and perennial crop plantations'}},
+      {icon:'📦',title:{en:'Post-harvest Infrastructure'},desc:{en:'Loans for storage, cold rooms, grading machines and packaging units at farm level'}},
+      {icon:'💰',title:{en:'Interest Subvention Available'},desc:{en:'Additional 2% interest subvention for prompt repayment under government scheme, reducing effective rate'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'Mandatory KYC'}},
+      {icon:'📄',name:{en:'Land Records (7/12)'},note:{en:'Ownership proof'}},
+      {icon:'📋',name:{en:'Project/Cost Estimate'},note:{en:'For term loan purpose'}},
+      {icon:'🏦',name:{en:'Bank Account Passbook'},note:{en:'Existing account details'}},
+      {icon:'📸',name:{en:'Passport Photos'},note:{en:'2 copies'}},
+    ],
+    steps:[
+      {title:{en:'Visit BOB branch or apply online'},desc:{en:'Go to nearest Bank of Baroda branch or apply via BOB World app or website'}},
+      {title:{en:'Submit loan application'},desc:{en:'Fill application mentioning purpose (borewell, horticulture, storage etc.) with cost estimate'}},
+      {title:{en:'Field inspection by bank officer'},desc:{en:'Bank officer visits your farm to assess project feasibility and land value'}},
+      {title:{en:'Disbursement in stages'},desc:{en:'Loan disbursed in stages as work progresses. Repayment starts after grace period'}},
+    ],
+    helpline:'1800-5700 (BOB Toll Free)', website:'bankofbaroda.in/agri-loans',
+  },
+  {
+    id:4, bankType:'govt', emoji:'🏠',
+    name:{en:'Canara Bank Agri Clinic Loan',hi:'केनरा बैंक एग्री क्लिनिक लोन',kn:'ಕೆನರಾ ಬ್ಯಾಂಕ್ ಅಗ್ರಿ ಕ್ಲಿನಿಕ್ ಸಾಲ',mr:'कॅनरा बँक ॲग्री क्लिनिक लोन',te:'కెనరా బ్యాంక్ అగ్రి క్లినిక్ రుణం',ta:'கேனரா வங்கி அக்ரி கிளினிக் கடன்'},
+    shortName:'Canara Agri Clinic', bankName:'Canara Bank',
+    category:['loan'],
+    interestRate:'7.5% p.a.', maxLoan:'₹20 Lakh', tenure:'5–7 years',
+    desc:{en:'Canara Bank supports educated unemployed agriculture graduates to set up Agri Clinics & Agri Business Centres. Provides loans up to ₹20 lakh (₹25 lakh for groups) with back-ended capital subsidy of 25-44% under ACABC scheme. Includes training, mentoring and handholding support.',hi:'केनरा बैंक कृषि स्नातकों को एग्री क्लिनिक स्थापित करने के लिए ₹20 लाख तक लोन देता है।'},
+    eligibility:[
+      {en:'Agriculture graduates (B.Sc Agri, B.V.Sc, B.Sc Horticulture, etc.)'},
+      {en:'Agricultural diploma holders with 55%+ marks'},
+      {en:'Individual applicants or groups of up to 5 persons'},
+      {en:'Age 18–45 years. Prior agriculture experience preferred'},
+    ],
+    benefits:[
+      {icon:'🏥',title:{en:'Up to 44% Capital Subsidy'},desc:{en:'SC/ST/women/north-east applicants get 44% back-ended subsidy. Others get 25% on loan amount'}},
+      {icon:'📚',title:{en:'MANAGE Training Support'},desc:{en:'45-day free residential training at MANAGE Hyderabad before loan disbursal'}},
+      {icon:'🤝',title:{en:'NABARD Mentoring'},desc:{en:'Ongoing mentoring and technical handholding from NABARD and state agriculture department'}},
+      {icon:'💰',title:{en:'Back-ended Subsidy'},desc:{en:'Subsidy credited to loan account after successful 3-year operation — reduces outstanding principal'}},
+    ],
+    docs:[
+      {icon:'🎓',name:{en:'Agriculture Degree Certificate'},note:{en:'Attested copy'}},
+      {icon:'🪪',name:{en:'Aadhaar + PAN Card'},note:{en:'KYC documents'}},
+      {icon:'📋',name:{en:'Business Plan/Project Report'},note:{en:'Detailed agri clinic plan'}},
+      {icon:'🏠',name:{en:'Premises Proof (rental/own)'},note:{en:'For clinic location'}},
+      {icon:'📄',name:{en:'MANAGE Training Certificate'},note:{en:'After completing training'}},
+    ],
+    steps:[
+      {title:{en:'Register with MANAGE for training'},desc:{en:'Apply for 45-day ACABC training at National Institute of Agricultural Extension Management'}},
+      {title:{en:'Prepare detailed project report'},desc:{en:'Prepare business plan for your agri clinic with revenue projections and setup costs'}},
+      {title:{en:'Apply at Canara Bank branch'},desc:{en:'Submit loan application with training certificate, project report and KYC documents'}},
+      {title:{en:'Start clinic & claim subsidy'},desc:{en:'After 3 years of successful operation, back-ended subsidy released to loan account'}},
+    ],
+    helpline:'1800-425-0018 (Canara)', website:'canarabank.com/agri',
+  },
+  {
+    id:5, bankType:'govt', emoji:'💧',
+    name:{en:'Union Bank Kisan Tatkal',hi:'यूनियन बैंक किसान तत्काल',kn:'ಯೂನಿಯನ್ ಬ್ಯಾಂಕ್ ಕಿಸಾನ್ ತತ್ಕಾಲ್',mr:'युनियन बँक किसान तत्काल',te:'యూనియన్ బ్యాంక్ కిసాన్ తత్కాల్',ta:'யூனியன் வங்கி கிசான் தட்கால்'},
+    shortName:'Union Kisan Tatkal', bankName:'Union Bank of India',
+    category:['loan'],
+    interestRate:'8%–10% p.a.', maxLoan:'₹5 Lakh', tenure:'12–18 months',
+    desc:{en:'Union Bank Kisan Tatkal is an emergency agricultural loan scheme providing quick credit (within 48 hours) to existing KCC farmers for urgent farm needs — emergency repairs, sudden pest attacks, calamity losses. No fresh collateral needed for existing KCC holders. Available for all crops across India.',hi:'Union Bank Kisan Tatkal मौजूदा किसानों को 48 घंटे में आपातकालीन लोन देता है।'},
+    eligibility:[
+      {en:'Existing Kisan Credit Card holder of Union Bank'},
+      {en:'No overdue/NPA status on existing loan'},
+      {en:'KCC account operational for at least 1 year'},
+      {en:'Maximum 2 Tatkal loans per year per farmer'},
+    ],
+    benefits:[
+      {icon:'⚡',title:{en:'48-hour Emergency Disbursal'},desc:{en:'Loan approved and disbursed within 48 hours for existing KCC customers — no long processing'}},
+      {icon:'🔒',title:{en:'No Additional Collateral'},desc:{en:'For amounts up to ₹1.6 lakh, no collateral required for existing KCC customers'}},
+      {icon:'🌿',title:{en:'Covers Emergency Farm Needs'},desc:{en:'Pest attack, drought, equipment breakdown, calamity losses — all emergency situations covered'}},
+      {icon:'💳',title:{en:'Linked to Existing KCC Limit'},desc:{en:'Emergency loan linked to and enhances your existing KCC credit limit temporarily'}},
+    ],
+    docs:[
+      {icon:'💳',name:{en:'Existing KCC Card'},note:{en:'Your Union Bank KCC'}},
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'Identity verification'}},
+      {icon:'📋',name:{en:'Emergency Declaration'},note:{en:'Statement of emergency need'}},
+      {icon:'📸',name:{en:'Passport Photo'},note:{en:'1 recent photo'}},
+    ],
+    steps:[
+      {title:{en:'Call Union Bank 24x7 helpline or visit branch'},desc:{en:'Contact 1800-222-244 or visit nearest branch with KCC card and Aadhaar'}},
+      {title:{en:'Declare emergency purpose'},desc:{en:'State the emergency need — pest attack, equipment failure, calamity damage etc.'}},
+      {title:{en:'Quick verification'},desc:{en:'Bank verifies your KCC status and approves within 24-48 hours'}},
+      {title:{en:'Credit to linked account'},desc:{en:'Amount credited directly to your savings account linked with KCC immediately'}},
+    ],
+    helpline:'1800-222-244 (Union Bank)', website:'unionbankofindia.co.in',
+  },
+  {
+    id:6, bankType:'govt', emoji:'🌻',
+    name:{en:'Indian Bank Crop Loan Scheme',hi:'इंडियन बैंक फसल ऋण',kn:'ಇಂಡಿಯನ್ ಬ್ಯಾಂಕ್ ಬೆಳೆ ಸಾಲ',mr:'इंडियन बँक पीक कर्ज',te:'ఇండియన్ బ్యాంక్ పంట రుణం',ta:'இந்தியன் வங்கி பயிர் கடன்'},
+    shortName:'Indian Bank Crop Loan', bankName:'Indian Bank',
+    category:['loan'],
+    interestRate:'7%–9% p.a.', maxLoan:'₹5 Lakh', tenure:'Up to 12 months',
+    desc:{en:'Indian Bank offers short-term crop production loans at competitive rates with special focus on South India. Loans cover seeds, fertilizers, pesticides, labour, irrigation and other crop cultivation expenses. SC/ST farmers get concessional rates. No collateral for loans up to ₹1.6 lakh.',hi:'इंडियन बैंक दक्षिण भारत के किसानों को कम ब्याज पर फसल ऋण देता है।'},
+    eligibility:[
+      {en:'All farmers — individual, joint, tenant farmers with land in South India'},
+      {en:'SHGs, JLGs and cooperatives eligible'},
+      {en:'No loan default history with any bank'},
+      {en:'Age 18–70 years'},
+    ],
+    benefits:[
+      {icon:'💵',title:{en:'No Collateral up to ₹1.6 Lakh'},desc:{en:'Farmers can get crop loans up to ₹1.6 lakh without any collateral or security'}},
+      {icon:'📉',title:{en:'Concessional Rates for SC/ST'},desc:{en:'Additional 1% concession in interest rate for SC/ST farmers and women borrowers'}},
+      {icon:'🌾',title:{en:'All Crops & All Seasons'},desc:{en:'Covers Kharif, Rabi, and Zaid crops. Allied activities like fishery and poultry also included'}},
+      {icon:'📱',title:{en:'Digital Application via IndOASIS App'},desc:{en:'Apply for crop loan digitally via Indian Bank IndOASIS app — minimal branch visits required'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'Mandatory'}},
+      {icon:'📄',name:{en:'Chitta/Patta (land records)'},note:{en:'South India land records'}},
+      {icon:'🏦',name:{en:'Bank Passbook'},note:{en:'Existing account'}},
+      {icon:'📸',name:{en:'Passport Photo'},note:{en:'2 copies'}},
+      {icon:'🌾',name:{en:'Crop Cultivation Plan'},note:{en:'Expected crop & expenses'}},
+    ],
+    steps:[
+      {title:{en:'Apply online or at branch'},desc:{en:'Use IndOASIS app or visit nearest Indian Bank branch with all documents'}},
+      {title:{en:'Crop assessment by bank'},desc:{en:'Bank assesses crop type, area and input cost to determine eligible loan amount'}},
+      {title:{en:'Loan sanction within 7 days'},desc:{en:'For loans up to ₹1.6 lakh, sanction usually within 7 working days'}},
+      {title:{en:'Repay after harvest'},desc:{en:'Repay the loan amount after your crop harvest — aligned with agricultural income cycle'}},
+    ],
+    helpline:'1800-425-00000 (Indian Bank)', website:'indianbank.in/agri',
+  },
+  {
+    id:7, bankType:'govt', emoji:'📦',
+    name:{en:'Central Bank Cent Kisan Scheme',hi:'सेंट्रल बैंक सेंट किसान',kn:'ಸೆಂಟ್ರಲ್ ಬ್ಯಾಂಕ್ ಸೆಂಟ್ ಕಿಸಾನ್',mr:'सेंट्रल बँक सेंट किसान',te:'సెంట్రల్ బ్యాంక్ సెంట్ కిసాన్',ta:'சென்ட்ரல் வங்கி சென்ட் கிசான்'},
+    shortName:'Cent Kisan', bankName:'Central Bank of India',
+    category:['loan','savings'],
+    interestRate:'7.5% p.a.', maxLoan:'₹50 Lakh', tenure:'Up to 7 years',
+    desc:{en:'Central Bank Cent Kisan is a composite agricultural scheme offering crop loans, term loans for allied activities, and a dedicated Cent Kisan savings account with zero balance. Specially designed for tribal farmers and those in underdeveloped regions. Includes crop insurance linkage and accidental death cover.',hi:'Central Bank Cent Kisan योजना फसल लोन और बचत खाते का संयुक्त पैकेज है।'},
+    eligibility:[
+      {en:'Individual farmers, SHGs, and JLGs across India'},
+      {en:'Priority to tribal farmers, NE states, KBK districts (Odisha)'},
+      {en:'Both crop loan and allied activity term loan components'},
+      {en:'Farmers with no existing NPA/overdue with any bank'},
+    ],
+    benefits:[
+      {icon:'🏦',title:{en:'Zero Balance Cent Kisan Savings Account'},desc:{en:'Free savings account with no minimum balance requirement for enrolled farmers'}},
+      {icon:'💰',title:{en:'Composite Loan up to ₹50 Lakh'},desc:{en:'Crop loan + term loan for allied activities bundled in single account for convenience'}},
+      {icon:'🛡️',title:{en:'Free Accident Insurance ₹1 Lakh'},desc:{en:'Accidental death coverage of ₹1 lakh linked with savings account at no extra premium'}},
+      {icon:'📱',title:{en:'Digital Passbook & e-Statement'},desc:{en:'Digital banking facilities with online passbook and transaction alerts via SMS'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + Voter ID'},note:{en:'KYC documents'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'Survey nos. and area'}},
+      {icon:'📋',name:{en:'Crop Details & Season'},note:{en:'Kharif or Rabi crop plan'}},
+      {icon:'🏠',name:{en:'Address Proof'},note:{en:'Ration card / utility bill'}},
+    ],
+    steps:[
+      {title:{en:'Open Cent Kisan savings account'},desc:{en:'Visit Central Bank branch to first open Cent Kisan savings account — zero balance, instant'}},
+      {title:{en:'Apply for crop loan component'},desc:{en:'Submit crop loan application with land records and crop plan linked to savings account'}},
+      {title:{en:'Linked term loan for allied activities'},desc:{en:'Apply for additional term loan component for livestock, fishery, poultry etc.'}},
+      {title:{en:'Repay and renew annually'},desc:{en:'Repay crop loan after harvest. KCC limit renewed every year without fresh paperwork'}},
+    ],
+    helpline:'1800-200-1911 (CBI)', website:'centralbankofindia.co.in',
+  },
+
+  // PRIVATE BANKS
+  {
+    id:8, bankType:'pvt', emoji:'🌟',
+    name:{en:'HDFC Bank Kisan Gold Card',hi:'एचडीएफसी बैंक किसान गोल्ड कार्ड',kn:'ಎಚ್‌ಡಿಎಫ್‌ಸಿ ಕಿಸಾನ್ ಗೋಲ್ಡ್ ಕಾರ್ಡ್',mr:'एचडीएफसी किसान गोल्ड कार्ड',te:'హెచ్‌డిఎఫ్‌సి కిసాన్ గోల్డ్ కార్డ్',ta:'எச்டிஃபிசி கிசான் தங்க அட்டை'},
+    shortName:'HDFC Kisan Gold', bankName:'HDFC Bank',
+    category:['credit','loan'],
+    interestRate:'9%–12% p.a.', maxLoan:'₹25 Lakh', tenure:'Revolving (annual)',
+    desc:{en:'HDFC Bank Kisan Gold Card is a premium credit facility for established farmers offering higher limits (up to ₹25L), digital banking, and value-added services like market price SMS alerts, agri advisory, and insurance linkage. Available across India with quick processing and minimal paperwork for existing HDFC customers.',hi:'HDFC किसान गोल्ड कार्ड अनुभवी किसानों को ₹25 लाख तक का प्रीमियम क्रेडिट देता है।'},
+    eligibility:[
+      {en:'Farmers with minimum 5 acres of agricultural land'},
+      {en:'At least 3 years of farming experience'},
+      {en:'No existing loan default or NPA with any bank'},
+      {en:'CIBIL score 650+ preferred for quick processing'},
+    ],
+    benefits:[
+      {icon:'💳',title:{en:'Higher Credit Limit — up to ₹25 Lakh'},desc:{en:'Much higher credit limit than standard KCC. Covers all farming needs including equipment purchase'}},
+      {icon:'📊',title:{en:'Free Mandi Price SMS Alerts'},desc:{en:'Receive daily SMS with mandi prices for your crop in nearby APMCs to sell at best price'}},
+      {icon:'🌾',title:{en:'Free Agri Expert Advisory'},desc:{en:'Access to HDFC Bank agri expert hotline for crop advisory, pest management guidance'}},
+      {icon:'📱',title:{en:'Full Digital Banking'},desc:{en:'Manage your KCC, track disbursals, check statements via HDFC Bank app — no branch visits'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + PAN Card'},note:{en:'Mandatory KYC'}},
+      {icon:'📄',name:{en:'Land Records (7/12 / RoR)'},note:{en:'Latest copy'}},
+      {icon:'📊',name:{en:'Income Proof / ITR'},note:{en:'Last 2 years if available'}},
+      {icon:'🏦',name:{en:'Bank Statements'},note:{en:'Last 12 months'}},
+      {icon:'📸',name:{en:'Passport Photos'},note:{en:'2 copies'}},
+      {icon:'🏠',name:{en:'Address Proof'},note:{en:'Utility bill'}},
+    ],
+    steps:[
+      {title:{en:'Apply on HDFC Bank website or app'},desc:{en:'Apply online on hdfc bank website under agri loans or visit branch. Instant eligibility check'}},
+      {title:{en:'Document submission & verification'},desc:{en:'Upload documents online or submit at branch. HDFC verifies land records via digital land portals'}},
+      {title:{en:'Credit assessment'},desc:{en:'Bank checks CIBIL score and farming income. Sanction in 7-10 working days'}},
+      {title:{en:'Receive Kisan Gold Card'},desc:{en:'Card couriered to your address. Activate via app or branch. Linked to your HDFC savings account'}},
+    ],
+    helpline:'1800-258-3838 (HDFC)', website:'hdfcbank.com/agri',
+  },
+  {
+    id:9, bankType:'pvt', emoji:'🌈',
+    name:{en:'ICICI Bank Kisan Credit Card',hi:'आईसीआईसीआई बैंक किसान क्रेडिट कार्ड',kn:'ಐಸಿಐಸಿಐ ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್',mr:'आयसीआयसीआय किसान क्रेडिट कार्ड',te:'ఐసిఐసిఐ కిసాన్ క్రెడిట్ కార్డ్',ta:'ஐசிஐசிஐ கிசான் கடன் அட்டை'},
+    shortName:'ICICI KCC', bankName:'ICICI Bank',
+    category:['credit','loan'],
+    interestRate:'10%–13% p.a.', maxLoan:'₹10 Lakh', tenure:'1 year (renewable)',
+    desc:{en:"ICICI Bank KCC offers digital-first credit for farmers with instant limit enhancement, UPI linkage, and 24/7 access. Unique features include weather-based advisory alerts, automatic crop insurance deduction, and linkage with ICICI's commodity trading platform for better price discovery.",hi:'ICICI KCC डिजिटल-फर्स्ट फसल क्रेडिट कार्ड है जो UPI से जुड़ा है।'},
+    eligibility:[
+      {en:'Farmers with agricultural land (minimum 0.5 acres)'},
+      {en:'Age 21–65 years'},
+      {en:'Existing ICICI savings account preferred'},
+      {en:'No active NPA with any scheduled commercial bank'},
+    ],
+    benefits:[
+      {icon:'📱',title:{en:'UPI-linked Instant Payments'},desc:{en:'Link your KCC to UPI — pay at nurseries, input shops, and agri stores via QR code instantly'}},
+      {icon:'🌦️',title:{en:'Weather-based Crop Advisory'},desc:{en:'Personalized weather alerts and crop advisory based on your farm location and crop type'}},
+      {icon:'🔄',title:{en:'Automatic Crop Insurance Linkage'},desc:{en:'PMFBY premium automatically deducted and insurance enrolled. Zero manual paperwork'}},
+      {icon:'📈',title:{en:'Commodity Price Alerts'},desc:{en:'Real-time commodity price alerts on ICICI iMobile app to make informed selling decisions'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + PAN Card'},note:{en:'Mandatory KYC'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'7/12 or equivalent'}},
+      {icon:'📱',name:{en:'Mobile Number (linked to Aadhaar)'},note:{en:'OTP verification'}},
+      {icon:'🏦',name:{en:'ICICI Bank Account'},note:{en:'Or any bank account'}},
+      {icon:'📸',name:{en:'Passport Photo'},note:{en:'2 copies'}},
+    ],
+    steps:[
+      {title:{en:'Apply via iMobile Pay App or website'},desc:{en:'Download iMobile Pay, go to Loans > KCC > Apply Now. Instant pre-approval check for existing customers'}},
+      {title:{en:'Upload documents digitally'},desc:{en:'Upload Aadhaar, PAN and land records directly in app. DigiLocker integration available'}},
+      {title:{en:'Video KYC verification'},desc:{en:'Complete video KYC call with bank agent from home — no branch visit needed'}},
+      {title:{en:'KCC activated digitally'},desc:{en:'Credit limit activated on app/UPI. Physical card couriered within 7 days if requested'}},
+    ],
+    helpline:'1800-1080 (ICICI)', website:'icicibank.com/agri-banking',
+  },
+  {
+    id:10, bankType:'pvt', emoji:'🌿',
+    name:{en:'Axis Bank Kisan All-in-One',hi:'एक्सिस बैंक किसान ऑल-इन-वन',kn:'ಆಕ್ಸಿಸ್ ಬ್ಯಾಂಕ್ ಕಿಸಾನ್ ಆಲ್-ಇನ್-ಒನ್',mr:'ॲक्सिस बँक किसान ऑल-इन-वन',te:'యాక్సిస్ బ్యాంక్ కిసాన్ ఆల్-ఇన్-వన్',ta:'ஆக்சிஸ் வங்கி கிசான் ஆல்-இன்-ஒன்'},
+    shortName:'Axis Kisan AIO', bankName:'Axis Bank',
+    category:['loan','savings'],
+    interestRate:'9.5%–11% p.a.', maxLoan:'₹10 Lakh', tenure:'1–5 years',
+    desc:{en:"Axis Bank Kisan All-in-One combines crop loan, term loan, and savings account in a single integrated product. Features include special women farmer benefit (additional 0.5% rate concession), doorstep banking in rural areas, and linkage with Axis Bank's FPO banking program for group farmers.",hi:'Axis Bank Kisan All-in-One फसल लोन, टर्म लोन और बचत खाते का एकीकृत उत्पाद है।'},
+    eligibility:[
+      {en:'Individual farmers and women farmers (special concession)'},
+      {en:'FPOs and farmer groups with Axis Bank FPO account'},
+      {en:'Age 18–65 years'},
+      {en:'Minimum 1 acre agricultural land required'},
+    ],
+    benefits:[
+      {icon:'👩‍🌾',title:{en:'0.5% Extra Concession for Women Farmers'},desc:{en:'Women farmers get additional 0.5% interest rate concession over standard rates'}},
+      {icon:'🚗',title:{en:'Doorstep Banking in Villages'},desc:{en:'Axis Bank agent visits your village for account opening, loan disbursal and repayment collection'}},
+      {icon:'📱',title:{en:'WhatsApp Banking'},desc:{en:'Check balance, mini-statement and request services via WhatsApp — works on basic smartphones'}},
+      {icon:'🤝',title:{en:'FPO Group Banking Support'},desc:{en:'Special credit lines for Farmer Producer Organisations with lower rates and higher limits'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'Mandatory'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'Latest extract'}},
+      {icon:'👩‍🌾',name:{en:'Women Farmer Certificate'},note:{en:'Only for concession rate'}},
+      {icon:'🏦',name:{en:'Bank Account'},note:{en:'Savings account details'}},
+      {icon:'📸',name:{en:'Photos'},note:{en:'2 passport size'}},
+    ],
+    steps:[
+      {title:{en:'Contact Axis Bank rural officer'},desc:{en:'Call 1860-419-5555 to connect with rural banking officer for your district'}},
+      {title:{en:'Doorstep document collection'},desc:{en:'Axis Bank agent visits your home to collect documents and complete KYC'}},
+      {title:{en:'Sanction & account opening'},desc:{en:'Kisan All-in-One account opened and crop loan limit sanctioned simultaneously'}},
+      {title:{en:'Use and repay'},desc:{en:'Withdraw as needed, repay after harvest. Annual limit renewal with no fresh docs for good repayers'}},
+    ],
+    helpline:'1860-419-5555 (Axis)', website:'axisbank.com/agri',
+  },
+  {
+    id:11, bankType:'pvt', emoji:'💎',
+    name:{en:'Kotak Mahindra Farm Equipment Loan',hi:'कोटक महिंद्रा फार्म उपकरण लोन',kn:'ಕೋಟಕ್ ಫಾರ್ಮ್ ಎಕ್ವಿಪ್‌ಮೆಂಟ್ ಲೋನ್',mr:'कोटक महिंद्रा फार्म उपकरण लोन',te:'కోటక్ ఫార్మ్ పరికరాల రుణం',ta:'கோடக் மஹிந்திரா பண்ணை உபகரண கடன்'},
+    shortName:'Kotak Farm Equipment', bankName:'Kotak Mahindra Bank',
+    category:['equipment'],
+    interestRate:'10%–14% p.a.', maxLoan:'₹1 Crore', tenure:'Up to 7 years',
+    desc:{en:'Kotak Mahindra Bank offers specialised farm equipment financing for tractors, harvesters, dryers, cold chains, and precision agriculture equipment. Offers one of the highest loan amounts (up to ₹1 crore) for large farmers and FPOs. Quick 48-hour approval for pre-approved customers.',hi:'Kotak Mahindra Bank कृषि उपकरण के लिए ₹1 करोड़ तक का लोन देता है।'},
+    eligibility:[
+      {en:'Individual farmers with 5+ acres of land for large equipment'},
+      {en:'FPOs, agri-startups, and cooperatives for large loans'},
+      {en:'Age 21–65 years'},
+      {en:'CIBIL score 700+ for best interest rates'},
+    ],
+    benefits:[
+      {icon:'🚜',title:{en:'Up to ₹1 Crore Equipment Loan'},desc:{en:'One of the highest farm equipment loan limits — suitable for large farmers and FPO buying group equipment'}},
+      {icon:'⚡',title:{en:'48-hour Approval for Pre-approved'},desc:{en:'Existing Kotak customers with good credit get 48-hour loan approval and disbursement'}},
+      {icon:'🔧',title:{en:'Covers Precision Agriculture Equipment'},desc:{en:'Drone sprayers, soil sensors, GPS tractors, automated irrigation — modern agri equipment covered'}},
+      {icon:'📊',title:{en:'Flexible Balloon Repayment'},desc:{en:'Balloon repayment option — pay smaller EMIs during crop season, larger after harvest windfall'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + PAN Card'},note:{en:'KYC mandatory'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'For large landholdings'}},
+      {icon:'📋',name:{en:'Equipment Quotation'},note:{en:'From authorized dealer'}},
+      {icon:'📊',name:{en:'Last 3 Years ITR'},note:{en:'Income proof'}},
+      {icon:'🏦',name:{en:'6 Months Bank Statements'},note:{en:'Financial health proof'}},
+      {icon:'📸',name:{en:'Photos'},note:{en:'2 copies'}},
+    ],
+    steps:[
+      {title:{en:'Get equipment quotation from dealer'},desc:{en:'Obtain quote from Kotak empanelled dealer — list of dealers available on website'}},
+      {title:{en:'Apply online or at branch'},desc:{en:'Submit application via kotak.com or at nearest Kotak branch with all documents'}},
+      {title:{en:'CIBIL and land verification'},desc:{en:'Bank checks CIBIL score and verifies land records. Assessment done in 3-5 days'}},
+      {title:{en:'Bank pays dealer directly'},desc:{en:'Loan amount paid directly to dealer. Equipment delivered to farm with Kotak hypothecation'}},
+    ],
+    helpline:'1860-266-0811 (Kotak)', website:'kotak.com/farm-loans',
+  },
+
+  // COOPERATIVE BANKS
+  {
+    id:12, bankType:'coop', emoji:'🤝',
+    name:{en:'PACS Crop Loan (Cooperative)',hi:'पैक्स फसल ऋण',kn:'ಪ್ಯಾಕ್ಸ್ ಬೆಳೆ ಸಾಲ',mr:'पॅक्स पीक कर्ज',te:'పాక్స్ పంట రుణం',ta:'பாக்ஸ் பயிர் கடன்'},
+    shortName:'PACS Crop Loan', bankName:'Primary Agricultural Credit Societies',
+    category:['loan'],
+    interestRate:'3%–7% p.a.', maxLoan:'₹3 Lakh', tenure:'1 crop season',
+    desc:{en:'Primary Agricultural Credit Societies (PACS) provide the lowest interest rate crop loans (as low as 3% after govt subvention) through the cooperative banking network. PACS are village-level cooperatives covering 1.2 lakh villages. Farmers must be PACS members to avail loans. Simple processes, minimal paperwork, same-day disbursement in many cases.',hi:'PACS गांव स्तरीय सहकारी बैंक हैं जो 3% ब्याज पर फसल ऋण देते हैं।'},
+    eligibility:[
+      {en:'Must be a registered member of the local PACS (one-time ₹100–₹500 membership fee)'},
+      {en:'Agricultural land in the PACS coverage area (village)'},
+      {en:'Active membership with no dues pending to PACS'},
+      {en:'Age 18–70 years'},
+    ],
+    benefits:[
+      {icon:'💰',title:{en:'Lowest Interest Rate — 3% After Subvention'},desc:{en:'Effective 3% interest for prompt repayers under government interest subvention — lowest in India'}},
+      {icon:'🏘️',title:{en:'Village-level Access — No City Visit'},desc:{en:'PACS are in your village — no need to travel to city bank. Secretary knows farmers personally'}},
+      {icon:'⚡',title:{en:'Same-day Loan Disbursement'},desc:{en:'Many PACS disburse crop loans on the same day of application for existing members'}},
+      {icon:'🌾',title:{en:'Input Supply Linkage'},desc:{en:'PACS also supply seeds, fertilizers, and pesticides on credit — single stop for farm inputs'}},
+    ],
+    docs:[
+      {icon:'📋',name:{en:'PACS Membership Card'},note:{en:'Active membership required'}},
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'Identity proof'}},
+      {icon:'📄',name:{en:'Land Records (RTC/7-12)'},note:{en:'Village land records'}},
+      {icon:'🏦',name:{en:'PACS Account/Passbook'},note:{en:'Cooperative account'}},
+    ],
+    steps:[
+      {title:{en:'Become a PACS member (if not already)'},desc:{en:'Visit your village PACS office, pay small membership fee (₹100-500) and become member'}},
+      {title:{en:'Apply for crop loan at PACS'},desc:{en:'Submit simple application at PACS with land records and Aadhaar before crop season'}},
+      {title:{en:'PACS secretary verifies'},desc:{en:'Local PACS secretary verifies your land and crop plan. Very quick process for known farmers'}},
+      {title:{en:'Loan disbursed same day'},desc:{en:'Cash or bank credit issued immediately in many cases. Repay after harvest at low 3% interest'}},
+    ],
+    helpline:'NABARD: 1800-26-27-000', website:'nafscob.org',
+  },
+  {
+    id:13, bankType:'coop', emoji:'🌴',
+    name:{en:'District Cooperative Bank Agri Loan',hi:'जिला सहकारी बैंक कृषि ऋण',kn:'ಜಿಲ್ಲಾ ಸಹಕಾರಿ ಬ್ಯಾಂಕ್ ಕೃಷಿ ಸಾಲ',mr:'जिल्हा सहकारी बँक कृषी कर्ज',te:'జిల్లా సహకార బ్యాంక్ వ్యవసాయ రుణం',ta:'மாவட்ட கூட்டுறவு வங்கி விவசாய கடன்'},
+    shortName:'DCB Agri Loan', bankName:'District Central Cooperative Banks',
+    category:['loan','equipment'],
+    interestRate:'5%–8% p.a.', maxLoan:'₹10 Lakh', tenure:'Up to 5 years',
+    desc:{en:'District Central Cooperative Banks (DCCBs) operate at district level providing medium-term agricultural loans for land improvement, borewell sinking, farm equipment, and horticulture development at lower interest rates than commercial banks. Funded by NABARD and state government refinance.',hi:'जिला सहकारी बैंक 5% ब्याज पर भूमि विकास और उपकरण के लिए ₹10 लाख तक लोन देते हैं।'},
+    eligibility:[
+      {en:'Farmers in the district covered by the DCCB'},
+      {en:'PACS membership in the district (or direct DCCB membership)'},
+      {en:'No overdue to PACS or DCCB'},
+      {en:'Age 18–65 years'},
+    ],
+    benefits:[
+      {icon:'💰',title:{en:'5% Interest — Competitive Rate'},desc:{en:'Lower than most commercial bank rates at 5% effective after government subvention'}},
+      {icon:'🌊',title:{en:'Borewell & Land Development Loans'},desc:{en:'Medium-term loans for borewell sinking, land leveling, soil conservation and farm development'}},
+      {icon:'🌳',title:{en:'Horticulture Term Loans'},desc:{en:'Long-term (up to 5 years) loans for orchard and plantation crop development with grace period'}},
+      {icon:'🏘️',title:{en:'Local Knowledge & Trust'},desc:{en:'DCCB staff know local farming conditions and can provide customized advice and flexibility'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + Voter ID'},note:{en:'KYC documents'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'RTC or 7/12 extract'}},
+      {icon:'📋',name:{en:'PACS/DCCB Membership'},note:{en:'Active membership proof'}},
+      {icon:'📊',name:{en:'Cost Estimate'},note:{en:'For borewell/equipment'}},
+    ],
+    steps:[
+      {title:{en:'Apply at nearest DCCB branch'},desc:{en:'Visit District Cooperative Bank branch (usually at taluka/tehsil level) with documents'}},
+      {title:{en:'Land and project assessment'},desc:{en:'Bank officer visits site for borewell or land development purpose verification'}},
+      {title:{en:'Loan sanctioned by DCCB committee'},desc:{en:'Loan approved by branch/district committee within 2-3 weeks'}},
+      {title:{en:'Staged disbursement'},desc:{en:'For term loans, money released in stages as work progresses. Repay over 5 years'}},
+    ],
+    helpline:'NABARD: 1800-26-27-000', website:'nafscob.org',
+  },
+
+  // REGIONAL RURAL BANKS
+  {
+    id:14, bankType:'rr', emoji:'🌾',
+    name:{en:'Gramin Bank Kisan Credit Card',hi:'ग्रामीण बैंक किसान क्रेडिट कार्ड',kn:'ಗ್ರಾಮೀಣ ಬ್ಯಾಂಕ್ ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್',mr:'ग्रामीण बँक किसान क्रेडिट कार्ड',te:'గ్రామీణ బ్యాంక్ కిసాన్ క్రెడిట్ కార్డ్',ta:'கிராமீண வங்கி கிசான் கடன் அட்டை'},
+    shortName:'Gramin Bank KCC', bankName:'Regional Rural Banks (RRBs)',
+    category:['credit','loan'],
+    interestRate:'4%–8% p.a.', maxLoan:'₹3 Lakh', tenure:'1 year (renewable)',
+    desc:{en:'Regional Rural Banks (RRBs) — like Pragathi Krishna, Andhra Pragathi, Karnataka Gramin — provide KCC at subsidized rates specifically targeting small and marginal farmers in rural areas. RRBs are rural-focused banks sponsored by commercial banks & owned by central/state govts. Best suited for first-time borrowers in remote areas.',hi:'क्षेत्रीय ग्रामीण बैंक छोटे किसानों को 4% ब्याज पर KCC देते हैं।'},
+    eligibility:[
+      {en:'Small and marginal farmers in RRB coverage area'},
+      {en:'Landless labourers, tenant farmers, sharecroppers also eligible'},
+      {en:'No minimum landholding requirement for small farmers'},
+      {en:'Age 18–70 years'},
+    ],
+    benefits:[
+      {icon:'🏘️',title:{en:'Deepest Rural Reach — Remote Villages'},desc:{en:'RRBs have branches in remote villages where commercial banks are absent — closest bank for many farmers'}},
+      {icon:'💰',title:{en:'4% Subsidized Crop Loan Rate'},desc:{en:'Same KCC subsidy as commercial banks but targeted at small/marginal farmers and rural areas'}},
+      {icon:'🤝',title:{en:'No Collateral for Small Farmers'},desc:{en:'For loans up to ₹1.6 lakh, no collateral needed. For SHGs and JLGs, limits extended'}},
+      {icon:'📅',title:{en:'Flexible Repayment'},desc:{en:'Repayment schedule aligned to local crop cycle — monsoon, winter, and summer harvest patterns'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'Mandatory'}},
+      {icon:'📄',name:{en:'Land Records / Lease Deed'},note:{en:'Or tenant farmer declaration'}},
+      {icon:'📸',name:{en:'Passport Photos'},note:{en:'2 copies'}},
+      {icon:'🏦',name:{en:'RRB Account'},note:{en:'Or any bank account'}},
+    ],
+    steps:[
+      {title:{en:'Visit nearest RRB branch'},desc:{en:'Find your local RRB branch (Gramin Bank) — present in almost every block/tehsil in India'}},
+      {title:{en:'Apply for KCC with basic documents'},desc:{en:'Submit simple KCC application with Aadhaar and land record at counter'}},
+      {title:{en:'Field verification'},desc:{en:'RRB officer may visit your land. For existing customers, verification may be waived'}},
+      {title:{en:'KCC issued within 14 days'},desc:{en:'Card issued. Start using for seeds, fertilizers, pesticides — withdraw from branch or BC agent'}},
+    ],
+    helpline:'NABARD: 1800-26-27-000', website:'nabard.org/rrb',
+  },
+  {
+    id:15, bankType:'rr', emoji:'🌿',
+    name:{en:'RRB Farm Mechanization Loan',hi:'क्षेत्रीय ग्रामीण बैंक कृषि यंत्रीकरण ऋण',kn:'ಆರ್‌ಆರ್‌ಬಿ ಕೃಷಿ ಯಾಂತ್ರೀಕರಣ ಸಾಲ',mr:'आरआरबी शेती यांत्रिकीकरण कर्ज',te:'ఆర్‌ఆర్‌బి వ్యవసాయ యాంత్రీకరణ రుణం',ta:'ஆர்ஆர்பி விவசாய இயந்திரமயமாக்கல் கடன்'},
+    shortName:'RRB Farm Mechanization', bankName:'Regional Rural Banks (RRBs)',
+    category:['equipment'],
+    interestRate:'8%–11% p.a.', maxLoan:'₹5 Lakh', tenure:'Up to 7 years',
+    desc:{en:'RRB Farm Mechanization Loans help small & marginal farmers access tractors, tillers, and equipment that would otherwise be unaffordable. Linked to SMAM (Sub-Mission on Agricultural Mechanization) government scheme providing 40-50% subsidy on eligible equipment. Lower processing requirements than commercial banks.',hi:'RRB कृषि यंत्रीकरण ऋण छोटे किसानों को ट्रैक्टर खरीदने में मदद करता है।'},
+    eligibility:[
+      {en:'Small & marginal farmers with 1-5 acres of land'},
+      {en:'FPOs and farmer groups in RRB coverage area'},
+      {en:'No existing equipment loan NPA'},
+      {en:'SMAM subsidy linkage increases eligibility'},
+    ],
+    benefits:[
+      {icon:'🚜',title:{en:'SMAM Subsidy Linkage — 40-50% Off'},desc:{en:'Link with SMAM scheme to get 40-50% government subsidy on eligible farm equipment. RRB processes both'}},
+      {icon:'💰',title:{en:'Low Margin for Small Farmers'},desc:{en:'Only 10% margin required (vs 20% in commercial banks) for small marginal farmers'}},
+      {icon:'🔧',title:{en:'Village-level Machinery Network'},desc:{en:'RRB helps link farmers to Custom Hiring Centres if loan is not feasible for individual purchase'}},
+      {icon:'📅',title:{en:'7-year Repayment'},desc:{en:'Long repayment period reduces monthly EMI burden. Repayment aligned to agricultural income'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar Card'},note:{en:'KYC'}},
+      {icon:'📄',name:{en:'Land Records'},note:{en:'Area and ownership'}},
+      {icon:'📋',name:{en:'Equipment Quotation'},note:{en:'Dealer quotation'}},
+      {icon:'🏛️',name:{en:'SMAM Subsidy Approval'},note:{en:'From Agriculture Dept (if claiming subsidy)'}},
+      {icon:'🏦',name:{en:'Bank Account'},note:{en:'RRB or other'}},
+    ],
+    steps:[
+      {title:{en:'Apply for SMAM subsidy first'},desc:{en:'Apply on agrimachinery.nic.in for SMAM equipment subsidy from state agriculture department'}},
+      {title:{en:'Visit RRB branch with SMAM approval'},desc:{en:'Take SMAM approval + quotation to RRB branch for equipment loan application'}},
+      {title:{en:'RRB loan sanction'},desc:{en:'Loan sanctioned for remaining amount after SMAM subsidy. Usually 3-5 weeks'}},
+      {title:{en:'Equipment delivery with subsidy'},desc:{en:'RRB pays dealer after SMAM subsidy is netted off. Equipment delivered to farm'}},
+    ],
+    helpline:'NABARD: 1800-26-27-000', website:'nabard.org/rrb',
+  },
+
+  // NABARD / APEX
+  {
+    id:16, bankType:'nb', emoji:'🏛️',
+    name:{en:'NABARD Farm Sector Refinance',hi:'नाबार्ड कृषि पुनर्वित्त',kn:'ನಬಾರ್ಡ್ ಕೃಷಿ ಮರುಹಣಕಾಸು',mr:'नाबार्ड शेती पुनर्वित्त',te:'నాబార్డ్ వ్యవసాయ రీఫైనాన్స్',ta:'நபார்ட் விவசாய மறுநிதியளிப்பு'},
+    shortName:'NABARD Refinance', bankName:'NABARD (National Bank for Agriculture & Rural Development)',
+    category:['loan'],
+    interestRate:'Varies by linked bank', maxLoan:'No upper limit', tenure:'Up to 25 years',
+    desc:{en:"NABARD provides refinance to cooperative banks, RRBs, and commercial banks for agricultural and rural lending. While farmers cannot directly approach NABARD, NABARD's schemes (like RIDF, KFW) fund infrastructure that benefits farmers. NABARD also runs Direct Farmer Schemes like FPO funding, PODF, and Rural Innovation Fund.",hi:'NABARD सहकारी बैंकों और RRBs को पुनर्वित्त देता है जिससे किसानों को सस्ता ऋण मिलता है।'},
+    eligibility:[
+      {en:'Farmers cannot apply directly — approach through PACS, DCCBs, RRBs, or commercial banks'},
+      {en:'For NABARD direct schemes: FPOs, cooperatives, NGOs, state agencies'},
+      {en:'NABARD funds schemes in specific project districts and KVK areas'},
+    ],
+    benefits:[
+      {icon:'🏗️',title:{en:'Rural Infrastructure via RIDF'},desc:{en:'NABARD Rural Infrastructure Development Fund builds bridges, irrigation, roads that improve farm access'}},
+      {icon:'🤝',title:{en:'FPO Equity Grant — ₹18 Lakh per FPO'},desc:{en:'NABARD provides ₹18 lakh equity grant to Farmer Producer Organisations for growth and working capital'}},
+      {icon:'💡',title:{en:'Rural Innovation Fund'},desc:{en:'NABARD funds innovative rural enterprises, agri-startups and off-farm income projects'}},
+      {icon:'📊',title:{en:'Training via NABARD KVKs'},desc:{en:'Free farm training, technology demonstrations and soil testing through Krishi Vigyan Kendras funded by NABARD'}},
+    ],
+    docs:[
+      {icon:'📋',name:{en:'FPO Registration Certificate'},note:{en:'For FPO-related direct schemes'}},
+      {icon:'🪪',name:{en:'KYC of FPO Directors'},note:{en:'Aadhaar + PAN'}},
+      {icon:'📊',name:{en:'Business Plan'},note:{en:'For FPO equity/loan'}},
+      {icon:'🏦',name:{en:'Bank Account of FPO'},note:{en:'Linked to registration'}},
+    ],
+    steps:[
+      {title:{en:'Approach your PACS or RRB'},desc:{en:'For regular loans, go to PACS, RRB or cooperative bank — they are refinanced by NABARD'}},
+      {title:{en:'For FPO equity: apply on SFAC portal'},desc:{en:'FPOs apply on sfac.in for equity grant support linked with NABARD funding'}},
+      {title:{en:'NABARD district office for projects'},desc:{en:'Contact NABARD district development manager (DDM) for region-specific schemes and projects'}},
+    ],
+    helpline:'1800-26-27-000 (NABARD)', website:'nabard.org',
+  },
+  {
+    id:17, bankType:'nb', emoji:'🌐',
+    name:{en:'MUDRA Kishore / Tarun for Agri Allied',hi:'मुद्रा किशोर/तरुण कृषि सहायक',kn:'ಮುದ್ರಾ ಕಿಶೋರ್/ತರುಣ್ ಕೃಷಿ',mr:'मुद्रा किशोर/तरुण कृषी',te:'ముద్రా కిశోర్/తరుణ్ వ్యవసాయ',ta:'முத்ரா கிஷோர்/தரண் வேளாண்மை'},
+    shortName:'MUDRA Agri Allied', bankName:'MUDRA Bank / Scheduled Banks',
+    category:['loan'],
+    interestRate:'8%–12% p.a.', maxLoan:'₹10 Lakh', tenure:'3–5 years',
+    desc:{en:'MUDRA (Micro Units Development and Refinance Agency) provides loans through banks for agri-allied activities — dairy, fishery, poultry, beekeeping, sericulture. Under Kishore (₹50K–₹5L) and Tarun (₹5L–₹10L) categories. No collateral required. Available via any scheduled commercial bank, RRB or MFI.',hi:'MUDRA योजना डेयरी, मत्स्य पालन जैसी सहायक गतिविधियों के लिए ₹10 लाख तक लोन देती है।'},
+    eligibility:[
+      {en:'Farmers/rural entrepreneurs in dairy, poultry, fishery, beekeeping, sericulture'},
+      {en:'No collateral required for any MUDRA loan'},
+      {en:'Age 18–65 years'},
+      {en:'Must have a viable business plan for the allied activity'},
+    ],
+    benefits:[
+      {icon:'🐄',title:{en:'Dairy, Fishery, Poultry — All Covered'},desc:{en:'Covers purchase of milch animals, aquaculture inputs, poultry sheds, beehives and more'}},
+      {icon:'🔒',title:{en:'No Collateral Required'},desc:{en:'MUDRA loans require NO collateral or security. Just business plan and Aadhaar'}},
+      {icon:'📜',title:{en:'MUDRA Card — Revolving Credit'},desc:{en:'MUDRA RuPay card for working capital withdrawals — use and repay as cash flow permits'}},
+      {icon:'🏦',title:{en:'Available at Any Scheduled Bank'},desc:{en:'Apply at SBI, PNB, cooperative bank, RRB or MFI — all disburse MUDRA loans'}},
+    ],
+    docs:[
+      {icon:'🪪',name:{en:'Aadhaar + PAN Card'},note:{en:'Mandatory KYC'}},
+      {icon:'📋',name:{en:'Business Plan for Allied Activity'},note:{en:'Simple plan with cost breakup'}},
+      {icon:'📸',name:{en:'Passport Photo'},note:{en:'2 copies'}},
+      {icon:'🏠',name:{en:'Address Proof'},note:{en:'Utility bill / ration card'}},
+      {icon:'📄',name:{en:'Caste Certificate (if SC/ST)'},note:{en:'For priority processing'}},
+    ],
+    steps:[
+      {title:{en:'Visit any bank or MFI with MUDRA'},desc:{en:'Go to nearest SBI, PNB, cooperative bank, or microfinance institution for MUDRA loan'}},
+      {title:{en:'Choose Kishore or Tarun category'},desc:{en:'Kishore: ₹50,000-₹5 lakh. Tarun: ₹5-10 lakh based on your business need'}},
+      {title:{en:'Submit application with business plan'},desc:{en:'Fill MUDRA application form with simple business plan for dairy/fishery/poultry etc.'}},
+      {title:{en:'Loan sanctioned without collateral'},desc:{en:'Sanctioned within 7-14 days. MUDRA RuPay card issued for working capital component'}},
+    ],
+    helpline:'1800-180-1111 (MUDRA)', website:'mudra.org.in',
+  },
+  {
+    id:18, bankType:'nb', emoji:'🌱',
+    name:{en:'SIDBI Agri-Enterprise Development',hi:'सिडबी कृषि उद्यम विकास',kn:'ಸಿಡ್ಬಿ ಕೃಷಿ-ಉದ್ಯಮ ಅಭಿವೃದ್ಧಿ',mr:'सिडबी कृषी-उद्योग विकास',te:'సిడ్బి వ్యవసాయ-పరిశ్రమ అభివృద్ధి',ta:'சிட்பி வேளாண் தொழில் மேம்பாடு'},
+    shortName:'SIDBI Agri-Enterprise', bankName:'SIDBI (Small Industries Dev. Bank of India)',
+    category:['loan','equipment'],
+    interestRate:'9%–13% p.a.', maxLoan:'₹1 Crore', tenure:'Up to 7 years',
+    desc:{en:'SIDBI supports agri-processing MSMEs, food processing entrepreneurs, and farmer collectives through direct lending and refinance. Schemes include SPEED (for food processing), CGTMSE guarantee, and special SFURTI clusters for agri-based cottage industries. Focused on value addition and post-harvest processing.',hi:'SIDBI खाद्य प्रसंस्करण MSME और किसान सामूहिकों को ₹1 करोड़ तक लोन देता है।'},
+    eligibility:[
+      {en:'Agri-processing MSMEs registered under MSME Act'},
+      {en:'FPOs and farmer cooperatives with processing activities'},
+      {en:'Food processing entrepreneurs (startups and established)'},
+      {en:'Applicant must have Udyam registration for MSME benefits'},
+    ],
+    benefits:[
+      {icon:'🏭',title:{en:'Up to ₹1 Crore for Food Processing'},desc:{en:'Term loans up to ₹1 crore for food processing machinery, cold storage, packaging units'}},
+      {icon:'🔒',title:{en:'CGTMSE Guarantee — No Collateral'},desc:{en:'Credit guarantee under CGTMSE for loans up to ₹5 crore — reduces collateral requirement significantly'}},
+      {icon:'📜',title:{en:'SFURTI Cluster Support'},desc:{en:'SIDBI SFURTI scheme creates agri-based clusters (bamboo, food, honey) with common facilities'}},
+      {icon:'💰',title:{en:'Subsidized via PMFME Linkage'},desc:{en:'When linked with PM FME scheme, get additional 35% capital subsidy on top of SIDBI loan'}},
+    ],
+    docs:[
+      {icon:'📋',name:{en:'Udyam Registration Certificate'},note:{en:'MSME registration'}},
+      {icon:'🪪',name:{en:'Aadhaar + PAN (Directors)'},note:{en:'All directors/partners'}},
+      {icon:'📊',name:{en:'3 Years Audited Financials'},note:{en:'Balance sheet + P&L'}},
+      {icon:'📄',name:{en:'Detailed Project Report'},note:{en:'For new processing unit'}},
+      {icon:'🏦',name:{en:'Bank Account Statements'},note:{en:'Last 12 months'}},
+    ],
+    steps:[
+      {title:{en:'Register on SIDBI portal — udyamimitra.in'},desc:{en:"Create account on udyamimitra.in — SIDBI's MSME loan portal for agri-enterprise loans"}},
+      {title:{en:'Submit project report and financials'},desc:{en:'Upload DPR, Udyam certificate, financials and KYC documents on portal'}},
+      {title:{en:'SIDBI/Bank credit assessment'},desc:{en:'SIDBI or linked bank assesses project feasibility and MSME creditworthiness'}},
+      {title:{en:'Disbursement with CGTMSE coverage'},desc:{en:'Loan disbursed with CGTMSE guarantee. PM FME subsidy also processed simultaneously if linked'}},
+    ],
+    helpline:'1800-226-753 (SIDBI)', website:'sidbi.in',
+  },
+];
+
+// ─── LOOKUP MAPS ───────────────────────────────────────────────────────────
+const bankTypeLabels = { govt:'🏛️', pvt:'🏢', coop:'🤝', rr:'🌾', nb:'🏦' };
+const badgeClass = { govt:'badge-govt', pvt:'badge-pvt', coop:'badge-coop', rr:'badge-rr', nb:'badge-nb' };
+const headerClass = { govt:'mh-govt', pvt:'mh-pvt', coop:'mh-coop', rr:'mh-rr', nb:'mh-nb' };
+
+// ─── LANGUAGE DATA ─────────────────────────────────────────────────────────
+const langLabels = {
+  en:{langLabel:'English',aiBtn:'Ask AI',mainHead:'All Bank Schemes',fAll:'All Schemes',fLoan:'Crop Loans',fCredit:'Credit Cards',fEquip:'Equipment',fSave:'Savings & Deposits',fIns:'Insurance',heroBadge:'Farmer Banking Schemes Portal',heroTitle:'Bank Schemes for Indian Farmers',heroSub:'Explore loans, credit, and financial schemes from government, private, cooperative & regional rural banks — all in one place.',stat1:'Total Schemes',stat2:'Govt Banks',stat3:'Private Banks',stat4:'Credit Deployed',tab0:'Overview',tab1:'Benefits',tab2:'Documents',tab3:'How to Apply',detailsBtn:'View Details',govt:'Govt Bank',pvt:'Private Bank',coop:'Cooperative Bank',rr:'Regional Rural Bank',nb:'NABARD/Apex',helplineLbl:'Helpline & Support',websiteLbl:'Official Website',docNote:'Carry original + photocopy of all documents to the bank branch.',aiWelcome:"Namaste 🙏 I'm your AI Banking Advisor! Ask me about farm loans, interest rates, documents needed, or which bank scheme suits you best — in English, Hindi, or Kannada!",emiTitle:'EMI Calculator',emiSub:'Calculate your monthly farm loan repayment',emiAmount:'Loan Amount',emiRate:'Interest Rate',emiTenure:'Tenure',emiMonthly:'MONTHLY EMI',emiInterest:'TOTAL INTEREST',emiTotal:'TOTAL PAYMENT',emiOver:'over loan period',emiPrincipal:'principal + interest',emiLegP:'Principal Amount',emiLegI:'Total Interest',emiLegT:'Total Payable'},
+  hi:{langLabel:'हिंदी',aiBtn:'AI से पूछें',mainHead:'सभी बैंक योजनाएं',fAll:'सभी',fLoan:'फसल ऋण',fCredit:'क्रेडिट कार्ड',fEquip:'उपकरण',fSave:'बचत',fIns:'बीमा',heroBadge:'किसान बैंकिंग पोर्टल',heroTitle:'भारतीय किसानों के लिए बैंक योजनाएं',heroSub:'सरकारी, निजी, सहकारी और ग्रामीण बैंकों की योजनाएं एक जगह।',stat1:'कुल योजनाएं',stat2:'सरकारी बैंक',stat3:'निजी बैंक',stat4:'कुल क्रेडिट',tab0:'अवलोकन',tab1:'लाभ',tab2:'दस्तावेज',tab3:'आवेदन',detailsBtn:'विवरण देखें',govt:'सरकारी बैंक',pvt:'निजी बैंक',coop:'सहकारी बैंक',rr:'क्षेत्रीय ग्रामीण बैंक',nb:'नाबार्ड',helplineLbl:'हेल्पलाइन',websiteLbl:'आधिकारिक वेबसाइट',docNote:'सभी दस्तावेज मूल + फोटोकॉपी के साथ बैंक शाखा ले जाएं।',aiWelcome:'नमस्ते 🙏 मैं आपका AI बैंकिंग सलाहकार हूं!',emiTitle:'EMI कैलकुलेटर',emiSub:'मासिक किसान ऋण भुगतान गणना',emiAmount:'ऋण राशि',emiRate:'ब्याज दर',emiTenure:'अवधि',emiMonthly:'मासिक EMI',emiInterest:'कुल ब्याज',emiTotal:'कुल भुगतान',emiOver:'ऋण अवधि में',emiPrincipal:'मूलधन + ब्याज',emiLegP:'मूलधन',emiLegI:'कुल ब्याज',emiLegT:'कुल देय'},
+  kn:{langLabel:'ಕನ್ನಡ',aiBtn:'AI ಕೇಳಿ',mainHead:'ಎಲ್ಲಾ ಬ್ಯಾಂಕ್ ಯೋಜನೆ',fAll:'ಎಲ್ಲಾ',fLoan:'ಬೆಳೆ ಸಾಲ',fCredit:'ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್',fEquip:'ಉಪಕರಣ',fSave:'ಉಳಿತಾಯ',fIns:'ವಿಮೆ',heroBadge:'ರೈತ ಬ್ಯಾಂಕಿಂಗ್ ಪೋರ್ಟಲ್',heroTitle:'ಭಾರತೀಯ ರೈತರಿಗೆ ಬ್ಯಾಂಕ್ ಯೋಜನೆ',heroSub:'ಸರ್ಕಾರಿ, ಖಾಸಗಿ, ಸಹಕಾರಿ ಮತ್ತು ಗ್ರಾಮೀಣ ಬ್ಯಾಂಕ್ ಯೋಜನೆಗಳು ಒಂದೆಡೆ.',stat1:'ಒಟ್ಟು ಯೋಜನೆ',stat2:'ಸರ್ಕಾರಿ ಬ್ಯಾಂಕ್',stat3:'ಖಾಸಗಿ ಬ್ಯಾಂಕ್',stat4:'ಒಟ್ಟು ಕ್ರೆಡಿಟ್',tab0:'ಅವಲೋಕನ',tab1:'ಲಾಭಗಳು',tab2:'ದಾಖಲೆ',tab3:'ಅರ್ಜಿ',detailsBtn:'ವಿವರ ನೋಡಿ',govt:'ಸರ್ಕಾರಿ ಬ್ಯಾಂಕ್',pvt:'ಖಾಸಗಿ ಬ್ಯಾಂಕ್',coop:'ಸಹಕಾರಿ ಬ್ಯಾಂಕ್',rr:'ಪ್ರಾದೇಶಿಕ ಗ್ರಾಮೀಣ ಬ್ಯಾಂಕ್',nb:'ನಬಾರ್ಡ್',helplineLbl:'ಹೆಲ್ಪ್‌ಲೈನ್',websiteLbl:'ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್',docNote:'ಎಲ್ಲಾ ದಾಖಲೆಗಳ ಮೂಲ + ಜೆರಾಕ್ಸ್ ತೆಗೆದುಕೊಂಡು ಬ್ಯಾಂಕ್‌ಗೆ ಹೋಗಿ.',aiWelcome:'ನಮಸ್ಕಾರ 🙏 ನಾನು ನಿಮ್ಮ AI ಬ್ಯಾಂಕಿಂಗ್ ಸಲಹೆಗಾರ!',emiTitle:'EMI ಕ್ಯಾಲ್ಕುಲೇಟರ್',emiSub:'ಮಾಸಿಕ ಕೃಷಿ ಸಾಲ ಮರುಪಾವತಿ ಲೆಕ್ಕ',emiAmount:'ಸಾಲ ಮೊತ್ತ',emiRate:'ಬಡ್ಡಿ ದರ',emiTenure:'ಅವಧಿ',emiMonthly:'ಮಾಸಿಕ EMI',emiInterest:'ಒಟ್ಟು ಬಡ್ಡಿ',emiTotal:'ಒಟ್ಟು ಪಾವತಿ',emiOver:'ಸಾಲ ಅವಧಿಯಲ್ಲಿ',emiPrincipal:'ಮೂಲ + ಬಡ್ಡಿ',emiLegP:'ಮೂಲ ಮೊತ್ತ',emiLegI:'ಒಟ್ಟು ಬಡ್ಡಿ',emiLegT:'ಒಟ್ಟು ಪಾವತಿ'},
+  mr:{langLabel:'मराठी',aiBtn:'AI ला विचारा',mainHead:'सर्व बँक योजना',fAll:'सर्व',fLoan:'पीक कर्ज',fCredit:'क्रेडिट कार्ड',fEquip:'उपकरणे',fSave:'बचत',fIns:'विमा',heroBadge:'शेतकरी बँकिंग पोर्टल',heroTitle:'भारतीय शेतकऱ्यांसाठी बँक योजना',heroSub:'सरकारी, खाजगी, सहकारी आणि ग्रामीण बँकांच्या योजना एकाच ठिकाणी.',stat1:'एकूण योजना',stat2:'सरकारी बँका',stat3:'खाजगी बँका',stat4:'एकूण क्रेडिट',tab0:'आढावा',tab1:'फायदे',tab2:'कागदपत्रे',tab3:'अर्ज कसा करावा',detailsBtn:'तपशील पहा',govt:'सरकारी बँक',pvt:'खाजगी बँक',coop:'सहकारी बँक',rr:'प्रादेशिक ग्रामीण बँक',nb:'नाबार्ड',helplineLbl:'हेल्पलाइन',websiteLbl:'अधिकृत संकेतस्थळ',docNote:'सर्व कागदपत्रे मूळ + झेरॉक्ससह बँकेत घेऊन जा.',aiWelcome:'नमस्कार 🙏 मी तुमचा AI बँकिंग सल्लागार!',emiTitle:'EMI कॅल्क्युलेटर',emiSub:'मासिक शेती कर्ज परतफेड',emiAmount:'कर्जाची रक्कम',emiRate:'व्याज दर',emiTenure:'मुदत',emiMonthly:'मासिक EMI',emiInterest:'एकूण व्याज',emiTotal:'एकूण देणे',emiOver:'कर्ज कालावधीत',emiPrincipal:'मूळ + व्याज',emiLegP:'मूळ रक्कम',emiLegI:'एकूण व्याज',emiLegT:'एकूण देय'},
+  te:{langLabel:'తెలుగు',aiBtn:'AI అడగండి',mainHead:'అన్ని బ్యాంక్ పథకాలు',fAll:'అన్నీ',fLoan:'పంట రుణాలు',fCredit:'క్రెడిట్ కార్డ్',fEquip:'యంత్రాలు',fSave:'పొదుపు',fIns:'బీమా',heroBadge:'రైతు బ్యాంకింగ్ పోర్టల్',heroTitle:'భారతీయ రైతులకు బ్యాంక్ పథకాలు',heroSub:'ప్రభుత్వ, ప్రైవేట్, సహకార మరియు గ్రామీణ బ్యాంకుల పథకాలు ఒక చోట.',stat1:'మొత్తం పథకాలు',stat2:'ప్రభుత్వ బ్యాంకులు',stat3:'ప్రైవేట్ బ్యాంకులు',stat4:'మొత్తం క్రెడిట్',tab0:'వివరణ',tab1:'ప్రయోజనాలు',tab2:'పత్రాలు',tab3:'దరఖాస్తు',detailsBtn:'వివరాలు',govt:'ప్రభుత్వ బ్యాంక్',pvt:'ప్రైవేట్ బ్యాంక్',coop:'సహకార బ్యాంక్',rr:'ప్రాంతీయ గ్రామీణ బ్యాంక్',nb:'నాబార్డ్',helplineLbl:'హెల్ప్‌లైన్',websiteLbl:'అధికారిక వెబ్‌సైట్',docNote:'అన్ని పత్రాల మూలం + జెరాక్స్ తీసుకుని బ్యాంకుకు వెళ్ళండి.',aiWelcome:'నమస్కారం 🙏 నేను మీ AI బ్యాంకింగ్ సలహాదారుడిని!',emiTitle:'EMI కాల్క్యులేటర్',emiSub:'మాసిక వ్యవసాయ రుణ చెల్లింపు',emiAmount:'రుణ మొత్తం',emiRate:'వడ్డీ రేటు',emiTenure:'కాలావధి',emiMonthly:'నెలవారీ EMI',emiInterest:'మొత్తం వడ్డీ',emiTotal:'మొత్తం చెల్లింపు',emiOver:'రుణ కాలంలో',emiPrincipal:'అసలు + వడ్డీ',emiLegP:'అసలు మొత్తం',emiLegI:'మొత్తం వడ్డీ',emiLegT:'మొత్తం చెల్లింపు'},
+  ta:{langLabel:'தமிழ்',aiBtn:'AI கேளுங்கள்',mainHead:'அனைத்து வங்கி திட்டங்கள்',fAll:'அனைத்தும்',fLoan:'பயிர் கடன்',fCredit:'கடன் அட்டை',fEquip:'உபகரணங்கள்',fSave:'சேமிப்பு',fIns:'காப்பீடு',heroBadge:'விவசாயி வங்கி போர்டல்',heroTitle:'இந்திய விவசாயிகளுக்கு வங்கி திட்டங்கள்',heroSub:'அரசு, தனியார், கூட்டுறவு மற்றும் கிராமீண வங்கி திட்டங்கள் ஒரே இடத்தில்.',stat1:'மொத்த திட்டங்கள்',stat2:'அரசு வங்கிகள்',stat3:'தனியார் வங்கிகள்',stat4:'மொத்த கடன்',tab0:'விவரம்',tab1:'நன்மைகள்',tab2:'ஆவணங்கள்',tab3:'விண்ணப்பிக்க',detailsBtn:'விவரம் காண',govt:'அரசு வங்கி',pvt:'தனியார் வங்கி',coop:'கூட்டுறவு வங்கி',rr:'கிராமீண வங்கி',nb:'நபார்ட்',helplineLbl:'உதவி எண்',websiteLbl:'அதிகாரப்பூர்வ தளம்',docNote:'அனைத்து ஆவணங்களின் அசல் + நகல் வங்கிக்கு எடுத்துச் செல்லவும்.',aiWelcome:'வணக்கம் 🙏 நான் உங்கள் AI வங்கி ஆலோசகர்!',emiTitle:'EMI கணக்கீட்டு',emiSub:'மாதாந்திர விவசாய கடன் திரும்பச் செலுத்துதல்',emiAmount:'கடன் தொகை',emiRate:'வட்டி விகிதம்',emiTenure:'காலம்',emiMonthly:'மாதாந்திர EMI',emiInterest:'மொத்த வட்டி',emiTotal:'மொத்த செலுத்துதல்',emiOver:'கடன் காலத்தில்',emiPrincipal:'அசல் + வட்டி',emiLegP:'அசல் தொகை',emiLegI:'மொத்த வட்டி',emiLegT:'மொத்த செலுத்துதல்'},
+};
+
+function L(key) { return (langLabels[currentLang] || langLabels.en)[key] || langLabels.en[key] || key; }
+function T(obj) { if (!obj) return ''; return obj[currentLang] || obj.en || ''; }
+
+// ─── RENDER CARDS ──────────────────────────────────────────────────────────
+function renderCards() {
+  const grid = document.getElementById('schemes-grid');
+  const q = searchQuery.toLowerCase();
+  const filtered = schemes.filter(s => {
+    const mf = currentFilter === 'all' || s.category.includes(currentFilter);
+    const mb = currentBankType === 'all' || s.bankType === currentBankType;
+    const ms = !q ||
+      T(s.name).toLowerCase().includes(q) ||
+      s.shortName.toLowerCase().includes(q) ||
+      s.bankName.toLowerCase().includes(q) ||
+      s.interestRate.toLowerCase().includes(q) ||
+      (T(s.desc) || '').toLowerCase().includes(q);
+    return mf && mb && ms;
+  });
+
+  document.getElementById('scheme-count-badge').textContent = filtered.length + ' schemes';
+  document.getElementById('total-schemes-count').textContent = schemes.length;
+  grid.innerHTML = '';
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state"><span class="empty-state-icon">🏦</span><div class="empty-state-msg">No schemes found</div><div class="empty-state-sub">Try changing filters or search</div></div>`;
+    return;
+  }
+
+  filtered.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = `scheme-card ${s.bankType}`;
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.onclick = () => openModal(s);
+
+    const catLabels = { loan: '💰 ' + L('fLoan'), credit: '💳 ' + L('fCredit'), equipment: '🚜 ' + L('fEquip'), savings: '🏦 ' + L('fSave'), insurance: '🛡️ ' + L('fIns') };
+    const cats = s.category.map(c => `<span class="scheme-tag">${catLabels[c] || c}</span>`).join('');
+
+    card.innerHTML = `
+      <div class="scheme-card-header">
+        <div class="scheme-icon-wrap">${s.emoji}</div>
+        <div class="scheme-header-info">
+          <div class="bank-type-badge ${badgeClass[s.bankType]}">${bankTypeLabels[s.bankType]} ${L(s.bankType)}</div>
+          <div class="scheme-name">${T(s.name)}</div>
+          <div class="scheme-short-name">${s.shortName}</div>
+        </div>
+      </div>
+      <div class="scheme-card-body">
+        <div class="scheme-desc">${T(s.desc)}</div>
+        <div class="scheme-tags">${cats}</div>
+      </div>
+      <div class="scheme-card-footer">
+        <div class="scheme-bank">🏦 ${s.bankName}</div>
+        <div class="scheme-cta">📋 ${L('detailsBtn')}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── MODAL ─────────────────────────────────────────────────────────────────
+function openModal(s) {
+  activeModal = s;
+  document.getElementById('modal-header').className = `modal-header ${headerClass[s.bankType]}`;
+  document.getElementById('m-icon').textContent = s.emoji;
+  document.getElementById('m-level-badge').textContent = bankTypeLabels[s.bankType] + ' ' + L(s.bankType);
+  document.getElementById('m-title').textContent = T(s.name);
+  document.getElementById('m-short').textContent = s.bankName;
+  document.getElementById('qi-banktype').textContent = L(s.bankType);
+  document.getElementById('qi-interest').textContent = s.interestRate;
+  document.getElementById('qi-maxloan').textContent = s.maxLoan;
+  document.getElementById('qi-tenure').textContent = s.tenure;
+  document.getElementById('tab0').textContent = L('tab0');
+  document.getElementById('tab1').textContent = L('tab1');
+  document.getElementById('tab2').textContent = L('tab2');
+  document.getElementById('tab3').textContent = L('tab3');
+  document.getElementById('m-desc').textContent = T(s.desc);
+  document.getElementById('m-eligibility').innerHTML = (s.eligibility || []).map(e =>
+    `<div class="elig-item"><div class="elig-dot"></div><span>${T(e) || e.en || e}</span></div>`
+  ).join('');
+  document.getElementById('m-benefits').innerHTML = (s.benefits || []).map(b =>
+    `<div class="benefit-item"><div class="benefit-icon">${b.icon}</div><div class="benefit-text"><strong>${T(b.title)}</strong>${T(b.desc)}</div></div>`
+  ).join('');
+  document.getElementById('m-doc-note').textContent = L('docNote');
+  document.getElementById('m-docs').innerHTML = (s.docs || []).map(d =>
+    `<div class="doc-item"><div class="doc-icon">${d.icon}</div><div><div class="doc-name">${T(d.name)}</div><div class="doc-note">${T(d.note)}</div></div></div>`
+  ).join('');
+  document.getElementById('m-steps').innerHTML = (s.steps || []).map((st, i) =>
+    `<div class="apply-step"><div class="step-num-wrap"><div class="step-num">${i + 1}</div><div class="step-line"></div></div><div class="step-content"><div class="step-title">${T(st.title)}</div><div class="step-desc">${T(st.desc)}</div></div></div>`
+  ).join('');
+  document.getElementById('helpline-lbl').textContent = L('helplineLbl');
+  document.getElementById('website-lbl').textContent = L('websiteLbl');
+  document.getElementById('m-helpline').textContent = s.helpline;
+  document.getElementById('m-website').textContent = s.website;
+  switchTab(0);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function switchTab(idx) {
+  activeTab = idx;
+  document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.modal-tab-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+}
+
+// FIX: closeModal now correctly handles both button click (no event) and overlay click
+function closeModal(e) {
+  if (!e) {
+    // Called directly from the ✕ button — always close
+    document.getElementById('modal-overlay').classList.remove('open');
+    return;
+  }
+  // Called from overlay onclick — only close if clicking the overlay itself (not the modal box)
+  if (e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+// Prevent clicks inside the modal box from bubbling up to the overlay
+document.getElementById('modal-box').addEventListener('click', e => e.stopPropagation());
+
+// ─── FILTERS ───────────────────────────────────────────────────────────────
+function setFilter(btn, cat) {
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  renderCards();
+}
+
+function filterBankType(v) {
+  currentBankType = v;
+  renderCards();
+}
+
+function filterSchemes(q) {
+  searchQuery = q;
+  renderCards();
+}
+
+// ─── LANGUAGE ──────────────────────────────────────────────────────────────
+function toggleLang() {
+  document.getElementById('lang-btn').classList.toggle('open');
+  document.getElementById('lang-dropdown').classList.toggle('open');
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  const langs = ['en', 'hi', 'kn', 'mr', 'te', 'ta'];
+  document.querySelectorAll('.lang-option').forEach((o, i) => o.classList.toggle('active', langs[i] === lang));
+  document.getElementById('lang-btn').classList.remove('open');
+  document.getElementById('lang-dropdown').classList.remove('open');
+  renderAll();
+  // Re-render modal in new language if it's open
+  if (activeModal && document.getElementById('modal-overlay').classList.contains('open')) {
+    openModal(activeModal);
+  }
+}
+
+document.addEventListener('click', e => {
+  const w = document.querySelector('.lang-wrapper');
+  if (!w.contains(e.target)) {
+    document.getElementById('lang-btn').classList.remove('open');
+    document.getElementById('lang-dropdown').classList.remove('open');
+  }
+});
+
+// ─── EMI CALCULATOR ────────────────────────────────────────────────────────
+function updateEMI() {
+  const P = parseFloat(document.getElementById('emi-amount').value);
+  const annualR = parseFloat(document.getElementById('emi-rate').value);
+  const N = parseInt(document.getElementById('emi-tenure').value);
+  const r = annualR / (12 * 100);
+
+  let emi, totalPayment, totalInterest;
+  if (r === 0) {
+    emi = P / N;
+  } else {
+    emi = P * r * Math.pow(1 + r, N) / (Math.pow(1 + r, N) - 1);
+  }
+  totalPayment = emi * N;
+  totalInterest = totalPayment - P;
+
+  const fmt = v => '₹' + Math.round(v).toLocaleString('en-IN');
+
+  document.getElementById('emi-val-amount').textContent = fmt(P);
+  document.getElementById('emi-val-rate').textContent = annualR.toFixed(1) + '%';
+  document.getElementById('emi-val-tenure').textContent = N + ' months';
+  document.getElementById('emi-monthly').textContent = fmt(emi);
+  document.getElementById('emi-interest').textContent = fmt(totalInterest);
+  document.getElementById('emi-total').textContent = fmt(totalPayment);
+  document.getElementById('emi-leg-pval').textContent = fmt(P);
+  document.getElementById('emi-leg-ival').textContent = fmt(totalInterest);
+  document.getElementById('emi-leg-tval').textContent = fmt(totalPayment);
+
+  // Update slider fill gradients
+  ['emi-amount', 'emi-rate', 'emi-tenure'].forEach(id => {
+    const el = document.getElementById(id);
+    const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.background = `linear-gradient(to right,var(--bm) 0%,var(--bm) ${pct}%,#D0D6E8 ${pct}%,#D0D6E8 100%)`;
+  });
+
+  // FIX: Removed unused `circ` variable. Pie chart uses circumference ~100 (2π × 15.9155 ≈ 100).
+  const principalPct = (P / totalPayment) * 100;
+  const interestPct = 100 - principalPct;
+  const pDash = principalPct.toFixed(1) + ' ' + interestPct.toFixed(1);
+  const iDash = interestPct.toFixed(1) + ' ' + principalPct.toFixed(1);
+  document.getElementById('emi-pie-principal').setAttribute('stroke-dasharray', pDash);
+  document.getElementById('emi-pie-interest').setAttribute('stroke-dasharray', iDash);
+  document.getElementById('emi-pie-interest').setAttribute('stroke-dashoffset', (-principalPct).toFixed(1));
+}
+
+// ─── AI PANEL ──────────────────────────────────────────────────────────────
+function openAI() {
+  document.getElementById('ai-panel').classList.add('open');
+  document.getElementById('ai-overlay').classList.add('open');
+}
+
+function closeAI() {
+  document.getElementById('ai-panel').classList.remove('open');
+  document.getElementById('ai-overlay').classList.remove('open');
+}
+
+function askChip(text) {
+  document.getElementById('ai-input').value = text;
+  sendAI();
+}
+
+async function sendAI() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  if (!geminiKey) {
+    showKeyStatus('Please save your Gemini API key first!', false);
+    document.getElementById('gemini-key-input').focus();
+    return;
+  }
+
+  const msgs = document.getElementById('ai-messages');
+
+  // Add user message
+  const ud = document.createElement('div');
+  ud.className = 'msg-bubble msg-user';
+  ud.textContent = msg;
+  msgs.appendChild(ud);
+  input.value = '';
+
+  // Add typing indicator
+  const td = document.createElement('div');
+  td.className = 'msg-bubble msg-ai';
+  td.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(td);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const schemeList = schemes.map(s =>
+    `${s.shortName} (${s.bankName}): ${s.interestRate}, max ${s.maxLoan}, type:${s.bankType}`
+  ).join('; ');
+
+  const sys = `You are a helpful AI advisor on AgriBridge Bank Schemes portal for Indian farmers. Available bank schemes: ${schemeList}. Help farmers understand which bank scheme suits them, what interest rates are, documents needed, eligibility, and application process. Keep answers concise (3-5 sentences), practical and specific. Mention bank names, interest rates, helpline numbers. Reply in the same language the farmer uses (Hindi, Kannada, Telugu, Tamil, Marathi, or English).`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-goog-api-key':'AIzaSyDzxt4CPtWZ97rr9eGo1wdXsFhM8y4cuW8'
+  },
+  body: JSON.stringify({
+    contents: [{ parts: [{ text: sys + "\n\nFarmer's question: " + msg }] }]
+  })
+});
+    const data = await res.json();
+    td.textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, could not get a response. Check your API key.';
+  } catch (e) {
+    td.textContent = 'Connection error. Check your Gemini API key and internet connection.';
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ─── RENDER ALL (labels + cards) ───────────────────────────────────────────
+function renderAll() {
+  document.getElementById('lang-label').textContent = L('langLabel');
+  document.getElementById('ai-btn-label').textContent = L('aiBtn');
+  document.getElementById('main-heading').textContent = L('mainHead');
+  document.getElementById('hero-badge-text').textContent = L('heroBadge');
+  document.getElementById('hero-title').textContent = L('heroTitle');
+  document.getElementById('hero-sub').textContent = L('heroSub');
+  document.getElementById('hero-stat1').textContent = L('stat1');
+  document.getElementById('hero-stat2').textContent = L('stat2');
+  document.getElementById('hero-stat3').textContent = L('stat3');
+  document.getElementById('hero-stat4').textContent = L('stat4');
+  document.getElementById('f-all').textContent = L('fAll');
+  document.getElementById('f-loan').textContent = L('fLoan');
+  document.getElementById('f-credit').textContent = L('fCredit');
+  document.getElementById('f-equip').textContent = L('fEquip');
+  document.getElementById('f-save').textContent = L('fSave');
+  document.getElementById('f-ins').textContent = L('fIns');
+  document.getElementById('ai-welcome').textContent = L('aiWelcome');
+  document.getElementById('emi-title').textContent = L('emiTitle');
+  document.getElementById('emi-sub').textContent = L('emiSub');
+  document.getElementById('emi-lbl-amount').textContent = L('emiAmount');
+  document.getElementById('emi-lbl-rate').textContent = L('emiRate');
+  document.getElementById('emi-lbl-tenure').textContent = L('emiTenure');
+  document.getElementById('emi-lbl-monthly').textContent = L('emiMonthly');
+  document.getElementById('emi-lbl-interest').textContent = L('emiInterest');
+  document.getElementById('emi-lbl-total').textContent = L('emiTotal');
+  document.getElementById('emi-lbl-over').textContent = L('emiOver');
+  document.getElementById('emi-lbl-principal').textContent = L('emiPrincipal');
+  document.getElementById('emi-leg-p').textContent = L('emiLegP');
+  document.getElementById('emi-leg-i').textContent = L('emiLegI');
+  document.getElementById('emi-leg-t').textContent = L('emiLegT');
+
+  const ph = {
+    en: 'Search bank schemes...', hi: 'बैंक योजना खोजें...',
+    kn: 'ಬ್ಯಾಂಕ್ ಯೋಜನೆ ಹುಡುಕಿ...', mr: 'बँक योजना शोधा...',
+    te: 'బ్యాంక్ పథకాలు వెతకండి...', ta: 'வங்கி திட்டம் தேடுங்கள்...'
+  };
+  document.getElementById('main-search').placeholder = ph[currentLang] || ph.en;
+  renderCards();
+}
+</script>
+</body>
+</html>

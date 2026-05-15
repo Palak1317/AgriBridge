@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriBridge — Everything a Farmer Needs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & ROOT ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --soil:    #0D1A0F;
+  --forest:  #122518;
+  --grove:   #1C3D28;
+  --leaf:    #2D6A40;
+  --sprout:  #4A9E63;
+  --mist:    #A8C9B0;
+  --cream:   #F0EBD8;
+  --wheat:   #E8C97A;
+  --amber:   #D4892A;
+  --rust:    #C05A1F;
+  --sky:     #7BB8D4;
+  --text:    #ECE8DA;
+  --text2:   rgba(236,232,218,0.65);
+  --text3:   rgba(236,232,218,0.35);
+  --fd: 'Playfair Display', Georgia, serif;
+  --fb: 'DM Sans', sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--fb);
+  background: var(--soil);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+  position: fixed; width: 10px; height: 10px;
+  background: var(--wheat); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.3s var(--ease), height 0.3s var(--ease), background 0.3s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  position: fixed; width: 36px; height: 36px;
+  border: 1.5px solid rgba(232,201,122,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: all 0.18s var(--ease);
+}
+body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 18px; height: 18px; }
+body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 52px; height: 52px; opacity: 0.5; }
+
+/* ── NOISE TEXTURE ── */
+.noise::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 1; border-radius: inherit;
+}
+
+/* ── NAVBAR ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+  background: #0a160c;
+  border-bottom: 1px solid rgba(74,158,99,0.18);
+  transition: box-shadow 0.4s;
+}
+.nav.scrolled {
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--leaf), var(--sprout));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 0 16px rgba(74,158,99,0.35);
+}
+.nav-logo-text {
+  font-family: var(--fd); font-size: 18px; font-weight: 700;
+  color: var(--cream); letter-spacing: -0.02em;
+}
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 13px; font-weight: 500;
+  color: var(--text2); text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+  height: 1px; background: var(--wheat);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s var(--ease);
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-cta {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1.5px solid rgba(74,158,99,0.5);
+  border-radius: 24px;
+  color: var(--mist) !important;
+  font-size: 13px; font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s var(--ease) !important;
+}
+.nav-cta:hover {
+  background: var(--leaf) !important;
+  border-color: var(--leaf) !important;
+  color: #fff !important;
+}
+.nav-cta::after { display: none !important; }
+
+/* ── LANG DROPDOWN ── */
+.lang-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+.lang-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: transparent;
+  border: 1.5px solid rgba(74,158,99,0.5);
+  border-radius: 24px;
+  padding: 8px 14px 8px 16px;
+  color: var(--mist);
+  font-size: 13px; font-weight: 500;
+  font-family: var(--fb);
+  cursor: none;
+  transition: all 0.25s var(--ease);
+  letter-spacing: 0.02em;
+}
+.lang-btn:hover {
+  background: var(--leaf);
+  border-color: var(--leaf);
+  color: #fff;
+}
+.lang-btn .chevron {
+  transition: transform 0.25s var(--ease);
+  font-size: 9px;
+  display: inline-block;
+  line-height: 1;
+  opacity: 0.7;
+}
+.lang-btn.open { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+.lang-btn.open .chevron { transform: rotate(180deg); }
+.lang-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: #122518;
+  border: 1px solid rgba(74,158,99,0.2);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  min-width: 155px;
+  overflow: hidden;
+  display: none;
+  z-index: 600;
+}
+.lang-dropdown.open { display: block; }
+.lang-option {
+  padding: 9px 14px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: none;
+  display: flex; align-items: center; gap: 10px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--fb);
+  transition: background 0.15s;
+}
+.lang-option:hover { background: rgba(74,158,99,0.1); color: var(--cream); }
+.lang-option.active { background: rgba(74,158,99,0.15); color: var(--mist); font-weight: 600; }
+
+/* ── HERO ── */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  overflow: hidden;
+  padding: 16px;
+  padding-top: 80px;
+}
+.hero-video-wrap {
+  position: absolute; top: 0; left: 16px; right: 16px; bottom: 16px;
+  border-radius: 24px; overflow: hidden;
+  z-index: 0;
+}
+.hero-video {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
+.hero-fallback {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg,
+    #0a1a0c 0%, #122518 25%, #1a3d22 45%,
+    #0f2a14 65%, #0d1a0f 100%);
+}
+.hero-grain {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay; opacity: 0.8;
+}
+.hero-gradient {
+  position: absolute; inset: 0; z-index: 3; border-radius: 24px;
+  background: linear-gradient(to bottom,
+    rgba(13,26,15,0.3) 0%,
+    transparent 30%,
+    transparent 50%,
+    rgba(13,26,15,0.7) 80%,
+    rgba(13,26,15,0.95) 100%);
+}
+.hero-orb {
+  position: absolute; z-index: 2;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45,106,64,0.25) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: orbFloat 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes orbFloat {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(-30px, 40px) scale(1.1); }
+}
+.hero-content {
+  position: relative; z-index: 10;
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: flex-end; gap: 32px;
+  padding-bottom: 12px;
+}
+.hero-brand {
+  font-family: var(--fd);
+  font-size: clamp(72px, 16vw, 220px);
+  font-weight: 900;
+  color: var(--cream);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  overflow: hidden;
+}
+.hero-brand .word {
+  display: inline-block;
+  animation: wordUp 1s var(--ease) both;
+}
+.hero-brand .word:nth-child(1) { animation-delay: 0.1s; }
+.hero-brand .word:nth-child(2) { animation-delay: 0.22s; color: var(--wheat); font-style: italic; }
+@keyframes wordUp {
+  from { opacity: 0; transform: translateY(60px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-brand sup {
+  font-size: 0.22em; vertical-align: super;
+  color: var(--sprout); font-family: var(--fb); font-weight: 400;
+}
+.hero-right {
+  max-width: 280px; padding-bottom: 8px;
+  display: flex; flex-direction: column; gap: 20px;
+  animation: fadeUp 0.9s var(--ease) 0.5s both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-desc {
+  font-size: 14px; line-height: 1.65;
+  color: var(--text2); font-weight: 300;
+}
+.hero-desc strong { color: var(--wheat); font-weight: 500; }
+.hero-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--wheat);
+  color: var(--soil) !important;
+  font-size: 14px; font-weight: 600;
+  padding: 12px 12px 12px 22px;
+  border-radius: 40px; text-decoration: none;
+  transition: gap 0.3s var(--ease), box-shadow 0.3s;
+  width: fit-content;
+  box-shadow: 0 4px 20px rgba(232,201,122,0.3);
+  cursor: none;
+}
+.hero-btn:hover { gap: 18px; box-shadow: 0 8px 32px rgba(232,201,122,0.45); }
+.hero-btn .btn-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--soil);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s var(--ease);
+}
+.hero-btn:hover .btn-circle { transform: scale(1.1); }
+.scroll-hint {
+  position: absolute; bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text3);
+  animation: fadeUp 1s var(--ease) 1.2s both;
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--text3), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { transform: scaleY(1); opacity: 0.5; }
+  50%      { transform: scaleY(0.6); opacity: 1; }
+}
+
+/* ── MISSION SECTION ── */
+.mission {
+  padding: 100px 48px;
+  background: var(--soil);
+  position: relative; overflow: hidden;
+}
+.mission-inner {
+  max-width: 900px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.mission-label {
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--sprout); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.mission-label::before {
+  content: ''; width: 30px; height: 1px; background: var(--sprout);
+}
+.mission-heading {
+  font-family: var(--fd);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 24px;
+}
+.mission-heading em { font-style: italic; color: var(--wheat); }
+.mission-body {
+  font-size: 15px; line-height: 1.75;
+  color: var(--text2); font-weight: 300;
+  margin-bottom: 32px;
+}
+.mission-quote {
+  background: var(--forest);
+  border-left: 3px solid var(--leaf);
+  border-radius: 0 12px 12px 0;
+  padding: 24px;
+  font-family: var(--fd); font-style: italic;
+  font-size: 18px; line-height: 1.5;
+  color: var(--cream);
+}
+.mission-quote cite {
+  display: block; font-style: normal; font-family: var(--fb);
+  font-size: 12px; color: var(--text3); margin-top: 12px;
+  letter-spacing: 0.05em;
+}
+.mission-visual {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.mission-card {
+  background: var(--forest);
+  border: 1px solid rgba(74,158,99,0.12);
+  border-radius: 16px; padding: 20px;
+  display: flex; align-items: center; gap: 16px;
+  transition: border-color 0.3s, transform 0.3s var(--ease);
+  cursor: default;
+  position: relative; overflow: hidden;
+}
+.mission-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(74,158,99,0.4), transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s var(--ease);
+}
+.mission-card:hover { border-color: rgba(74,158,99,0.3); transform: translateX(6px); }
+.mission-card:hover::before { transform: scaleX(1); }
+.mc-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.mc-text h4 { font-size: 14px; font-weight: 600; color: var(--cream); margin-bottom: 3px; }
+.mc-text p  { font-size: 12px; color: var(--text3); line-height: 1.4; }
+.mc-num {
+  margin-left: auto; font-family: var(--fd);
+  font-size: 28px; font-weight: 700; color: var(--leaf);
+  opacity: 0.4; flex-shrink: 0;
+}
+
+/* ── FEATURES SECTION ── */
+.features {
+  padding: 80px 24px 100px;
+  background: var(--forest);
+  position: relative; overflow: hidden;
+}
+.features-noise {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+.features-header {
+  text-align: center; max-width: 700px; margin: 0 auto 60px;
+  position: relative; z-index: 1;
+}
+.features-label {
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--sprout); margin-bottom: 16px;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.features-label::before, .features-label::after {
+  content: ''; width: 20px; height: 1px; background: var(--sprout);
+}
+.features-title {
+  font-family: var(--fd);
+  font-size: clamp(32px, 4vw, 54px);
+  font-weight: 700; line-height: 1.05;
+  letter-spacing: -0.025em; color: var(--cream);
+  margin-bottom: 14px;
+}
+.features-title em { font-style: italic; color: var(--wheat); }
+.features-sub {
+  font-size: 15px; color: var(--text2);
+  font-weight: 300; line-height: 1.6;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  position: relative; z-index: 1;
+  max-width: 1300px; margin: 0 auto;
+}
+.feat-card {
+  border-radius: 20px; overflow: hidden;
+  height: 500px;
+  position: relative;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  animation: cardIn 0.7s var(--ease) both;
+  cursor: none;
+}
+.feat-card:nth-child(1) { animation-delay: 0.1s; }
+.feat-card:nth-child(2) { animation-delay: 0.2s; }
+.feat-card:nth-child(3) { animation-delay: 0.3s; }
+.feat-card:nth-child(4) { animation-delay: 0.4s; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.feat-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+}
+.feat-card-1 {
+  background: linear-gradient(160deg, #0e2016 0%, #1a3d28 50%, #0d1a10 100%);
+  border: 1px solid rgba(74,158,99,0.2);
+}
+.feat-card-2 {
+  background: linear-gradient(160deg, #1a1206 0%, #2e1f08 50%, #1a1206 100%);
+  border: 1px solid rgba(212,137,42,0.2);
+}
+.feat-card-3 {
+  background: linear-gradient(160deg, #071a1a 0%, #0f2e2e 50%, #071a1a 100%);
+  border: 1px solid rgba(123,184,212,0.2);
+}
+.feat-card-4 {
+  background: linear-gradient(160deg, #111620 0%, #1c2535 50%, #111620 100%);
+  border: 1px solid rgba(168,201,176,0.2);
+}
+.feat-card-bg {
+  position: absolute; inset: 0;
+  opacity: 0.15;
+  transition: opacity 0.5s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 160px;
+  filter: blur(2px);
+  user-select: none;
+}
+.feat-card:hover .feat-card-bg { opacity: 0.25; }
+.feat-card-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0; transition: opacity 0.5s;
+  border-radius: 20px;
+}
+.feat-card-1 .feat-card-glow { background: radial-gradient(circle at 50% 0%, rgba(74,158,99,0.15), transparent 70%); }
+.feat-card-2 .feat-card-glow { background: radial-gradient(circle at 50% 0%, rgba(212,137,42,0.15), transparent 70%); }
+.feat-card-3 .feat-card-glow { background: radial-gradient(circle at 50% 0%, rgba(123,184,212,0.15), transparent 70%); }
+.feat-card-4 .feat-card-glow { background: radial-gradient(circle at 50% 0%, rgba(168,201,176,0.15), transparent 70%); }
+.feat-card:hover .feat-card-glow { opacity: 1; }
+.feat-card-inner {
+  position: relative; z-index: 2;
+  height: 100%; padding: 28px;
+  display: flex; flex-direction: column;
+}
+.feat-num {
+  font-size: 11px; letter-spacing: 0.12em;
+  color: var(--text3); margin-bottom: auto;
+  font-weight: 500;
+}
+.feat-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin-bottom: 20px;
+  transition: transform 0.4s var(--ease);
+}
+.feat-card-1 .feat-icon { background: rgba(74,158,99,0.15); }
+.feat-card-2 .feat-icon { background: rgba(212,137,42,0.15); }
+.feat-card-3 .feat-icon { background: rgba(123,184,212,0.15); }
+.feat-card-4 .feat-icon { background: rgba(168,201,176,0.12); }
+.feat-card:hover .feat-icon { transform: scale(1.1) rotate(-4deg); }
+.feat-title {
+  font-family: var(--fd);
+  font-size: 22px; font-weight: 700;
+  color: var(--cream); line-height: 1.15;
+  margin-bottom: 10px; letter-spacing: -0.01em;
+}
+.feat-desc {
+  font-size: 13px; color: var(--text2);
+  line-height: 1.6; font-weight: 300;
+  margin-bottom: 20px; flex: 1;
+}
+.feat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.feat-tag {
+  font-size: 10px; padding: 3px 9px;
+  border-radius: 20px; font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.feat-card-1 .feat-tag { background: rgba(74,158,99,0.15); color: var(--sprout); }
+.feat-card-2 .feat-tag { background: rgba(212,137,42,0.15); color: var(--amber); }
+.feat-card-3 .feat-tag { background: rgba(123,184,212,0.15); color: var(--sky); }
+.feat-card-4 .feat-tag { background: rgba(168,201,176,0.12); color: var(--mist); }
+.feat-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.feat-explore {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.feat-card-1 .feat-explore { color: var(--sprout); }
+.feat-card-2 .feat-explore { color: var(--amber); }
+.feat-card-3 .feat-explore { color: var(--sky); }
+.feat-card-4 .feat-explore { color: var(--mist); }
+.feat-arrow {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  transition: transform 0.3s var(--ease);
+}
+.feat-card-1 .feat-arrow { background: rgba(74,158,99,0.15); color: var(--sprout); }
+.feat-card-2 .feat-arrow { background: rgba(212,137,42,0.15); color: var(--amber); }
+.feat-card-3 .feat-arrow { background: rgba(123,184,212,0.15); color: var(--sky); }
+.feat-card-4 .feat-arrow { background: rgba(168,201,176,0.12); color: var(--mist); }
+.feat-card:hover .feat-arrow { transform: rotate(-45deg) scale(1.1); }
+
+/* ── HOW IT WORKS ── */
+.how {
+  padding: 100px 48px;
+  background: var(--soil);
+  position: relative;
+}
+.how-inner { max-width: 1000px; margin: 0 auto; }
+.how-header { text-align: center; margin-bottom: 64px; }
+.how-title {
+  font-family: var(--fd); font-size: clamp(28px, 3.5vw, 46px);
+  font-weight: 700; color: var(--cream); letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.how-title em { font-style: italic; color: var(--wheat); }
+.how-sub { font-size: 15px; color: var(--text2); font-weight: 300; }
+.how-steps {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; position: relative;
+}
+.how-steps::before {
+  content: '';
+  position: absolute; top: 40px; left: calc(16.66% + 40px); right: calc(16.66% + 40px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--leaf), var(--sprout), var(--leaf));
+  z-index: 0;
+}
+.how-step {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 0 24px;
+  position: relative; z-index: 1;
+}
+.how-step-num {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--forest);
+  border: 2px solid var(--leaf);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fd); font-size: 28px; font-weight: 700;
+  color: var(--wheat); margin-bottom: 20px;
+  transition: all 0.3s var(--ease);
+  box-shadow: 0 0 0 0 rgba(74,158,99,0);
+}
+.how-step:hover .how-step-num {
+  border-color: var(--sprout);
+  box-shadow: 0 0 24px rgba(74,158,99,0.3);
+  transform: scale(1.05);
+}
+.how-step-emoji { font-size: 28px; }
+.how-step h3 {
+  font-size: 16px; font-weight: 600; color: var(--cream);
+  margin-bottom: 8px; letter-spacing: -0.01em;
+}
+.how-step p { font-size: 13px; color: var(--text2); line-height: 1.6; font-weight: 300; }
+
+/* ── BANNER ── */
+.banner {
+  padding: 80px 48px;
+  background: var(--grove);
+  position: relative; overflow: hidden;
+  text-align: center;
+}
+.banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(74,158,99,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.banner-eyebrow {
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--sprout); margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.banner-eyebrow::before, .banner-eyebrow::after {
+  content: ''; width: 40px; height: 1px; background: var(--leaf);
+}
+.banner-quote {
+  font-family: var(--fd); font-size: clamp(22px, 3vw, 38px);
+  font-style: italic; color: var(--cream);
+  max-width: 780px; margin: 0 auto 32px;
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+.banner-quote strong { color: var(--wheat); font-style: normal; }
+.banner-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--wheat); color: var(--soil);
+  padding: 13px 13px 13px 24px; border-radius: 40px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  transition: box-shadow 0.3s, gap 0.3s var(--ease);
+  box-shadow: 0 4px 20px rgba(232,201,122,0.3);
+  cursor: none;
+}
+.btn-primary:hover { gap: 18px; box-shadow: 0 8px 32px rgba(232,201,122,0.45); }
+.btn-primary .bc {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--soil);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: transform 0.3s var(--ease);
+}
+.btn-primary:hover .bc { transform: scale(1.1) rotate(-45deg); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1.5px solid rgba(168,201,176,0.3);
+  color: var(--mist); background: transparent;
+  padding: 13px 24px; border-radius: 40px;
+  font-size: 14px; font-weight: 500; text-decoration: none;
+  transition: all 0.25s var(--ease);
+  cursor: none;
+}
+.btn-secondary:hover { background: rgba(168,201,176,0.08); border-color: var(--mist); }
+
+/* ── FOOTER ── */
+footer {
+  background: #080F09;
+  padding: 48px;
+  border-top: 1px solid rgba(74,158,99,0.08);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 40px; align-items: center;
+}
+.footer-left .foot-logo {
+  font-family: var(--fd); font-size: 22px; font-weight: 700;
+  color: var(--cream); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.footer-left p { font-size: 13px; color: var(--text3); line-height: 1.6; max-width: 340px; }
+.footer-links { display: flex; gap: 24px; justify-content: flex-end; flex-wrap: wrap; }
+.footer-links a {
+  font-size: 13px; color: var(--text3); text-decoration: none;
+  transition: color 0.2s; cursor: none;
+}
+.footer-links a:hover { color: var(--mist); }
+.footer-bottom {
+  padding: 20px 48px;
+  background: #080F09;
+  border-top: 1px solid rgba(74,158,99,0.05);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-bottom p { font-size: 12px; color: var(--text3); }
+.footer-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text3);
+}
+.footer-badge span { color: var(--sprout); }
+
+/* ── LANGUAGE SPLASH ── */
+#lang-splash {
+  position: fixed; inset: 0; z-index: 9000;
+  background: var(--soil);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  animation: splashIn 0.4s var(--ease) both;
+}
+@keyframes splashIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+#lang-splash.hiding {
+  animation: splashOut 0.6s var(--ease) forwards;
+}
+@keyframes splashOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-30px); }
+}
+.splash-logo {
+  font-family: var(--fd); font-size: clamp(42px, 10vw, 72px);
+  font-weight: 900; color: var(--cream); letter-spacing: -0.04em;
+  margin-bottom: 8px;
+}
+.splash-logo span { color: var(--wheat); font-style: italic; }
+.splash-tagline {
+  font-size: 13px; color: var(--text2); letter-spacing: 0.05em;
+  margin-bottom: 48px; text-align: center;
+}
+.splash-prompt {
+  font-family: var(--fd); font-size: clamp(16px, 2.5vw, 22px);
+  color: var(--mist); margin-bottom: 28px; text-align: center;
+  font-style: italic;
+}
+.splash-langs {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; max-width: 500px; width: 90%;
+}
+.splash-lang-btn {
+  padding: 16px 12px;
+  background: var(--forest);
+  border: 1.5px solid rgba(74,158,99,0.2);
+  border-radius: 16px;
+  color: var(--text);
+  font-size: 15px; font-weight: 600;
+  font-family: var(--fb);
+  cursor: none;
+  transition: all 0.25s var(--ease);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center; line-height: 1.2;
+}
+.splash-lang-btn:hover {
+  background: var(--grove);
+  border-color: var(--leaf);
+  color: var(--wheat);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(74,158,99,0.2);
+}
+.splash-lang-native { font-size: 18px; }
+.splash-lang-en { font-size: 11px; color: var(--text2); font-weight: 400; letter-spacing: 0.04em; }
+.splash-divider {
+  width: 40px; height: 1px; background: rgba(74,158,99,0.3);
+  margin: 36px 0 20px;
+}
+.splash-sub { font-size: 12px; color: var(--text3); text-align: center; }
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .feat-card { height: 420px; }
+  .mission-inner { grid-template-columns: 1fr; gap: 48px; }
+  .how-steps { grid-template-columns: 1fr; gap: 40px; }
+  .how-steps::before { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-right { max-width: 100%; }
+  .stat-bar { grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .mission { padding: 60px 24px; }
+  .how { padding: 60px 24px; }
+  footer { grid-template-columns: 1fr; }
+  .footer-links { justify-content: flex-start; }
+  .footer-bottom { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- LANGUAGE SPLASH SCREEN -->
+<div id="lang-splash">
+  <div class="splash-logo">Agri<span>Bridge</span></div>
+  <div class="splash-tagline">A platform for every Indian farmer</div>
+  <div class="splash-prompt" id="splash-prompt">Choose your language / अपनी भाषा चुनें</div>
+  <div class="splash-langs">
+    <button class="splash-lang-btn" data-lang="en">
+      <span class="splash-lang-native">English</span>
+      <span class="splash-lang-en">English</span>
+    </button>
+    <button class="splash-lang-btn" data-lang="hi">
+      <span class="splash-lang-native">हिंदी</span>
+      <span class="splash-lang-en">Hindi</span>
+    </button>
+    <button class="splash-lang-btn" data-lang="kn">
+      <span class="splash-lang-native">ಕನ್ನಡ</span>
+      <span class="splash-lang-en">Kannada</span>
+    </button>
+    <button class="splash-lang-btn" data-lang="mr">
+      <span class="splash-lang-native">मराठी</span>
+      <span class="splash-lang-en">Marathi</span>
+    </button>
+    <button class="splash-lang-btn" data-lang="te">
+      <span class="splash-lang-native">తెలుగు</span>
+      <span class="splash-lang-en">Telugu</span>
+    </button>
+    <button class="splash-lang-btn" data-lang="ta">
+      <span class="splash-lang-native">தமிழ்</span>
+      <span class="splash-lang-en">Tamil</span>
+    </button>
+  </div>
+  <div class="splash-divider"></div>
+  <div class="splash-sub">You can change language anytime from the menu above</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">🌉</div>
+    <span class="nav-logo-text">AgriBridge</span>
+  </a>
+  <div class="nav-links">
+    <a href="1.html" data-i18n="nav_gov">Gov. Schemes</a>
+    <a href="2.html" data-i18n="nav_bank">Banking</a>
+    <a href="3.html" data-i18n="nav_apmc">APMC Prices</a>
+    <a href="4.html" data-i18n="nav_storage">Storage</a>
+
+    <!-- ✅ LANGUAGE DROPDOWN — correctly placed inside .nav-links -->
+    <div class="lang-wrapper">
+      <button class="lang-btn" id="lang-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span id="main-lang-label">English</span>
+        <span class="chevron">&#9660;</span>
+      </button>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button class="lang-option active" data-lang="en">🇮🇳 English</button>
+        <button class="lang-option" data-lang="hi">🇮🇳 हिंदी</button>
+        <button class="lang-option" data-lang="kn">🇮🇳 ಕನ್ನಡ</button>
+        <button class="lang-option" data-lang="mr">🇮🇳 मराठी</button>
+        <button class="lang-option" data-lang="te">🇮🇳 తెలుగు</button>
+        <button class="lang-option" data-lang="ta">🇮🇳 தமிழ்</button>
+      </div>
+    </div>
+
+    <a href="#features" class="nav-cta" data-i18n="nav_explore">Explore Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-video-wrap">
+    <div class="hero-fallback"></div>
+    <video class="hero-video" autoplay loop muted playsinline
+      poster=""
+      onerror="this.style.display='none'">
+      <source src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80">
+    </video>
+    <div class="hero-grain"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-orb"></div>
+  </div>
+
+  <div class="hero-content">
+    <div>
+      <div class="hero-brand">
+        <span class="word">Agri</span><span class="word">Bridge<sup>®</sup></span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc" data-i18n="hero_desc">
+        From <strong>government schemes</strong> to <strong>live mandi prices</strong> —
+        every resource an Indian farmer needs, unified in one platform.
+        Built for the fields. Designed for dignity.
+      </p>
+      <a href="#features" class="hero-btn">
+        <span data-i18n="hero_btn">Explore Platform</span>
+        <div class="btn-circle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8C97A" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 14 0M13 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span data-i18n="scroll">Scroll</span>
+  </div>
+</section>
+
+
+
+<!-- MISSION -->
+<section class="mission">
+  <div class="mission-inner">
+    <div>
+      <div class="mission-label reveal" data-i18n="mission_label">Our Mission</div>
+      <h2 class="mission-heading reveal reveal-delay-1" data-i18n="mission_heading">
+        The Indian farmer deserves <em>better tools,</em> not more middlemen.
+      </h2>
+      <p class="mission-body reveal reveal-delay-2" data-i18n="mission_body">
+        Over 140 million farming families in India navigate a maze of disconnected portals, 
+        outdated information, and complex paperwork every single season. AgriBridge cuts through 
+        the noise — real-time prices, verified schemes, and nearby infrastructure, in your language.
+      </p>
+      <div class="mission-quote reveal reveal-delay-3" data-i18n="mission_quote">
+        "When a farmer knows his crop's price before he leaves the farm,
+        he negotiates. When he doesn't, he accepts."
+        <cite>— The AgriBridge Vision</cite>
+      </div>
+    </div>
+    <div class="mission-visual">
+      <div class="mission-card reveal">
+        <div class="mc-icon" style="background:rgba(74,158,99,0.12)">🏛️</div>
+        <div class="mc-text">
+          <h4 data-i18n="mc1_title">Government Schemes</h4>
+          <p data-i18n="mc1_sub">PM-KISAN, PMFBY, state subsidies & more</p>
+        </div>
+        <div class="mc-num">01</div>
+      </div>
+      <div class="mission-card reveal reveal-delay-1">
+        <div class="mc-icon" style="background:rgba(212,137,42,0.12)">🏦</div>
+        <div class="mc-text">
+          <h4 data-i18n="mc2_title">Banking & Credit</h4>
+          <p data-i18n="mc2_sub">KCC, NABARD loans, interest rates</p>
+        </div>
+        <div class="mc-num">02</div>
+      </div>
+      <div class="mission-card reveal reveal-delay-2">
+        <div class="mc-icon" style="background:rgba(123,184,212,0.12)">📊</div>
+        <div class="mc-text">
+          <h4 data-i18n="mc3_title">APMC Live Prices</h4>
+          <p data-i18n="mc3_sub">Daily mandi rates, 7-day trends, MSP alerts</p>
+        </div>
+        <div class="mc-num">03</div>
+      </div>
+      <div class="mission-card reveal reveal-delay-3">
+        <div class="mc-icon" style="background:rgba(168,201,176,0.1)">🏪</div>
+        <div class="mc-text">
+          <h4 data-i18n="mc4_title">Nearby Storage</h4>
+          <p data-i18n="mc4_sub">Cold storage, FCI godowns, warehouses</p>
+        </div>
+        <div class="mc-num">04</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-noise"></div>
+  <div class="features-header">
+    <div class="features-label reveal">Four Pillars</div>
+    <h2 class="features-title reveal reveal-delay-1">
+      Everything you need,<br><em>in one place.</em>
+    </h2>
+    <p class="features-sub reveal reveal-delay-2">
+      Four powerful tools built specifically for the Indian farmer.
+      No jargon. No complexity. Just answers.
+    </p>
+  </div>
+
+  <div class="features-grid">
+    <a href="1.html" class="feat-card feat-card-1">
+      <div class="feat-card-bg">🏛️</div>
+      <div class="feat-card-glow"></div>
+      <div class="feat-card-inner">
+        <div class="feat-num">01 / 04</div>
+        <div class="feat-icon">🏛️</div>
+        <div class="feat-title">Government Schemes</div>
+        <div class="feat-desc">
+          Every central and state scheme, subsidy, and benefit you're eligible for — 
+          filtered by your state, crop, and land size. No more missing out.
+        </div>
+        <div class="feat-tags">
+          <span class="feat-tag">PM-KISAN</span>
+          <span class="feat-tag">PMFBY</span>
+          <span class="feat-tag">eNAM</span>
+          <span class="feat-tag">Subsidies</span>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-explore">Explore Schemes</span>
+          <div class="feat-arrow">→</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="2.html" class="feat-card feat-card-2">
+      <div class="feat-card-bg">🏦</div>
+      <div class="feat-card-glow"></div>
+      <div class="feat-card-inner">
+        <div class="feat-num">02 / 04</div>
+        <div class="feat-icon">🏦</div>
+        <div class="feat-title">Banking & Credit</div>
+        <div class="feat-desc">
+          Kisan Credit Cards, NABARD loans, and interest subvention schemes. 
+          Know exactly how much credit you qualify for and at what rate.
+        </div>
+        <div class="feat-tags">
+          <span class="feat-tag">KCC @ 4%</span>
+          <span class="feat-tag">NABARD</span>
+          <span class="feat-tag">FPO Loans</span>
+          <span class="feat-tag">Insurance</span>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-explore">Explore Banking</span>
+          <div class="feat-arrow">→</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="3.html" class="feat-card feat-card-3">
+      <div class="feat-card-bg">📊</div>
+      <div class="feat-card-glow"></div>
+      <div class="feat-card-inner">
+        <div class="feat-num">03 / 04</div>
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Live APMC Prices</div>
+        <div class="feat-desc">
+          Real-time mandi prices for vegetables, fruits, pulses and cereals 
+          across 580+ APMCs. 7-day trends, MSP alerts, and AI-powered forecasts.
+        </div>
+        <div class="feat-tags">
+          <span class="feat-tag">Live Rates</span>
+          <span class="feat-tag">580+ Mandis</span>
+          <span class="feat-tag">AI Forecast</span>
+          <span class="feat-tag">MSP Alert</span>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-explore">Check Prices</span>
+          <div class="feat-arrow">→</div>
+        </div>
+      </div>
+    </a>
+
+    <a href="4.html" class="feat-card feat-card-4">
+      <div class="feat-card-bg">🏪</div>
+      <div class="feat-card-glow"></div>
+      <div class="feat-card-inner">
+        <div class="feat-num">04 / 04</div>
+        <div class="feat-icon">🏪</div>
+        <div class="feat-title">Nearby Storage</div>
+        <div class="feat-desc">
+          Find cold storage, FCI godowns, and certified warehouses near your 
+          village. Compare rates, check capacity, and contact directly.
+        </div>
+        <div class="feat-tags">
+          <span class="feat-tag">Cold Storage</span>
+          <span class="feat-tag">FCI Godowns</span>
+          <span class="feat-tag">Warehouses</span>
+          <span class="feat-tag">Near Me</span>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-explore">Find Storage</span>
+          <div class="feat-arrow">→</div>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="how-inner">
+    <div class="how-header">
+      <h2 class="how-title reveal" data-i18n="how_title">Simple as <em>three steps.</em></h2>
+      <p class="how-sub reveal reveal-delay-1" data-i18n="how_sub">Designed for farmers, not engineers.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="how-step-num"><span class="how-step-emoji">📍</span></div>
+        <h3 data-i18n="step1_title">Select Your State</h3>
+        <p data-i18n="step1_body">Choose your state and district. AgriBridge filters everything relevant to your location automatically.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-1">
+        <div class="how-step-num"><span class="how-step-emoji">🔍</span></div>
+        <h3 data-i18n="step2_title">Pick What You Need</h3>
+        <p data-i18n="step2_body">Government scheme, loan, mandi price, or storage — navigate with one tap. Available in 6 regional languages.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="how-step-num"><span class="how-step-emoji">✅</span></div>
+        <h3 data-i18n="step3_title">Act with Confidence</h3>
+        <p data-i18n="step3_body">Get verified, actionable information. Know your rights, your prices, and your options before you decide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANNER CTA -->
+<section class="banner">
+  <div class="banner-eyebrow reveal" data-i18n="banner_eyebrow">Start Today</div>
+  <p class="banner-quote reveal reveal-delay-1">
+    "<span data-i18n="banner_quote">Every farmer in India deserves access to the same information that </span><strong data-i18n="banner_quote_strong">big traders</strong><span data-i18n="banner_quote_end"> have always had.</span>"
+  </p>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="foot-logo">
+      <span>🌉</span> AgriBridge
+    </div>
+    <p>A unified platform for Indian farmers — bridging the gap between the field and fair opportunity. Built with purpose at a national hackathon.</p>
+  </div>
+  <div class="footer-links">
+    <a href="1.html">Gov. Schemes</a>
+    <a href="2.html">Banking</a>
+    <a href="3.html">APMC Prices</a>
+    <a href="4.html">Storage</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2025 AgriBridge — Built for Bharat's Farmers 🌾</p>
+  <div class="footer-badge">Made with <span>♥</span> for India's 140M farming families</div>
+</div>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animate() {
+  rx += (mx - rx) * 0.15;
+  ry += (my - ry) * 0.15;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+  ring.style.left   = rx + 'px';
+  ring.style.top    = ry + 'px';
+  requestAnimationFrame(animate);
+})();
+
+// ── NAV SCROLL ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── CARD REVEAL ──
+const cardObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.style.animationPlayState = 'running';
+  });
+}, { threshold: 0.1, rootMargin: '-60px' });
+document.querySelectorAll('.feat-card').forEach(c => {
+  c.style.animationPlayState = 'paused';
+  cardObserver.observe(c);
+});
+
+// ── LANGUAGE TRANSLATION ENGINE ──
+const langBtn      = document.getElementById('lang-btn');
+const langDropdown = document.getElementById('lang-dropdown');
+const langLabel    = document.getElementById('main-lang-label');
+
+const translations = {
+  en: {
+    nav_gov: 'Gov. Schemes', nav_bank: 'Banking', nav_apmc: 'APMC Prices',
+    nav_storage: 'Storage', nav_explore: 'Explore Now',
+    hero_desc: 'From <strong>government schemes</strong> to <strong>live mandi prices</strong> — every resource an Indian farmer needs, unified in one platform. Built for the fields. Designed for dignity.',
+    hero_btn: 'Explore Platform', scroll: 'Scroll',
+    stat_mandis: 'Mandis Tracked', stat_schemes: 'Active Schemes',
+    stat_states: 'States Covered', stat_langs: 'Languages',
+    mission_label: 'Our Mission',
+    mission_heading: 'The Indian farmer deserves <em>better tools,</em> not more middlemen.',
+    mission_body: 'Over 140 million farming families in India navigate a maze of disconnected portals, outdated information, and complex paperwork every single season. AgriBridge cuts through the noise — real-time prices, verified schemes, and nearby infrastructure, in your language.',
+    mission_quote: '"When a farmer knows his crop\'s price before he leaves the farm, he negotiates. When he doesn\'t, he accepts." <cite>— The AgriBridge Vision</cite>',
+    mc1_title: 'Government Schemes', mc1_sub: 'PM-KISAN, PMFBY, state subsidies & more',
+    mc2_title: 'Banking & Credit',   mc2_sub: 'KCC, NABARD loans, interest rates',
+    mc3_title: 'APMC Live Prices',   mc3_sub: 'Daily mandi rates, 7-day trends, MSP alerts',
+    mc4_title: 'Nearby Storage',     mc4_sub: 'Cold storage, FCI godowns, warehouses',
+    how_title: 'Simple as <em>three steps.</em>', how_sub: 'Designed for farmers, not engineers.',
+    step1_title: 'Select Your State',    step1_body: 'Choose your state and district. AgriBridge filters everything relevant to your location automatically.',
+    step2_title: 'Pick What You Need',   step2_body: 'Government scheme, loan, mandi price, or storage — navigate with one tap. Available in 6 regional languages.',
+    step3_title: 'Act with Confidence',  step3_body: 'Get verified, actionable information. Know your rights, your prices, and your options before you decide.',
+    banner_eyebrow: 'Start Today',
+    banner_quote: 'Every farmer in India deserves access to the same information that ',
+    banner_quote_strong: 'big traders', banner_quote_end: ' have always had.',
+    btn_open: 'Open AgriBridge', btn_prices: "Check Today's Prices",
+  },
+  hi: {
+    nav_gov: 'सरकारी योजनाएं', nav_bank: 'बैंकिंग', nav_apmc: 'APMC भाव',
+    nav_storage: 'भंडारण', nav_explore: 'अभी देखें',
+    hero_desc: '<strong>सरकारी योजनाओं</strong> से लेकर <strong>लाइव मंडी भाव</strong> तक — भारतीय किसान की हर जरूरत एक मंच पर। खेतों के लिए बना, सम्मान के साथ।',
+    hero_btn: 'प्लेटफ़ॉर्म देखें', scroll: 'स्क्रॉल करें',
+    stat_mandis: 'मंडियां ट्रैक', stat_schemes: 'सक्रिय योजनाएं',
+    stat_states: 'राज्य कवर', stat_langs: 'भाषाएं',
+    mission_label: 'हमारा मिशन',
+    mission_heading: 'भारतीय किसान को <em>बेहतर औज़ार</em> चाहिए, बिचौलिए नहीं।',
+    mission_body: 'भारत में 14 करोड़ से अधिक किसान परिवार हर सीजन में बिखरे पोर्टल, पुरानी जानकारी और जटिल कागजी कार्रवाई से जूझते हैं। AgriBridge इस उलझन को सुलझाता है — रियल-टाइम भाव, सत्यापित योजनाएं, और नजदीकी बुनियादी ढांचा, आपकी भाषा में।',
+    mission_quote: '"जब किसान खेत से निकलने से पहले अपनी फसल का भाव जानता है, तो वह मोलभाव करता है। जब नहीं जानता, तो जो मिले वो स्वीकार करता है।" <cite>— AgriBridge विज़न</cite>',
+    mc1_title: 'सरकारी योजनाएं', mc1_sub: 'PM-KISAN, PMFBY, राज्य सब्सिडी आदि',
+    mc2_title: 'बैंकिंग और ऋण',   mc2_sub: 'KCC, NABARD ऋण, ब्याज दरें',
+    mc3_title: 'APMC लाइव भाव',   mc3_sub: 'दैनिक मंडी दरें, 7-दिन ट्रेंड, MSP अलर्ट',
+    mc4_title: 'नजदीकी भंडारण',   mc4_sub: 'शीत भंडार, FCI गोदाम, वेयरहाउस',
+    how_title: '<em>तीन आसान</em> कदम।', how_sub: 'किसानों के लिए बना, इंजीनियरों के लिए नहीं।',
+    step1_title: 'अपना राज्य चुनें',      step1_body: 'अपना राज्य और जिला चुनें। AgriBridge आपके लिए सभी प्रासंगिक जानकारी अपने आप फ़िल्टर करता है।',
+    step2_title: 'जो चाहिए वो चुनें',    step2_body: 'सरकारी योजना, ऋण, मंडी भाव, या भंडारण — एक टैप में नेविगेट करें। 6 क्षेत्रीय भाषाओं में उपलब्ध।',
+    step3_title: 'आत्मविश्वास से निर्णय लें', step3_body: 'सत्यापित, कार्रवाई योग्य जानकारी पाएं। निर्णय लेने से पहले अपने अधिकार, भाव और विकल्प जानें।',
+    banner_eyebrow: 'आज ही शुरू करें',
+    banner_quote: 'भारत का हर किसान उसी जानकारी का हकदार है जो ',
+    banner_quote_strong: 'बड़े व्यापारियों', banner_quote_end: ' के पास हमेशा रही है।',
+    btn_open: 'AgriBridge खोलें', btn_prices: 'आज के भाव देखें',
+  },
+  kn: {
+    nav_gov: 'ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು', nav_bank: 'ಬ್ಯಾಂಕಿಂಗ್', nav_apmc: 'APMC ಬೆಲೆಗಳು',
+    nav_storage: 'ಸಂಗ್ರಹಣೆ', nav_explore: 'ಈಗ ನೋಡಿ',
+    hero_desc: '<strong>ಸರ್ಕಾರಿ ಯೋಜನೆಗಳಿಂದ</strong> <strong>ಲೈವ್ ಮಂಡಿ ಬೆಲೆಗಳವರೆಗೆ</strong> — ಭಾರತೀಯ ರೈತನ ಪ್ರತಿ ಅಗತ್ಯ ಒಂದೇ ವೇದಿಕೆಯಲ್ಲಿ.',
+    hero_btn: 'ವೇದಿಕೆ ನೋಡಿ', scroll: 'ಸ್ಕ್ರಾಲ್ ಮಾಡಿ',
+    stat_mandis: 'ಮಂಡಿಗಳ ಟ್ರ್ಯಾಕ್', stat_schemes: 'ಸಕ್ರಿಯ ಯೋಜನೆಗಳು',
+    stat_states: 'ರಾಜ್ಯಗಳು ಕವರ್', stat_langs: 'ಭಾಷೆಗಳು',
+    mission_label: 'ನಮ್ಮ ಧ್ಯೇಯ',
+    mission_heading: 'ಭಾರತೀಯ ರೈತನಿಗೆ <em>ಉತ್ತಮ ಸಾಧನಗಳು</em> ಬೇಕು, ಮಧ್ಯವರ್ತಿಗಳಲ್ಲ.',
+    mission_body: 'ಭಾರತದಲ್ಲಿ 14 ಕೋಟಿಗೂ ಹೆಚ್ಚು ರೈತ ಕುಟುಂಬಗಳು ಪ್ರತಿ ಋತುವಿನಲ್ಲಿ ಚದುರಿದ ಪೋರ್ಟಲ್‌ಗಳು ಮತ್ತು ಸಂಕೀರ್ಣ ಕಾಗದಪತ್ರಗಳೊಂದಿಗೆ ಹೋರಾಡುತ್ತಾರೆ. AgriBridge ಈ ಗೊಂದಲವನ್ನು ಕಡಿತಗೊಳಿಸುತ್ತದೆ.',
+    mission_quote: '"ರೈತನು ಹೊಲ ಬಿಡುವ ಮೊದಲು ತನ್ನ ಬೆಳೆಯ ಬೆಲೆ ತಿಳಿದಿದ್ದರೆ, ಅವನು ಮೊಲಭಾವ ಮಾಡುತ್ತಾನೆ." <cite>— AgriBridge ದರ್ಶನ</cite>',
+    mc1_title: 'ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು', mc1_sub: 'PM-KISAN, PMFBY, ರಾಜ್ಯ ಸಹಾಯಧನ',
+    mc2_title: 'ಬ್ಯಾಂಕಿಂಗ್ & ಸಾಲ',    mc2_sub: 'KCC, NABARD ಸಾಲ, ಬಡ್ಡಿ ದರಗಳು',
+    mc3_title: 'APMC ಲೈವ್ ಬೆಲೆಗಳು',   mc3_sub: 'ದೈನಿಕ ಮಂಡಿ ದರಗಳು, 7-ದಿನ ಟ್ರೆಂಡ್',
+    mc4_title: 'ಸಮೀಪದ ಸಂಗ್ರಹಣೆ',     mc4_sub: 'ಶೀತ ಗೃಹ, FCI ಗೋದಾಮು, ಗೋದಾಮುಗಳು',
+    how_title: '<em>ಮೂರು ಸರಳ</em> ಹಂತಗಳು.', how_sub: 'ರೈತರಿಗಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ.',
+    step1_title: 'ನಿಮ್ಮ ರಾಜ್ಯ ಆಯ್ಕೆ ಮಾಡಿ',   step1_body: 'ನಿಮ್ಮ ರಾಜ್ಯ ಮತ್ತು ಜಿಲ್ಲೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ. AgriBridge ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಫಿಲ್ಟರ್ ಮಾಡುತ್ತದೆ.',
+    step2_title: 'ನಿಮಗೆ ಬೇಕಾದ್ದನ್ನು ಆಯ್ಕೆ ಮಾಡಿ', step2_body: 'ಒಂದೇ ಟ್ಯಾಪ್‌ನಲ್ಲಿ ಯೋಜನೆ, ಸಾಲ, ಮಂಡಿ ಬೆಲೆ ಅಥವಾ ಸಂಗ್ರಹಣೆ ನ್ಯಾವಿಗೇಟ್ ಮಾಡಿ.',
+    step3_title: 'ಆತ್ಮವಿಶ್ವಾಸದಿಂದ ನಿರ್ಧರಿಸಿ',  step3_body: 'ಪರಿಶೀಲಿತ ಮಾಹಿತಿ ಪಡೆಯಿರಿ. ನಿಮ್ಮ ಹಕ್ಕುಗಳು, ಬೆಲೆಗಳು ಮತ್ತು ಆಯ್ಕೆಗಳನ್ನು ತಿಳಿಯಿರಿ.',
+    banner_eyebrow: 'ಇಂದೇ ಪ್ರಾರಂಭಿಸಿ',
+    banner_quote: 'ಭಾರತದ ಪ್ರತಿ ರೈತನಿಗೆ ಅದೇ ಮಾಹಿತಿ ಸಿಗಬೇಕು ಅದು ',
+    banner_quote_strong: 'ದೊಡ್ಡ ವ್ಯಾಪಾರಿಗಳಿಗೆ', banner_quote_end: ' ಯಾವಾಗಲೂ ಇತ್ತು.',
+    btn_open: 'AgriBridge ತೆರೆಯಿರಿ', btn_prices: 'ಇಂದಿನ ಬೆಲೆಗಳು ನೋಡಿ',
+  },
+  mr: {
+    nav_gov: 'सरकारी योजना', nav_bank: 'बँकिंग', nav_apmc: 'APMC भाव',
+    nav_storage: 'साठवण', nav_explore: 'आता पहा',
+    hero_desc: '<strong>सरकारी योजनांपासून</strong> ते <strong>थेट मंडी भावापर्यंत</strong> — भारतीय शेतकऱ्याची प्रत्येक गरज एकाच व्यासपीठावर.',
+    hero_btn: 'प्लॅटफॉर्म पहा', scroll: 'स्क्रोल करा',
+    stat_mandis: 'मंड्यांचे ट्रॅकिंग', stat_schemes: 'सक्रिय योजना',
+    stat_states: 'राज्ये समाविष्ट', stat_langs: 'भाषा',
+    mission_label: 'आमचे ध्येय',
+    mission_heading: 'भारतीय शेतकऱ्याला <em>चांगली साधने</em> हवीत, दलाल नको.',
+    mission_body: 'भारतातील 14 कोटींहून अधिक शेतकरी कुटुंबे प्रत्येक हंगामात विखुरलेल्या पोर्टल्स आणि गुंतागुंतीच्या कागदपत्रांशी झुंजतात. AgriBridge हा गोंधळ दूर करतो.',
+    mission_quote: '"शेतकऱ्याला शेत सोडण्याआधी पिकाचा भाव माहीत असेल तर तो घासाघीस करतो. नसेल तर जे मिळेल ते स्वीकारतो." <cite>— AgriBridge व्हिजन</cite>',
+    mc1_title: 'सरकारी योजना',    mc1_sub: 'PM-KISAN, PMFBY, राज्य अनुदान',
+    mc2_title: 'बँकिंग व कर्ज',    mc2_sub: 'KCC, NABARD कर्ज, व्याजदर',
+    mc3_title: 'APMC थेट भाव',    mc3_sub: 'दैनिक मंडी दर, 7-दिवस ट्रेंड',
+    mc4_title: 'जवळची साठवण',     mc4_sub: 'शीतगृह, FCI गोदाम, वेअरहाऊस',
+    how_title: '<em>तीन सोप्या</em> पायऱ्या.', how_sub: 'शेतकऱ्यांसाठी बनवले, अभियंत्यांसाठी नाही.',
+    step1_title: 'तुमचे राज्य निवडा',    step1_body: 'तुमचे राज्य आणि जिल्हा निवडा. AgriBridge आपोआप सर्व संबंधित माहिती फिल्टर करते.',
+    step2_title: 'तुम्हाला हवे ते निवडा',  step2_body: 'एका टॅपमध्ये योजना, कर्ज, मंडी भाव किंवा साठवण नेव्हिगेट करा.',
+    step3_title: 'आत्मविश्वासाने निर्णय घ्या', step3_body: 'सत्यापित माहिती मिळवा. निर्णय घेण्यापूर्वी तुमचे हक्क, भाव आणि पर्याय जाणून घ्या.',
+    banner_eyebrow: 'आजच सुरू करा',
+    banner_quote: 'भारतातील प्रत्येक शेतकऱ्याला तीच माहिती मिळावी जी ',
+    banner_quote_strong: 'मोठ्या व्यापाऱ्यांना', banner_quote_end: ' नेहमीच होती.',
+    btn_open: 'AgriBridge उघडा', btn_prices: 'आजचे भाव पहा',
+  },
+  te: {
+    nav_gov: 'ప్రభుత్వ పథకాలు', nav_bank: 'బ్యాంకింగ్', nav_apmc: 'APMC ధరలు',
+    nav_storage: 'నిల్వ', nav_explore: 'ఇప్పుడు చూడండి',
+    hero_desc: '<strong>ప్రభుత్వ పథకాల</strong> నుండి <strong>లైవ్ మండి ధరల</strong> వరకు — భారతీయ రైతుకు కావలసిన అన్నీ ఒక వేదికపై.',
+    hero_btn: 'వేదికను అన్వేషించండి', scroll: 'స్క్రోల్ చేయండి',
+    stat_mandis: 'మండీలు ట్రాక్', stat_schemes: 'చురుకైన పథకాలు',
+    stat_states: 'రాష్ట్రాలు', stat_langs: 'భాషలు',
+    mission_label: 'మా లక్ష్యం',
+    mission_heading: 'భారతీయ రైతుకు <em>మెరుగైన సాధనాలు</em> కావాలి, దళారులు కాదు.',
+    mission_body: 'భారతదేశంలో 14 కోట్లకు పైగా రైతు కుటుంబాలు ప్రతి సీజన్‌లో చెల్లాచెదురైన పోర్టల్స్‌తో పోరాడుతున్నారు. AgriBridge ఈ గందరగోళాన్ని తొలగిస్తుంది.',
+    mission_quote: '"రైతుకు పొలం వదిలే ముందు తన పంట ధర తెలిసి ఉంటే, అతను흥ు చేస్తాడు." <cite>— AgriBridge దృష్టి</cite>',
+    mc1_title: 'ప్రభుత్వ పథకాలు', mc1_sub: 'PM-KISAN, PMFBY, రాష్ట్ర సబ్సిడీలు',
+    mc2_title: 'బ్యాంకింగ్ & రుణాలు', mc2_sub: 'KCC, NABARD రుణాలు, వడ్డీ రేట్లు',
+    mc3_title: 'APMC లైవ్ ధరలు',    mc3_sub: 'రోజువారీ మండి రేట్లు, 7-రోజుల ట్రెండ్',
+    mc4_title: 'సమీప నిల్వ',        mc4_sub: 'శీతల గిడ్డంగులు, FCI గోదాంలు',
+    how_title: '<em>మూడు సులభ</em> దశలు.', how_sub: 'రైతుల కోసం నిర్మించబడింది.',
+    step1_title: 'మీ రాష్ట్రం ఎంచుకోండి',  step1_body: 'మీ రాష్ట్రం మరియు జిల్లాను ఎంచుకోండి. AgriBridge స్వయంచాలకంగా ఫిల్టర్ చేస్తుంది.',
+    step2_title: 'మీకు కావలసింది ఎంచుకోండి', step2_body: 'ఒక్క ట్యాప్‌లో పథకం, రుణం, మండి ధర లేదా నిల్వ నావిగేట్ చేయండి.',
+    step3_title: 'నమ్మకంగా నిర్ణయించండి',   step3_body: 'ధృవీకరించిన సమాచారం పొందండి. మీ హక్కులు, ధరలు మరియు ఎంపికలు తెలుసుకోండి.',
+    banner_eyebrow: 'ఈరోజే ప్రారంభించండి',
+    banner_quote: 'భారతదేశంలో ప్రతి రైతుకు అదే సమాచారం అందాలి, అది ',
+    banner_quote_strong: 'పెద్ద వ్యాపారులకు', banner_quote_end: ' ఎప్పుడూ ఉంది.',
+    btn_open: 'AgriBridge తెరవండి', btn_prices: 'నేటి ధరలు చూడండి',
+  },
+  ta: {
+    nav_gov: 'அரசு திட்டங்கள்', nav_bank: 'வங்கி', nav_apmc: 'APMC விலைகள்',
+    nav_storage: 'சேமிப்பு', nav_explore: 'இப்போது பார்க்க',
+    hero_desc: '<strong>அரசு திட்டங்களிலிருந்து</strong> <strong>நேரடி மண்டி விலைகள்</strong> வரை — இந்திய விவசாயிக்கு தேவையான அனைத்தும் ஒரே தளத்தில்.',
+    hero_btn: 'தளத்தை ஆராயுங்கள்', scroll: 'உருட்டுங்கள்',
+    stat_mandis: 'மண்டிகள் கண்காணிப்பு', stat_schemes: 'செயல்பாட்டு திட்டங்கள்',
+    stat_states: 'மாநிலங்கள்', stat_langs: 'மொழிகள்',
+    mission_label: 'எங்கள் நோக்கம்',
+    mission_heading: 'இந்திய விவசாயிக்கு <em>சிறந்த கருவிகள்</em> வேண்டும், தரகர்கள் அல்ல.',
+    mission_body: 'இந்தியாவில் 14 கோடிக்கும் அதிகமான விவசாயக் குடும்பங்கள் ஒவ்வொரு பருவத்திலும் சிக்கலான ஆவணங்களுடன் போராடுகின்றன. AgriBridge இந்த குழப்பத்தை நீக்குகிறது.',
+    mission_quote: '"விவசாயி வயலை விட்டு கிளம்பும் முன் தன் பயிரின் விலை தெரிந்திருந்தால் பேரம் பேசுவான்." <cite>— AgriBridge தொலைநோக்கு</cite>',
+    mc1_title: 'அரசு திட்டங்கள்',  mc1_sub: 'PM-KISAN, PMFBY, மாநில மானியங்கள்',
+    mc2_title: 'வங்கி & கடன்',     mc2_sub: 'KCC, NABARD கடன்கள், வட்டி விகிதங்கள்',
+    mc3_title: 'APMC நேரடி விலைகள்', mc3_sub: 'தினசரி மண்டி விகிதங்கள், 7-நாள் போக்கு',
+    mc4_title: 'அருகிலுள்ள சேமிப்பு', mc4_sub: 'குளிர் சேமிப்பு, FCI கிடங்குகள்',
+    how_title: '<em>மூன்று எளிய</em> படிகள்.', how_sub: 'விவசாயிகளுக்காக கட்டப்பட்டது.',
+    step1_title: 'உங்கள் மாநிலத்தை தேர்வு செய்யுங்கள்', step1_body: 'உங்கள் மாநிலம் மற்றும் மாவட்டத்தை தேர்வு செய்யுங்கள். AgriBridge தானாகவே வடிகட்டுகிறது.',
+    step2_title: 'தேவையானதை தேர்வு செய்யுங்கள்',      step2_body: 'ஒரே தட்டுதலில் திட்டம், கடன், மண்டி விலை அல்லது சேமிப்பு.',
+    step3_title: 'நம்பிக்கையுடன் முடிவு செய்யுங்கள்',  step3_body: 'சரிபார்க்கப்பட்ட தகவல்களை பெறுங்கள். உங்கள் உரிமைகள், விலைகள் மற்றும் விருப்பங்களை தெரிந்து கொள்ளுங்கள்.',
+    banner_eyebrow: 'இன்றே தொடங்குங்கள்',
+    banner_quote: 'இந்தியாவின் ஒவ்வொரு விவசாயிக்கும் அதே தகவல் கிடைக்க வேண்டும் ',
+    banner_quote_strong: 'பெரிய வணிகர்களுக்கு', banner_quote_end: ' எப்போதும் இருந்தது.',
+    btn_open: 'AgriBridge திறக்கவும்', btn_prices: 'இன்றைய விலைகளை பார்க்க',
+  }
+};
+
+const langNames = { en:'English', hi:'हिंदी', kn:'ಕನ್ನಡ', mr:'मराठी', te:'తెలుగు', ta:'தமிழ்' };
+
+function applyLang(lang) {
+  const t = translations[lang];
+  if (!t) return;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  langLabel.textContent = langNames[lang];
+  document.documentElement.lang = lang;
+  localStorage.setItem('agribridge-lang', lang);
+}
+
+// Toggle open/close
+langBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  const isOpen = langDropdown.classList.toggle('open');
+  langBtn.classList.toggle('open', isOpen);
+});
+
+// Select a language
+langDropdown.querySelectorAll('.lang-option').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const lang = btn.dataset.lang;
+    langDropdown.querySelectorAll('.lang-option').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    langDropdown.classList.remove('open');
+    langBtn.classList.remove('open');
+    applyLang(lang);
+  });
+});
+
+// Close when clicking outside
+document.addEventListener('click', () => {
+  langDropdown.classList.remove('open');
+  langBtn.classList.remove('open');
+});
+
+// ── LANGUAGE SPLASH SCREEN ──
+const splash = document.getElementById('lang-splash');
+const savedLang = localStorage.getItem('agribridge-lang');
+
+if (savedLang && translations[savedLang]) {
+  // Language already chosen — skip splash, apply directly
+  splash.style.display = 'none';
+  applyLang(savedLang);
+  langDropdown.querySelectorAll('.lang-option').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === savedLang);
+  });
+} else {
+  // Show splash for first-time visitors
+  document.body.style.overflow = 'hidden';
+  splash.querySelectorAll('.splash-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      applyLang(lang);
+      langDropdown.querySelectorAll('.lang-option').forEach(b => {
+        b.classList.toggle('active', b.dataset.lang === lang);
+      });
+      splash.classList.add('hiding');
+      setTimeout(() => {
+        splash.style.display = 'none';
+        document.body.style.overflow = '';
+      }, 600);
+    });
+  });
+}
+</script>
+</body>
+</html>
